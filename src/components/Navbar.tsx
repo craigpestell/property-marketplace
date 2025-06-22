@@ -20,7 +20,7 @@ export default function MainNavbar() {
       <div className="container flex h-16 items-center justify-between px-4 sm:px-6 max-w-full">
         <Link href="/" className="flex items-center space-x-2">
           <span className="text-xl sm:text-2xl font-bold font-poppins bg-gradient-to-r from-[var(--primary)] to-[var(--accent)] bg-clip-text text-transparent">
-            NextBoiler
+            Property Marketplace
           </span>
         </Link>
 

@@ -8,7 +8,7 @@ export default function MainFooter() {
       <div className="container px-4 md:px-6 flex flex-col md:flex-row items-center justify-between gap-4 max-w-full">
         <div className="flex items-center space-x-2">
           <span className="text-sm font-semibold text-[var(--foreground)] font-poppins">
-            NextBoiler
+            Property Marketplace
           </span>
           <span className="text-sm text-[var(--muted-foreground)]">
             © {new Date().getFullYear()} All rights reserved.

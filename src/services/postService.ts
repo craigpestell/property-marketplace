@@ -1,4 +1,20 @@
 export const postService = {
+  getPost: async(postId: string) => {
+    const url = `/api/post/${postId}`;
+    console.log('postService', {url})
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch post');
+    }
+
+    return response.json();
+  },
   getPosts: async (query: string = '', category?: string, sortBy: string = 'newest') => {
     const params = new URLSearchParams();
     if (query) params.append('query', query);

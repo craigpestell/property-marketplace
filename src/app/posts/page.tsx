@@ -1,5 +1,6 @@
 'use client';
 
+import Hero from '@/components/Hero';
 import PostCard from '@/components/PostCard';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -60,49 +61,7 @@ export default function PostsPage() {
 
   return (
     <div className="bg-[var(--background)] min-h-screen">
-      {/* Hero section */}
-      <div className="relative bg-gradient-to-r from-[var(--primary)]/[0.1] to-[var(--accent)]/[0.1] py-16">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="text-center max-w-3xl mx-auto"
-          >
-            <h1 className="text-4xl md:text-5xl font-bold text-[var(--foreground)] mb-4">
-              Explore Our <span className="text-[var(--primary)]">Blog</span>
-            </h1>
-            <p className="text-lg text-[var(--muted-foreground)] max-w-2xl mx-auto mb-8">
-              Discover insightful articles, tutorials, and stories from our
-              community of writers and experts.
-            </p>
-
-            <div className="relative max-w-lg mx-auto">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-[var(--muted-foreground)]" />
-              <Input
-                type="text"
-                placeholder="Search posts by title, content, or tags..."
-                value={searchQuery}
-                onChange={e => setSearchQuery(e.target.value)}
-                className="pl-10 py-6 bg-[var(--card)] border-[var(--border)] text-[var(--foreground)] focus-visible:ring-[var(--primary)] placeholder:text-[var(--muted-foreground)]"
-              />
-            </div>
-          </motion.div>
-        </div>
-
-        {/* Wave SVG */}
-        <div className="absolute bottom-0 left-0 right-0 h-12 md:h-16 overflow-hidden">
-          <svg
-            viewBox="0 0 1440 120"
-            className="absolute bottom-0 w-full h-full"
-          >
-            <path
-              fill="var(--background)"
-              d="M0,96L48,85.3C96,75,192,53,288,53.3C384,53,480,75,576,80C672,85,768,75,864,64C960,53,1056,43,1152,42.7C1248,43,1344,53,1392,58.7L1440,64L1440,120L1392,120C1344,120,1248,120,1152,120C1056,120,960,120,864,120C768,120,672,120,576,120C480,120,384,120,288,120C192,120,96,120,48,120L0,120Z"
-            ></path>
-          </svg>
-        </div>
-      </div>
+      
 
       {/* Filters */}
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
