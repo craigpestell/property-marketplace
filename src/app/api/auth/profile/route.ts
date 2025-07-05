@@ -35,7 +35,7 @@ export async function GET() {
 
     // Get user's property count
     const propertyCountResult = await pool.query(
-      'SELECT COUNT(*) as count FROM listings WHERE client_email = $1 AND (deleted IS NULL OR deleted = FALSE)',
+      'SELECT COUNT(*) as count FROM properties WHERE user_email = $1 AND (deleted IS NULL OR deleted = FALSE)',
       [session.user.email],
     );
 
@@ -106,7 +106,7 @@ export async function PUT(request: NextRequest) {
 
     // Get updated property count
     const propertyCountResult = await pool.query(
-      'SELECT COUNT(*) as count FROM listings WHERE client_email = $1 AND (deleted IS NULL OR deleted = FALSE)',
+      'SELECT COUNT(*) as count FROM properties WHERE user_email = $1 AND (deleted IS NULL OR deleted = FALSE)',
       [email],
     );
 
