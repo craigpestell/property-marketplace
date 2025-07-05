@@ -5,6 +5,10 @@ import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 
+import UserPropertyCard from '@/components/UserPropertyCard';
+
+import { Property } from '@/types';
+
 interface UserProfile {
   id: string;
   name: string;
@@ -24,17 +28,12 @@ export default function ProfilePage() {
     name: '',
     email: '',
   });
-
-  useEffect(() => {
-    if (status === 'unauthenticated') {
-      router.push('/login');
-      return;
-    }
-
-    if (status === 'authenticated' && session?.user) {
-      fetchProfile();
-    }
-  }, [status, session, router]);
+  const [userListings, setUserListings] = useState<Property[]>([]);
+  const [listingsLoading, setListingsLoading] = useState(false);
+  const [deletingPropertyId, setDeletingPropertyId] = useState<string | null>(
+    null,
+  );
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
   const fetchProfile = async () => {
     try {
@@ -54,6 +53,81 @@ export default function ProfilePage() {
       setLoading(false);
     }
   };
+
+  const fetchUserListings = async () => {
+    if (!session?.user?.email) return;
+
+    try {
+      setListingsLoading(true);
+      const response = await fetch(
+        `/api/listings?userEmail=${session.user.email}`,
+      );
+      if (response.ok) {
+        const data = await response.json();
+        setUserListings(data.properties || []);
+      }
+    } catch (err) {
+      // Handle error silently for now
+      setUserListings([]);
+    } finally {
+      setListingsLoading(false);
+    }
+  };
+
+  const handleDeleteProperty = async (propertyId: string) => {
+    if (!session?.user?.email) return;
+
+    try {
+      setDeletingPropertyId(propertyId);
+      setDeleteError(null);
+
+      const response = await fetch(
+        `/api/listings?id=${propertyId}&userEmail=${session.user.email}`,
+        {
+          method: 'DELETE',
+        },
+      );
+
+      if (response.ok) {
+        // Remove the deleted property from the list
+        setUserListings((prev) =>
+          prev.filter((property) => property.id !== propertyId),
+        );
+
+        // Update the profile property count
+        if (profile) {
+          setProfile((prev) =>
+            prev
+              ? {
+                  ...prev,
+                  propertyCount: (prev.propertyCount || 0) - 1,
+                }
+              : null,
+          );
+        }
+      } else {
+        const errorData = await response.json();
+        setDeleteError(errorData.error || 'Failed to delete property');
+      }
+    } catch (err) {
+      setDeleteError('Failed to delete property');
+    } finally {
+      setDeletingPropertyId(null);
+    }
+  };
+
+  useEffect(() => {
+    if (status === 'unauthenticated') {
+      router.push('/login');
+      return;
+    }
+
+    if (status === 'authenticated' && session?.user) {
+      fetchProfile();
+      fetchUserListings();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [status, session, router]);
 
   const handleEditSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -277,6 +351,97 @@ export default function ProfilePage() {
                       {profile.propertyCount || 0}
                     </p>
                   </div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* My Listings Section */}
+          <div className='bg-white rounded-lg shadow-sm mb-8'>
+            <div className='px-6 py-6 border-b border-gray-200'>
+              <div className='flex items-center justify-between'>
+                <div>
+                  <h2 className='text-xl font-bold text-gray-900'>
+                    My Listings
+                  </h2>
+                  <p className='text-gray-600'>
+                    Properties you have listed for sale
+                  </p>
+                </div>
+                <Link
+                  href='/listings'
+                  className='text-blue-600 hover:text-blue-700 text-sm font-medium'
+                >
+                  View All Properties →
+                </Link>
+              </div>
+            </div>
+
+            <div className='px-6 py-6'>
+              {deleteError && (
+                <div className='mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded'>
+                  {deleteError}
+                </div>
+              )}
+
+              {listingsLoading ? (
+                <div className='flex items-center justify-center py-8'>
+                  <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600'></div>
+                  <span className='ml-2 text-gray-600'>
+                    Loading your listings...
+                  </span>
+                </div>
+              ) : userListings.length > 0 ? (
+                <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
+                  {userListings.slice(0, 6).map((property) => (
+                    <UserPropertyCard
+                      key={property.id}
+                      property={property}
+                      onDelete={handleDeleteProperty}
+                      isDeleting={deletingPropertyId === property.id}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <div className='text-center py-8'>
+                  <div className='h-16 w-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4'>
+                    <svg
+                      className='h-8 w-8 text-gray-400'
+                      fill='none'
+                      stroke='currentColor'
+                      viewBox='0 0 24 24'
+                    >
+                      <path
+                        strokeLinecap='round'
+                        strokeLinejoin='round'
+                        strokeWidth={2}
+                        d='M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z'
+                      />
+                    </svg>
+                  </div>
+                  <h3 className='text-lg font-medium text-gray-900 mb-2'>
+                    No listings yet
+                  </h3>
+                  <p className='text-gray-600 mb-4'>
+                    You haven't listed any properties for sale.
+                  </p>
+                  <Link
+                    href='/listings'
+                    className='inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700'
+                  >
+                    Browse Properties
+                  </Link>
+                </div>
+              )}
+
+              {userListings.length > 6 && (
+                <div className='mt-6 text-center'>
+                  <Link
+                    href='/listings'
+                    className='inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50'
+                  >
+                    View All {userListings.length} Listings
+                  </Link>
                 </div>
               )}
             </div>

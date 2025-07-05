@@ -39,6 +39,7 @@ export async function GET(request: Request) {
     const bathrooms = searchParams.get('bathrooms');
     const city = searchParams.get('city');
     const clientId = searchParams.get('clientId');
+    const userEmail = searchParams.get('userEmail'); // Add user email filter
 
     const offset = (page - 1) * limit;
 
@@ -81,6 +82,13 @@ export async function GET(request: Request) {
     if (clientId) {
       whereConditions.push(`client_id = $${paramIndex}`);
       queryParams.push(parseInt(clientId));
+      paramIndex++;
+    }
+
+    // User email filtering (for user's own listings)
+    if (userEmail) {
+      whereConditions.push(`user_email = $${paramIndex}`);
+      queryParams.push(userEmail);
       paramIndex++;
     }
 
@@ -242,6 +250,60 @@ export async function POST(req: Request) {
     console.error('Error adding property:', error);
     return NextResponse.json(
       { error: error.message || 'Database error' },
+      { status: 500 },
+    );
+  }
+}
+
+export async function DELETE(request: Request) {
+  try {
+    const { searchParams } = new URL(request.url);
+    const propertyId = searchParams.get('id');
+    const userEmail = searchParams.get('userEmail');
+
+    if (!propertyId || !userEmail) {
+      return NextResponse.json(
+        { error: 'Property ID and user email are required' },
+        { status: 400 },
+      );
+    }
+
+    // First, verify the property belongs to the user
+    const propertyResult = await pool.query(
+      'SELECT id, user_email, title FROM properties WHERE id = $1 AND (deleted IS NULL OR deleted = FALSE)',
+      [propertyId],
+    );
+
+    if (propertyResult.rows.length === 0) {
+      return NextResponse.json(
+        { error: 'Property not found' },
+        { status: 404 },
+      );
+    }
+
+    const property = propertyResult.rows[0];
+
+    // Check if the user owns this property
+    if (property.user_email !== userEmail) {
+      return NextResponse.json(
+        { error: 'Unauthorized: You can only delete your own listings' },
+        { status: 403 },
+      );
+    }
+
+    // Soft delete the property by setting deleted flag
+    await pool.query(
+      'UPDATE properties SET deleted = TRUE, updated_at = NOW() WHERE id = $1',
+      [propertyId],
+    );
+
+    return NextResponse.json({
+      success: true,
+      message: `Property "${property.title}" has been deleted successfully`,
+    });
+  } catch (error) {
+    return NextResponse.json(
+      { error: 'Failed to delete property' },
       { status: 500 },
     );
   }
