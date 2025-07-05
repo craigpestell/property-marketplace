@@ -5,6 +5,9 @@ import '@/styles/globals.css';
 // !STARTERCONF This is for demo purposes, remove @/styles/colors.css import immediately
 import '@/styles/colors.css';
 
+import Header from '@/components/Header';
+import SessionWrapper from '@/components/SessionWrapper';
+
 import { siteConfig } from '@/constant/config';
 
 // !STARTERCONF Change these default meta
@@ -12,10 +15,11 @@ import { siteConfig } from '@/constant/config';
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
   title: {
-    default: siteConfig.title,
-    template: `%s | ${siteConfig.title}`,
+    default: 'Real Estate Marketplace',
+    template: `%s | Real Estate Marketplace`,
   },
-  description: siteConfig.description,
+  description:
+    'Find your dream property in our curated real estate marketplace',
   robots: { index: true, follow: true },
   // !STARTERCONF this is the default favicon, you can generate your own from https://realfavicongenerator.net/
   // ! copy to /favicon folder
@@ -27,26 +31,21 @@ export const metadata: Metadata = {
   manifest: `/favicon/site.webmanifest`,
   openGraph: {
     url: siteConfig.url,
-    title: siteConfig.title,
-    description: siteConfig.description,
-    siteName: siteConfig.title,
+    title: 'Real Estate Marketplace',
+    description:
+      'Find your dream property in our curated real estate marketplace',
+    siteName: 'Real Estate Marketplace',
     images: [`${siteConfig.url}/images/og.jpg`],
     type: 'website',
     locale: 'en_US',
   },
   twitter: {
     card: 'summary_large_image',
-    title: siteConfig.title,
-    description: siteConfig.description,
+    title: 'Real Estate Marketplace',
+    description:
+      'Find your dream property in our curated real estate marketplace',
     images: [`${siteConfig.url}/images/og.jpg`],
-    // creator: '@th_clarence',
   },
-  // authors: [
-  //   {
-  //     name: 'Theodorus Clarence',
-  //     url: 'https://theodorusclarence.com',
-  //   },
-  // ],
 };
 
 export default function RootLayout({
@@ -56,7 +55,12 @@ export default function RootLayout({
 }) {
   return (
     <html>
-      <body>{children}</body>
+      <body>
+        <SessionWrapper>
+          <Header />
+          <main className='min-h-[calc(100vh-80px)]'>{children}</main>
+        </SessionWrapper>
+      </body>
     </html>
   );
 }
