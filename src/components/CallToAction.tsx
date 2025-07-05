@@ -5,7 +5,7 @@ export default function CallToAction() {
     <section className='bg-blue-900 text-white py-16'>
       <div className='layout text-center'>
         <h2 className='text-3xl font-bold mb-4'>
-          Ready to Save $40K+ on Your Next Property?
+          Ready to Save $41K+ on Your Next Property?
         </h2>
         <p className='text-lg text-blue-100 mb-8 max-w-2xl mx-auto'>
           Join thousands of satisfied customers who saved money with our 0.9%

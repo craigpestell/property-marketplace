@@ -10,7 +10,7 @@ export default function Hero() {
       <div className='relative layout py-24 lg:py-32'>
         <div className='max-w-4xl mx-auto text-center'>
           <h1 className='text-4xl md:text-6xl font-bold mb-6'>
-            Save $40K+ on Your
+            Save $41K+ on Your
             <span className='block text-blue-200'>Dream Home</span>
           </h1>
 

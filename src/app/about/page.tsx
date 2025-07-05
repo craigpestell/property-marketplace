@@ -226,7 +226,7 @@ export default function AboutPage() {
                       />
                     </svg>
                     <span>
-                      <strong>Save $25,000+</strong> on a $1M home vs.
+                      <strong>Save $16,000+</strong> on a $1M home vs.
                       traditional 2.5% seller commission
                     </span>
                   </li>
