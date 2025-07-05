@@ -5,7 +5,7 @@ import { signOut, useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 
 export default function SettingsPage() {
-  const { data: session, status } = useSession();
+  const { data: _session, status } = useSession();
   const router = useRouter();
   const [isDeleting, setIsDeleting] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);

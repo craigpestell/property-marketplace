@@ -13,7 +13,7 @@ export default function CreateListingPage() {
   React.useEffect(() => {
     if (status === 'loading') return; // Still loading
     if (!session) {
-      router.push('/signin');
+      router.push('/login');
     }
   }, [session, status, router]);
 

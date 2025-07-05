@@ -31,7 +31,7 @@ export default function EditListingPage({
   React.useEffect(() => {
     if (status === 'loading') return; // Still loading
     if (!session) {
-      router.push('/signin');
+      router.push('/login');
       return;
     }
     if (!uid) return;
