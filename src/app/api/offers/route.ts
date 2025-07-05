@@ -32,7 +32,7 @@ export async function GET(request: NextRequest) {
         p.title as property_title,
         p.address as property_address,
         p.price as listing_price,
-        p.images as property_images
+        p.image_url as property_image_url
       FROM offers o
       JOIN properties p ON o.property_uid = p.property_uid
       WHERE p.deleted = false AND (
@@ -63,7 +63,8 @@ export async function GET(request: NextRequest) {
       offers: result.rows,
     });
   } catch (error) {
-    // Log error for debugging
+    // eslint-disable-next-line no-console
+    console.error('GET /api/offers error:', error);
     return NextResponse.json(
       { error: 'Failed to fetch offers' },
       { status: 500 },
@@ -103,7 +104,7 @@ export async function POST(request: NextRequest) {
 
     // Get property details and seller email
     const propertyQuery = `
-      SELECT user_email, client_email, price, title 
+      SELECT user_email, price, title 
       FROM properties 
       WHERE property_uid = $1 AND deleted = false
     `;
@@ -117,7 +118,7 @@ export async function POST(request: NextRequest) {
     }
 
     const property = propertyResult.rows[0];
-    const seller_email = property.user_email || property.client_email;
+    const seller_email = property.user_email;
 
     // Prevent users from making offers on their own properties
     if (seller_email === session.user.email) {
@@ -172,7 +173,8 @@ export async function POST(request: NextRequest) {
       offer: newOffer,
     });
   } catch (error) {
-    // Log error for debugging
+    // eslint-disable-next-line no-console
+    console.error('POST /api/offers error:', error);
     return NextResponse.json(
       { error: 'Failed to create offer' },
       { status: 500 },

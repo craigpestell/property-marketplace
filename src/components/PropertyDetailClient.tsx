@@ -29,8 +29,8 @@ export default function PropertyDetailClient({
 
   const isOwner =
     session?.user?.email &&
-    property.client_email &&
-    session.user.email === property.client_email;
+    property.user_email &&
+    session.user.email === property.user_email;
 
   const canMakeOffer = session?.user?.email && !isOwner;
 

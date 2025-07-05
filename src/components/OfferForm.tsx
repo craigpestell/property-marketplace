@@ -56,6 +56,12 @@ export default function OfferForm({
 
       if (!response.ok) {
         const errorData = await response.json();
+        // eslint-disable-next-line no-console
+        console.error('Offer submission failed:', {
+          status: response.status,
+          statusText: response.statusText,
+          error: errorData,
+        });
         throw new Error(errorData.error || 'Failed to submit offer');
       }
 

@@ -30,16 +30,6 @@ const handler = NextAuth({
         );
         const user = result.rows[0];
 
-        console.log('Credentials:', credentials);
-        console.log('User from DB:', user);
-        console.log('bcrypt compare:', {
-          password: credentials.password,
-          password_hash: user?.password_hash,
-          compare: await bcrypt.compare(
-            credentials.password as string,
-            user.password_hash,
-          ),
-        });
         // Compare the posted password with the stored hash
         if (
           user &&
