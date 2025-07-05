@@ -31,6 +31,8 @@ export default function PropertyForm({ property, mode }: PropertyFormProps) {
     description: '',
   });
   const [imageFile, setImageFile] = React.useState<File | null>(null);
+  const [isGeneratingDescription, setIsGeneratingDescription] =
+    React.useState(false);
 
   React.useEffect(() => {
     if (property?.details) {
@@ -77,6 +79,44 @@ export default function PropertyForm({ property, mode }: PropertyFormProps) {
     // Prevent Enter key from submitting the form
     if (e.key === 'Enter' && e.target !== e.currentTarget) {
       e.preventDefault();
+    }
+  };
+
+  const generateDescription = async () => {
+    if (!imageFile) {
+      setError('Please select an image first');
+      return;
+    }
+
+    setIsGeneratingDescription(true);
+    setError(null);
+
+    try {
+      const formData = new FormData();
+      formData.append('image', imageFile);
+
+      const response = await fetch('/api/generate-description', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Failed to generate description');
+      }
+
+      // Update the description field with the generated content
+      setFormData((prev) => ({
+        ...prev,
+        description: result.description,
+      }));
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : 'Failed to generate description',
+      );
+    } finally {
+      setIsGeneratingDescription(false);
     }
   };
 
@@ -336,25 +376,6 @@ export default function PropertyForm({ property, mode }: PropertyFormProps) {
             </div>
           </div>
 
-          {/* Description */}
-          <div>
-            <label
-              htmlFor='description'
-              className='block text-sm font-medium text-gray-700 mb-2'
-            >
-              Description
-            </label>
-            <textarea
-              id='description'
-              name='description'
-              value={formData.description}
-              onChange={handleInputChange}
-              rows={4}
-              className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500'
-              placeholder='Describe the property features, amenities, and other details...'
-            />
-          </div>
-
           {/* Image Upload */}
           <div>
             <label
@@ -382,6 +403,69 @@ export default function PropertyForm({ property, mode }: PropertyFormProps) {
                   className='mt-1 w-32 h-24 object-cover rounded border'
                 />
               </div>
+            )}
+          </div>
+
+          {/* Description */}
+          <div>
+            <div className='flex items-center justify-between mb-2'>
+              <label
+                htmlFor='description'
+                className='block text-sm font-medium text-gray-700'
+              >
+                Description
+              </label>
+              {imageFile && (
+                <button
+                  type='button'
+                  onClick={generateDescription}
+                  disabled={isGeneratingDescription}
+                  className='inline-flex items-center px-3 py-1 text-xs font-medium text-blue-600 bg-blue-50 border border-blue-200 rounded-md hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed'
+                >
+                  {isGeneratingDescription ? (
+                    <>
+                      <svg
+                        className='animate-spin -ml-1 mr-2 h-3 w-3 text-blue-600'
+                        xmlns='http://www.w3.org/2000/svg'
+                        fill='none'
+                        viewBox='0 0 24 24'
+                      >
+                        <circle
+                          className='opacity-25'
+                          cx='12'
+                          cy='12'
+                          r='10'
+                          stroke='currentColor'
+                          strokeWidth='4'
+                        ></circle>
+                        <path
+                          className='opacity-75'
+                          fill='currentColor'
+                          d='M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z'
+                        ></path>
+                      </svg>
+                      Generating...
+                    </>
+                  ) : (
+                    <>✨ Generate from Image</>
+                  )}
+                </button>
+              )}
+            </div>
+            <textarea
+              id='description'
+              name='description'
+              value={formData.description}
+              onChange={handleInputChange}
+              rows={4}
+              className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500'
+              placeholder='Describe the property features, amenities, and other details...'
+            />
+            {imageFile && !formData.description && (
+              <p className='mt-1 text-xs text-gray-500'>
+                💡 Image uploaded! Click "Generate from Image" above to
+                automatically create a description
+              </p>
             )}
           </div>
 

@@ -6,9 +6,12 @@ import {
   CurrencyDollarIcon,
   MapPinIcon,
 } from '@heroicons/react/24/outline';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
 import { useState } from 'react';
+
+import OfferForm from './OfferForm';
 
 import { Property, PropertyDetails } from '@/types';
 
@@ -22,11 +25,14 @@ export default function PropertyDetailClient({
   const { data: session } = useSession();
   const [imageError, setImageError] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [showOfferForm, setShowOfferForm] = useState(false);
 
   const isOwner =
     session?.user?.email &&
     property.client_email &&
     session.user.email === property.client_email;
+
+  const canMakeOffer = session?.user?.email && !isOwner;
 
   const handleImageError = () => {
     setImageError(true);
@@ -38,7 +44,7 @@ export default function PropertyDetailClient({
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
-      console.error('Failed to copy UID:', err);
+      // Handle copy error silently - may not have clipboard permissions
     }
   };
 
@@ -65,13 +71,15 @@ export default function PropertyDetailClient({
         <div className='max-w-6xl mx-auto'>
           {/* Property Image */}
           <div className='mb-8'>
-            <img
+            <Image
               src={
                 !imageError && property.image_url
                   ? property.image_url
                   : '/placeholder-property.jpg'
               }
               alt={property.title}
+              width={1200}
+              height={500}
               className='w-full h-96 lg:h-[500px] object-cover rounded-xl shadow-lg'
               onError={handleImageError}
             />
@@ -134,6 +142,18 @@ export default function PropertyDetailClient({
                     </span>
                   </div>
                 </div>
+
+                {/* Action Buttons */}
+                {canMakeOffer && (
+                  <div className='mt-6'>
+                    <button
+                      onClick={() => setShowOfferForm(true)}
+                      className='w-full bg-primary-600 text-white py-3 px-4 rounded-lg hover:bg-primary-700 transition-colors font-medium text-lg'
+                    >
+                      Make an Offer
+                    </button>
+                  </div>
+                )}
               </div>
 
               {/* Property Description - now from details */}
@@ -469,6 +489,23 @@ export default function PropertyDetailClient({
           </div>
         </div>
       </div>
+
+      {/* Offer Form Modal */}
+      {showOfferForm && (
+        <div className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50'>
+          <div className='bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto'>
+            <OfferForm
+              propertyUid={property.property_uid}
+              listingPrice={property.price}
+              onOfferSubmitted={() => {
+                setShowOfferForm(false);
+                // You could add a success message here
+              }}
+              onCancel={() => setShowOfferForm(false)}
+            />
+          </div>
+        </div>
+      )}
     </main>
   );
 }
