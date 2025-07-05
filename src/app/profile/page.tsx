@@ -74,15 +74,15 @@ export default function ProfilePage() {
     }
   };
 
-  const handleDeleteProperty = async (propertyId: string) => {
+  const handleDeleteProperty = async (propertyUid: string) => {
     if (!session?.user?.email) return;
 
     try {
-      setDeletingPropertyId(propertyId);
+      setDeletingPropertyId(propertyUid);
       setDeleteError(null);
 
       const response = await fetch(
-        `/api/listings?id=${propertyId}&userEmail=${session.user.email}`,
+        `/api/listings?uid=${propertyUid}&userEmail=${session.user.email}`,
         {
           method: 'DELETE',
         },
@@ -91,7 +91,7 @@ export default function ProfilePage() {
       if (response.ok) {
         // Remove the deleted property from the list
         setUserListings((prev) =>
-          prev.filter((property) => property.id !== propertyId),
+          prev.filter((property) => property.property_uid !== propertyUid),
         );
 
         // Update the profile property count
@@ -398,7 +398,7 @@ export default function ProfilePage() {
                       key={property.id}
                       property={property}
                       onDelete={handleDeleteProperty}
-                      isDeleting={deletingPropertyId === property.id}
+                      isDeleting={deletingPropertyId === property.property_uid}
                     />
                   ))}
                 </div>

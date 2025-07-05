@@ -258,20 +258,20 @@ export async function POST(req: Request) {
 export async function DELETE(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
-    const propertyId = searchParams.get('id');
+    const propertyUid = searchParams.get('uid');
     const userEmail = searchParams.get('userEmail');
 
-    if (!propertyId || !userEmail) {
+    if (!propertyUid || !userEmail) {
       return NextResponse.json(
-        { error: 'Property ID and user email are required' },
+        { error: 'Property UID and user email are required' },
         { status: 400 },
       );
     }
 
     // First, verify the property belongs to the user
     const propertyResult = await pool.query(
-      'SELECT id, user_email, title FROM properties WHERE id = $1 AND (deleted IS NULL OR deleted = FALSE)',
-      [propertyId],
+      'SELECT id, property_uid, user_email, title FROM properties WHERE property_uid = $1 AND (deleted IS NULL OR deleted = FALSE)',
+      [propertyUid],
     );
 
     if (propertyResult.rows.length === 0) {
@@ -293,8 +293,8 @@ export async function DELETE(request: Request) {
 
     // Soft delete the property by setting deleted flag
     await pool.query(
-      'UPDATE properties SET deleted = TRUE, updated_at = NOW() WHERE id = $1',
-      [propertyId],
+      'UPDATE properties SET deleted = TRUE WHERE property_uid = $1',
+      [propertyUid],
     );
 
     return NextResponse.json({

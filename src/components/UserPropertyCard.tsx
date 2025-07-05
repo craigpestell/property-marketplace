@@ -26,7 +26,7 @@ export default function UserPropertyCard({
   const handleConfirmDelete = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    onDelete(property.id);
+    onDelete(property.property_uid);
     setShowDeleteConfirm(false);
   };
 
