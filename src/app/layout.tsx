@@ -5,6 +5,7 @@ import '@/styles/globals.css';
 // !STARTERCONF This is for demo purposes, remove @/styles/colors.css import immediately
 import '@/styles/colors.css';
 
+import Footer from '@/components/Footer';
 import Header from '@/components/Header';
 import SessionWrapper from '@/components/SessionWrapper';
 
@@ -59,6 +60,7 @@ export default function RootLayout({
         <SessionWrapper>
           <Header />
           <main className='min-h-[calc(100vh-80px)]'>{children}</main>
+          <Footer />
         </SessionWrapper>
       </body>
     </html>

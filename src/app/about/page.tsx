@@ -8,7 +8,7 @@ export default function AboutPage() {
         <section className='py-20 bg-white'>
           <div className='max-w-4xl mx-auto text-center'>
             <h1 className='text-4xl md:text-5xl font-bold text-gray-900 mb-6'>
-              About PropertyMarketplace
+              About Real Estate Marketplace
             </h1>
             <p className='text-xl text-gray-600 mb-8 max-w-3xl mx-auto'>
               We're revolutionizing the way people buy, sell, and discover
@@ -35,11 +35,11 @@ export default function AboutPage() {
                   Our Mission
                 </h2>
                 <p className='text-lg text-gray-600 mb-6'>
-                  At PropertyMarketplace, we believe that finding the perfect
-                  property should be simple, transparent, and stress-free. Our
-                  mission is to empower individuals and families to make
-                  informed real estate decisions through cutting-edge technology
-                  and exceptional service.
+                  At Real Estate Marketplace, we believe that finding the
+                  perfect property should be simple, transparent, and
+                  stress-free. Our mission is to empower individuals and
+                  families to make informed real estate decisions through
+                  cutting-edge technology and exceptional service.
                 </p>
                 <p className='text-lg text-gray-600'>
                   We're committed to creating a platform that brings together
@@ -197,21 +197,21 @@ export default function AboutPage() {
                 <p className='text-blue-600 mb-3'>Founder & CEO</p>
                 <p className='text-gray-600'>
                   Passionate about technology and real estate, Craig founded
-                  PropertyMarketplace to revolutionize how people find their
+                  Real Estate Marketplace to revolutionize how people find their
                   dream homes.
                 </p>
               </div>
 
               <div className='text-center bg-white rounded-lg shadow-lg p-6'>
                 <div className='w-24 h-24 bg-green-600 rounded-full flex items-center justify-center mx-auto mb-4'>
-                  <span className='text-2xl font-bold text-white'>SM</span>
+                  <span className='text-2xl font-bold text-white'>MK</span>
                 </div>
                 <h3 className='text-xl font-bold text-gray-900 mb-2'>
-                  Sarah Mitchell
+                  Michelle Kessler
                 </h3>
                 <p className='text-green-600 mb-3'>Head of Operations</p>
                 <p className='text-gray-600'>
-                  With over 10 years in real estate operations, Sarah ensures
+                  With over 10 years in real estate operations, Michelle ensures
                   our platform runs smoothly and efficiently for all users.
                 </p>
               </div>
