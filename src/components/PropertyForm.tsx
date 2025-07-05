@@ -73,6 +73,13 @@ export default function PropertyForm({ property, mode }: PropertyFormProps) {
     }
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    // Prevent Enter key from submitting the form
+    if (e.key === 'Enter' && e.target !== e.currentTarget) {
+      e.preventDefault();
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!session?.user?.email) {
@@ -155,7 +162,11 @@ export default function PropertyForm({ property, mode }: PropertyFormProps) {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className='space-y-6'>
+        <form
+          onSubmit={handleSubmit}
+          onKeyDown={handleKeyDown}
+          className='space-y-6'
+        >
           {/* Basic Information */}
           <div>
             <h3 className='text-lg font-semibold mb-4'>Basic Information</h3>
