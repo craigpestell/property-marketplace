@@ -1,6 +1,8 @@
 'use client';
 
+import Link from 'next/link';
 import * as React from 'react';
+
 import '@/lib/env';
 
 import PropertyCard from '@/components/PropertyCard';
@@ -104,12 +106,33 @@ export default function ListingsPage() {
     <section className='bg-white'>
       <div className='layout min-h-screen py-12'>
         <div className='mb-12'>
-          <h1 className='text-4xl font-bold text-gray-900 mb-4 text-center'>
-            Property Listings
-          </h1>
-          <p className='text-lg text-gray-600 text-center mb-6'>
-            Browse all available properties in our marketplace
-          </p>
+          <div className='text-center mb-6'>
+            <h1 className='text-4xl font-bold text-gray-900 mb-4'>
+              Property Listings
+            </h1>
+            <p className='text-lg text-gray-600 mb-4'>
+              Browse all available properties in our marketplace
+            </p>
+            <Link
+              href='/listings/create'
+              className='inline-flex items-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors'
+            >
+              <svg
+                className='w-5 h-5 mr-2'
+                fill='none'
+                stroke='currentColor'
+                viewBox='0 0 24 24'
+              >
+                <path
+                  strokeLinecap='round'
+                  strokeLinejoin='round'
+                  strokeWidth={2}
+                  d='M12 4v16m8-8H4'
+                />
+              </svg>
+              List Your Property
+            </Link>
+          </div>
 
           {/* Simplified Incentive Tagline */}
           <div className='bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg p-4 max-w-4xl mx-auto mb-6'>

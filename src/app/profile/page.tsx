@@ -368,12 +368,20 @@ export default function ProfilePage() {
                     Properties you have listed for sale
                   </p>
                 </div>
-                <Link
-                  href='/listings'
-                  className='text-blue-600 hover:text-blue-700 text-sm font-medium'
-                >
-                  View All Properties →
-                </Link>
+                <div className='flex items-center space-x-4'>
+                  <Link
+                    href='/listings/create'
+                    className='bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors'
+                  >
+                    + Create New Listing
+                  </Link>
+                  <Link
+                    href='/listings'
+                    className='text-blue-600 hover:text-blue-700 text-sm font-medium'
+                  >
+                    View All Properties →
+                  </Link>
+                </div>
               </div>
             </div>
 

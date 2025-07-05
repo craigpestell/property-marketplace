@@ -235,10 +235,20 @@ export async function POST(req: Request) {
 
     // Remove description from INSERT query
     const insertResult = await pool.query(
-      `INSERT INTO properties (uuid, property_uid, title, price, details, image_url, address, client_id) 
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+      `INSERT INTO properties (uuid, property_uid, title, price, details, image_url, address, client_id, user_email) 
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
        RETURNING id, property_uid`,
-      [uuid, propertyUID, title, price, details, image_url, address, client.id],
+      [
+        uuid,
+        propertyUID,
+        title,
+        price,
+        details,
+        image_url,
+        address,
+        client.id,
+        email,
+      ],
     );
 
     return NextResponse.json({
