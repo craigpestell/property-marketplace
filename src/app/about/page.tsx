@@ -12,9 +12,9 @@ export default function AboutPage() {
             </h1>
             <p className='text-xl text-gray-600 mb-8 max-w-3xl mx-auto'>
               We're revolutionizing the way people buy, sell, and discover
-              properties. Save thousands with our 0.9% seller commission vs.
-              traditional 5% while receiving full-service support from search to
-              closing.
+              properties. Save thousands with our 0.9% seller commission and
+              zero buyer commission vs. traditional 5% total commission while
+              receiving full-service support from search to closing.
             </p>
             <div className='flex justify-center'>
               <Link
@@ -40,8 +40,9 @@ export default function AboutPage() {
                   perfect property should be simple, transparent, and
                   affordable. Traditional real estate transactions involve 5%
                   total commission (2.5% for buyer's agent, 2.5% for seller's
-                  agent), while we charge only 0.9% commission to sellers,
-                  saving you thousands of dollars on your property transactions.
+                  agent), while we charge only 0.9% commission to sellers and
+                  zero commission to buyers, saving both parties thousands of
+                  dollars on your property transactions.
                 </p>
                 <p className='text-lg text-gray-600 mb-6'>
                   We provide comprehensive services to facilitate the entire
@@ -69,9 +70,9 @@ export default function AboutPage() {
                   </div>
                   <div>
                     <div className='text-3xl font-bold text-blue-600 mb-2'>
-                      $40K+
+                      $41K+
                     </div>
-                    <div className='text-gray-600'>Average Savings</div>
+                    <div className='text-gray-600'>Combined Savings</div>
                   </div>
                   <div>
                     <div className='text-3xl font-bold text-blue-600 mb-2'>
@@ -143,8 +144,8 @@ export default function AboutPage() {
                       />
                     </svg>
                     <span>
-                      <strong>Zero commission fees</strong> - Keep more money in
-                      your pocket
+                      <strong>Zero commission fees</strong> - Save $25,000 on a
+                      $1M purchase vs. traditional 2.5% buyer commission
                     </span>
                   </li>
                   <li className='flex items-start space-x-3'>
@@ -225,8 +226,8 @@ export default function AboutPage() {
                       />
                     </svg>
                     <span>
-                      <strong>Save $41,000+</strong> on a $1M home vs.
-                      traditional 5% total commission (2.5% + 2.5%)
+                      <strong>Save $25,000+</strong> on a $1M home vs.
+                      traditional 2.5% seller commission
                     </span>
                   </li>
                   <li className='flex items-start space-x-3'>
@@ -363,9 +364,9 @@ export default function AboutPage() {
                   </div>
                   <div className='mt-6 p-4 bg-blue-50 rounded-lg'>
                     <p className='text-sm text-gray-700'>
-                      <strong>Example savings:</strong> On a $1M property, you
-                      save $41,000 with our 0.9% seller commission vs.
-                      traditional 5% total commission (2.5% + 2.5%).
+                      <strong>Combined savings:</strong> On a $1M property,
+                      buyers save $25,000 (no 2.5% commission) and sellers save
+                      $16,000 (0.9% vs 2.5%), for total savings of $41,000.
                     </p>
                   </div>
                 </div>

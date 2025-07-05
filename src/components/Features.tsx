@@ -9,7 +9,7 @@ const features = [
   {
     name: '0.9% Seller Commission',
     description:
-      'Sellers save thousands with our 0.9% commission vs. traditional 5% total commission (2.5% + 2.5%). Buyers pay zero commission, creating faster sales and better offers.',
+      'Sellers save $16,000+ (0.9% vs 2.5%) and buyers save $25,000+ (zero vs 2.5% commission) on a $1M property. Combined savings of $41,000+.',
     icon: CurrencyDollarIcon,
   },
   {

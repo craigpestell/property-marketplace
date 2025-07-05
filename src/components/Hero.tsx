@@ -45,8 +45,8 @@ export default function Hero() {
             <div className='text-blue-100'>Seller Commission</div>
           </div>
           <div className='text-center'>
-            <div className='text-3xl font-bold text-blue-200'>$40K+</div>
-            <div className='text-blue-100'>Average Savings</div>
+            <div className='text-3xl font-bold text-blue-200'>$41K+</div>
+            <div className='text-blue-100'>Combined Savings</div>
           </div>
           <div className='text-center'>
             <div className='text-3xl font-bold text-blue-200'>5K+</div>
