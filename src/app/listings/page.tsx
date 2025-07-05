@@ -90,9 +90,37 @@ export default function ListingsPage() {
           <h1 className='text-4xl font-bold text-gray-900 mb-4 text-center'>
             Property Listings
           </h1>
-          <p className='text-lg text-gray-600 text-center mb-8'>
+          <p className='text-lg text-gray-600 text-center mb-6'>
             Browse all available properties in our marketplace
           </p>
+
+          {/* Simplified Incentive Tagline */}
+          <div className='bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg p-4 max-w-4xl mx-auto mb-6'>
+            <div className='flex items-center justify-center gap-4 text-center'>
+              <div className='flex items-center gap-2'>
+                <svg
+                  className='w-5 h-5 text-yellow-300'
+                  fill='none'
+                  stroke='currentColor'
+                  viewBox='0 0 24 24'
+                >
+                  <path
+                    strokeLinecap='round'
+                    strokeLinejoin='round'
+                    strokeWidth={2}
+                    d='M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1'
+                  />
+                </svg>
+                <span className='font-bold text-xl'>
+                  Save $41K+ with Zero Buyer Commission
+                </span>
+              </div>
+              <div className='hidden md:block text-blue-200'>•</div>
+              <div className='text-blue-100 text-sm'>
+                Access FSBO properties others won't show
+              </div>
+            </div>
+          </div>
 
           {/* Search Bar */}
           <div className='max-w-md mx-auto mb-8'>
