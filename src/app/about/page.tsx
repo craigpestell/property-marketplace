@@ -12,8 +12,9 @@ export default function AboutPage() {
             </h1>
             <p className='text-xl text-gray-600 mb-8 max-w-3xl mx-auto'>
               We're revolutionizing the way people buy, sell, and discover
-              properties. Our platform connects buyers with sellers in a
-              seamless, transparent, and efficient marketplace.
+              properties. Save thousands with our 0.9% commission (vs.
+              traditional 5%) while receiving full-service support from search
+              to closing.
             </p>
             <div className='flex justify-center'>
               <Link
@@ -37,24 +38,32 @@ export default function AboutPage() {
                 <p className='text-lg text-gray-600 mb-6'>
                   At Real Estate Marketplace, we believe that finding the
                   perfect property should be simple, transparent, and
-                  stress-free. Our mission is to empower individuals and
-                  families to make informed real estate decisions through
-                  cutting-edge technology and exceptional service.
+                  affordable. While traditional realtors charge 5% commission,
+                  we charge only 0.9% commission, saving you thousands of
+                  dollars on your property transactions.
                 </p>
                 <p className='text-lg text-gray-600'>
-                  We're committed to creating a platform that brings together
-                  buyers, sellers, and real estate professionals in one
-                  comprehensive ecosystem, making property transactions more
-                  efficient and accessible for everyone.
+                  We provide comprehensive services to facilitate the entire
+                  purchasing process - from contracts and paperwork to closing
+                  support. Our platform brings together buyers, sellers, and
+                  real estate professionals in one ecosystem, making property
+                  transactions more efficient, accessible, and cost-effective
+                  for everyone.
                 </p>
               </div>
               <div className='bg-white rounded-lg shadow-lg p-8'>
                 <div className='grid grid-cols-2 gap-6 text-center'>
                   <div>
                     <div className='text-3xl font-bold text-blue-600 mb-2'>
-                      10K+
+                      0.9%
                     </div>
-                    <div className='text-gray-600'>Properties Listed</div>
+                    <div className='text-gray-600'>Commission Rate</div>
+                  </div>
+                  <div>
+                    <div className='text-3xl font-bold text-blue-600 mb-2'>
+                      $20K+
+                    </div>
+                    <div className='text-gray-600'>Average Savings</div>
                   </div>
                   <div>
                     <div className='text-3xl font-bold text-blue-600 mb-2'>
@@ -64,15 +73,181 @@ export default function AboutPage() {
                   </div>
                   <div>
                     <div className='text-3xl font-bold text-blue-600 mb-2'>
-                      50+
-                    </div>
-                    <div className='text-gray-600'>Cities Covered</div>
-                  </div>
-                  <div>
-                    <div className='text-3xl font-bold text-blue-600 mb-2'>
                       99%
                     </div>
                     <div className='text-gray-600'>Success Rate</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Why Choose Us Section */}
+        <section className='py-16 bg-blue-50'>
+          <div className='max-w-6xl mx-auto'>
+            <div className='text-center mb-12'>
+              <h2 className='text-3xl font-bold text-gray-900 mb-4'>
+                Why Choose Real Estate Marketplace?
+              </h2>
+              <p className='text-lg text-gray-600 max-w-3xl mx-auto'>
+                We're disrupting the traditional real estate industry with
+                transparent pricing, comprehensive services, and fair access to
+                all properties.
+              </p>
+            </div>
+
+            <div className='grid grid-cols-1 lg:grid-cols-2 gap-12 items-center'>
+              <div>
+                <div className='bg-white rounded-lg shadow-lg p-8'>
+                  <h3 className='text-2xl font-bold text-gray-900 mb-6'>
+                    Commission Comparison
+                  </h3>
+                  <div className='space-y-4'>
+                    <div className='flex items-center justify-between p-4 bg-red-50 rounded-lg'>
+                      <div>
+                        <span className='text-lg font-semibold text-gray-900'>
+                          Traditional Realtors
+                        </span>
+                        <p className='text-sm text-gray-600'>
+                          Industry standard commission
+                        </p>
+                      </div>
+                      <div className='text-3xl font-bold text-red-600'>5%</div>
+                    </div>
+                    <div className='flex items-center justify-between p-4 bg-green-50 rounded-lg'>
+                      <div>
+                        <span className='text-lg font-semibold text-gray-900'>
+                          Real Estate Marketplace
+                        </span>
+                        <p className='text-sm text-gray-600'>
+                          Our competitive commission
+                        </p>
+                      </div>
+                      <div className='text-3xl font-bold text-green-600'>
+                        0.9%
+                      </div>
+                    </div>
+                  </div>
+                  <div className='mt-6 p-4 bg-blue-50 rounded-lg'>
+                    <p className='text-sm text-gray-700'>
+                      <strong>Example savings:</strong> On a $500,000 home, you
+                      save $20,500 with our 0.9% commission vs. traditional 5%
+                      commission.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <h3 className='text-2xl font-bold text-gray-900 mb-6'>
+                  Complete Transaction Support
+                </h3>
+                <div className='space-y-4'>
+                  <div className='flex items-start space-x-3'>
+                    <div className='bg-blue-100 w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-1'>
+                      <svg
+                        className='w-4 h-4 text-blue-600'
+                        fill='none'
+                        stroke='currentColor'
+                        viewBox='0 0 24 24'
+                      >
+                        <path
+                          strokeLinecap='round'
+                          strokeLinejoin='round'
+                          strokeWidth={2}
+                          d='M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z'
+                        />
+                      </svg>
+                    </div>
+                    <div>
+                      <h4 className='text-lg font-semibold text-gray-900'>
+                        Contract Management
+                      </h4>
+                      <p className='text-gray-600'>
+                        Professional contract preparation and review services
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className='flex items-start space-x-3'>
+                    <div className='bg-blue-100 w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-1'>
+                      <svg
+                        className='w-4 h-4 text-blue-600'
+                        fill='none'
+                        stroke='currentColor'
+                        viewBox='0 0 24 24'
+                      >
+                        <path
+                          strokeLinecap='round'
+                          strokeLinejoin='round'
+                          strokeWidth={2}
+                          d='M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z'
+                        />
+                      </svg>
+                    </div>
+                    <div>
+                      <h4 className='text-lg font-semibold text-gray-900'>
+                        Paperwork Processing
+                      </h4>
+                      <p className='text-gray-600'>
+                        Handle all necessary documentation and legal paperwork
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className='flex items-start space-x-3'>
+                    <div className='bg-blue-100 w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-1'>
+                      <svg
+                        className='w-4 h-4 text-blue-600'
+                        fill='none'
+                        stroke='currentColor'
+                        viewBox='0 0 24 24'
+                      >
+                        <path
+                          strokeLinecap='round'
+                          strokeLinejoin='round'
+                          strokeWidth={2}
+                          d='M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z'
+                        />
+                      </svg>
+                    </div>
+                    <div>
+                      <h4 className='text-lg font-semibold text-gray-900'>
+                        Closing Support
+                      </h4>
+                      <p className='text-gray-600'>
+                        Comprehensive support throughout the closing process
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className='flex items-start space-x-3'>
+                    <div className='bg-blue-100 w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-1'>
+                      <svg
+                        className='w-4 h-4 text-blue-600'
+                        fill='none'
+                        stroke='currentColor'
+                        viewBox='0 0 24 24'
+                      >
+                        <path
+                          strokeLinecap='round'
+                          strokeLinejoin='round'
+                          strokeWidth={2}
+                          d='M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z'
+                        />
+                      </svg>
+                    </div>
+                    <div>
+                      <h4 className='text-lg font-semibold text-gray-900'>
+                        For Sale By Owner Support
+                      </h4>
+                      <p className='text-gray-600'>
+                        List and discover "for sale by owner" properties that
+                        traditional realtors often won't show because they're
+                        not listed through the real estate board
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -237,11 +412,12 @@ export default function AboutPage() {
         <section className='py-16 bg-blue-600'>
           <div className='max-w-4xl mx-auto text-center'>
             <h2 className='text-3xl font-bold text-white mb-4'>
-              Ready to Get Started?
+              Ready to Save Thousands?
             </h2>
             <p className='text-xl text-blue-100 mb-8 max-w-2xl mx-auto'>
-              Join thousands of satisfied customers who have found their perfect
-              properties through our platform.
+              Join thousands of satisfied customers who have saved money and
+              received exceptional service with our 0.9% commission and
+              full-service support.
             </p>
             <div className='flex flex-col sm:flex-row gap-4 justify-center'>
               <Link
