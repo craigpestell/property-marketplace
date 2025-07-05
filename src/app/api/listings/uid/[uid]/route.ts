@@ -34,6 +34,7 @@ export async function GET(
         created_at, 
         address,
         client_id,
+        user_email,
         (SELECT email FROM clients WHERE clients.id = properties.client_id) as client_email
       FROM properties 
       WHERE property_uid = $1 AND (deleted IS NULL OR deleted = FALSE)`,

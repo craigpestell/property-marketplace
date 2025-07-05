@@ -2,7 +2,6 @@
 
 import Link from 'next/link';
 import * as React from 'react';
-
 import '@/lib/env';
 
 import PropertyCard from '@/components/PropertyCard';

@@ -143,6 +143,7 @@ export async function GET(request: Request) {
         created_at, 
         address,
         client_id,
+        user_email,
         (SELECT email FROM clients WHERE clients.id = properties.client_id) as client_email
       FROM properties 
       ${whereClause}

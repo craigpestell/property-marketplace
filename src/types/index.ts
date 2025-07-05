@@ -10,6 +10,7 @@ export interface Property {
   created_at: string;
   client_id: string;
   client_email?: string;
+  user_email?: string;
 }
 
 export interface PropertyDetails {
