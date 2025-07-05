@@ -44,16 +44,9 @@ export default function EditListingPage({
         }
         const data = await response.json();
 
-        // Debug logging (temporary)
-        console.log('Property data:', data);
-        console.log('User email:', session.user?.email);
-        console.log('Property user_email:', data.user_email);
-        console.log('Property client_email:', data.client_email);
-
         // Check if the user owns this property
         // Use user_email if available, otherwise fallback to client_email
         const propertyOwnerEmail = data.user_email || data.client_email;
-        console.log('Property owner email:', propertyOwnerEmail);
 
         if (propertyOwnerEmail !== session.user?.email) {
           setError('You are not authorized to edit this property');
