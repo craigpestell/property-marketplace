@@ -16,10 +16,10 @@ export default function Hero() {
 
           <p className='text-lg md:text-xl text-blue-100 mb-8 max-w-2xl mx-auto'>
             Pay only 0.9% commission (sellers only) instead of the traditional
-            5%. Buyers pay zero commission, creating a larger pool of motivated
-            buyers that helps properties sell faster. Full-service support from
-            search to closing, plus access to "for sale by owner" properties
-            others won't show you.
+            5% total commission (2.5% buyer + 2.5% seller). Buyers pay zero
+            commission, creating a larger pool of motivated buyers that helps
+            properties sell faster. Full-service support from search to closing,
+            plus access to "for sale by owner" properties others won't show you.
           </p>
 
           <div className='flex flex-col sm:flex-row gap-4 justify-center items-center'>

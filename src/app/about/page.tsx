@@ -38,9 +38,10 @@ export default function AboutPage() {
                 <p className='text-lg text-gray-600 mb-6'>
                   At Real Estate Marketplace, we believe that finding the
                   perfect property should be simple, transparent, and
-                  affordable. While traditional realtors charge 5% commission to
-                  sellers, we charge only 0.9% commission to sellers, saving you
-                  thousands of dollars on your property transactions.
+                  affordable. Traditional real estate transactions involve 5%
+                  total commission (2.5% for buyer's agent, 2.5% for seller's
+                  agent), while we charge only 0.9% commission to sellers,
+                  saving you thousands of dollars on your property transactions.
                 </p>
                 <p className='text-lg text-gray-600 mb-6'>
                   We provide comprehensive services to facilitate the entire
@@ -225,7 +226,7 @@ export default function AboutPage() {
                     </svg>
                     <span>
                       <strong>Save $41,000+</strong> on a $1M home vs.
-                      traditional 5% commission
+                      traditional 5% total commission (2.5% + 2.5%)
                     </span>
                   </li>
                   <li className='flex items-start space-x-3'>
@@ -341,7 +342,7 @@ export default function AboutPage() {
                           Traditional Realtors
                         </span>
                         <p className='text-sm text-gray-600'>
-                          Seller commission only
+                          Total commission (2.5% buyer + 2.5% seller)
                         </p>
                       </div>
                       <div className='text-3xl font-bold text-red-600'>5%</div>
@@ -352,7 +353,7 @@ export default function AboutPage() {
                           Real Estate Marketplace
                         </span>
                         <p className='text-sm text-gray-600'>
-                          Seller commission only
+                          No buyer commission, 0.9% seller commission
                         </p>
                       </div>
                       <div className='text-3xl font-bold text-green-600'>
@@ -364,7 +365,7 @@ export default function AboutPage() {
                     <p className='text-sm text-gray-700'>
                       <strong>Example savings:</strong> On a $1M property, you
                       save $41,000 with our 0.9% seller commission vs.
-                      traditional 5% seller commission.
+                      traditional 5% total commission (2.5% + 2.5%).
                     </p>
                   </div>
                 </div>

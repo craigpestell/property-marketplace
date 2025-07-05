@@ -9,7 +9,7 @@ const features = [
   {
     name: '0.9% Seller Commission',
     description:
-      'Sellers save thousands with our 0.9% commission vs. traditional 5%. Buyers pay zero commission, creating faster sales and better offers.',
+      'Sellers save thousands with our 0.9% commission vs. traditional 5% total commission (2.5% + 2.5%). Buyers pay zero commission, creating faster sales and better offers.',
     icon: CurrencyDollarIcon,
   },
   {
