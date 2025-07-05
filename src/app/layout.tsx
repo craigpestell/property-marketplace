@@ -10,6 +10,7 @@ import Header from '@/components/Header';
 import SessionWrapper from '@/components/SessionWrapper';
 
 import { siteConfig } from '@/constant/config';
+import { ToastProvider } from '@/contexts/ToastContext';
 
 // !STARTERCONF Change these default meta
 // !STARTERCONF Look at @/constant/config to change them
@@ -58,9 +59,11 @@ export default function RootLayout({
     <html>
       <body>
         <SessionWrapper>
-          <Header />
-          <main className='min-h-[calc(100vh-80px)]'>{children}</main>
-          <Footer />
+          <ToastProvider>
+            <Header />
+            <main className='min-h-[calc(100vh-80px)]'>{children}</main>
+            <Footer />
+          </ToastProvider>
         </SessionWrapper>
       </body>
     </html>

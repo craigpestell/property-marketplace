@@ -153,20 +153,31 @@ export async function POST(request: NextRequest) {
     const result = await pool.query(insertQuery, insertParams);
     const newOffer = result.rows[0];
 
-    // Create notification for seller
-    const notificationQuery = `
-      INSERT INTO offer_notifications (offer_id, recipient_email, type, message)
-      VALUES ($1, $2, $3, $4)
-    `;
-
+    // Create notification for seller in both tables
     const notificationMessage = `New offer of $${offer_amount.toLocaleString()} received for "${property.title}"`;
 
-    await pool.query(notificationQuery, [
-      newOffer.offer_id,
-      seller_email,
-      'offer_received',
-      notificationMessage,
-    ]);
+    // Legacy notification (for existing system)
+    await pool.query(
+      `INSERT INTO offer_notifications (offer_id, recipient_email, type, message)
+       VALUES ($1, $2, $3, $4)`,
+      [newOffer.offer_id, seller_email, 'offer_received', notificationMessage],
+    );
+
+    // New notification system
+    await pool.query(
+      `INSERT INTO user_notifications 
+       (user_email, title, message, type, related_offer_id, related_property_uid, priority)
+       VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+      [
+        seller_email,
+        'New Offer Received!',
+        notificationMessage,
+        'offer_received',
+        newOffer.offer_id,
+        property_uid,
+        'high',
+      ],
+    );
 
     return NextResponse.json({
       message: 'Offer submitted successfully',

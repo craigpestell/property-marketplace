@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 
+import { useToast } from '@/contexts/ToastContext';
+
 import Button from './buttons/Button';
 
 interface OfferFormProps {
@@ -17,6 +19,7 @@ export default function OfferForm({
   onOfferSubmitted,
   onCancel,
 }: OfferFormProps) {
+  const { showSuccess, showError, showInfo } = useToast();
   const [formData, setFormData] = useState({
     offer_amount: '',
     message: '',
@@ -35,6 +38,9 @@ export default function OfferForm({
     setError('');
 
     try {
+      // Show initial feedback
+      showInfo('Submitting Offer', 'Processing your offer submission...');
+
       const response = await fetch('/api/offers', {
         method: 'POST',
         headers: {
@@ -62,12 +68,29 @@ export default function OfferForm({
           statusText: response.statusText,
           error: errorData,
         });
-        throw new Error(errorData.error || 'Failed to submit offer');
+        const errorMessage = errorData.error || 'Failed to submit offer';
+        showError('Offer Submission Failed', errorMessage);
+        throw new Error(errorMessage);
       }
 
+      await response.json();
+      showSuccess(
+        'Offer Submitted Successfully!',
+        `Your offer of $${parseFloat(formData.offer_amount).toLocaleString()} has been submitted and the property owner will be notified.`,
+      );
       onOfferSubmitted();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to submit offer');
+      const errorMessage =
+        err instanceof Error ? err.message : 'Failed to submit offer';
+      // Only show network error toast if it's not an API response error
+      if (
+        !(
+          err instanceof Error && err.message.includes('Failed to submit offer')
+        )
+      ) {
+        showError('Network Error', errorMessage);
+      }
+      setError(errorMessage);
     } finally {
       setIsSubmitting(false);
     }

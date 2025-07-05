@@ -10,6 +10,8 @@ import Link from 'next/link';
 import { signOut, useSession } from 'next-auth/react';
 import { useEffect, useRef, useState } from 'react';
 
+import NotificationCenter from './NotificationCenter';
+
 export default function Header() {
   const { data: session, status } = useSession();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -70,55 +72,61 @@ export default function Header() {
             {status === 'loading' ? (
               <div className='w-16 h-4 bg-primary-800 animate-pulse rounded'></div>
             ) : status === 'authenticated' ? (
-              <div className='relative' ref={dropdownRef}>
-                <button
-                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                  className='flex items-center space-x-2 hover:text-primary-200 transition-colors focus:outline-none'
-                >
-                  <UserCircleIcon className='h-5 w-5' />
-                  <span className='text-sm'>
-                    {session.user?.name || session.user?.email}
-                  </span>
-                  <ChevronDownIcon className='h-4 w-4' />
-                </button>
+              <div className='flex items-center space-x-4'>
+                {/* Notification Center */}
+                <NotificationCenter />
 
-                {isDropdownOpen && (
-                  <div className='absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 border'>
-                    <div className='px-4 py-2 text-sm text-gray-700 border-b'>
-                      Welcome, {session.user?.name || session.user?.email}
+                {/* User Dropdown */}
+                <div className='relative' ref={dropdownRef}>
+                  <button
+                    onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                    className='flex items-center space-x-2 hover:text-primary-200 transition-colors focus:outline-none'
+                  >
+                    <UserCircleIcon className='h-5 w-5' />
+                    <span className='text-sm'>
+                      {session.user?.name || session.user?.email}
+                    </span>
+                    <ChevronDownIcon className='h-4 w-4' />
+                  </button>
+
+                  {isDropdownOpen && (
+                    <div className='absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 border'>
+                      <div className='px-4 py-2 text-sm text-gray-700 border-b'>
+                        Welcome, {session.user?.name || session.user?.email}
+                      </div>
+                      <Link
+                        href='/profile'
+                        className='block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100'
+                        onClick={() => setIsDropdownOpen(false)}
+                      >
+                        Profile
+                      </Link>
+                      <Link
+                        href='/offers'
+                        className='block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100'
+                        onClick={() => setIsDropdownOpen(false)}
+                      >
+                        My Offers
+                      </Link>
+                      <Link
+                        href='/settings'
+                        className='block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100'
+                        onClick={() => setIsDropdownOpen(false)}
+                      >
+                        Settings
+                      </Link>
+                      <button
+                        onClick={() => {
+                          handleSignOut();
+                          setIsDropdownOpen(false);
+                        }}
+                        className='block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100'
+                      >
+                        Logout
+                      </button>
                     </div>
-                    <Link
-                      href='/profile'
-                      className='block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100'
-                      onClick={() => setIsDropdownOpen(false)}
-                    >
-                      Profile
-                    </Link>
-                    <Link
-                      href='/offers'
-                      className='block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100'
-                      onClick={() => setIsDropdownOpen(false)}
-                    >
-                      My Offers
-                    </Link>
-                    <Link
-                      href='/settings'
-                      className='block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100'
-                      onClick={() => setIsDropdownOpen(false)}
-                    >
-                      Settings
-                    </Link>
-                    <button
-                      onClick={() => {
-                        handleSignOut();
-                        setIsDropdownOpen(false);
-                      }}
-                      className='block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100'
-                    >
-                      Logout
-                    </button>
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
             ) : (
               <div className='flex items-center space-x-4'>
