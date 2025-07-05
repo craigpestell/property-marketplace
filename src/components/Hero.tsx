@@ -10,13 +10,16 @@ export default function Hero() {
       <div className='relative layout py-24 lg:py-32'>
         <div className='max-w-4xl mx-auto text-center'>
           <h1 className='text-4xl md:text-6xl font-bold mb-6'>
-            Find Your Perfect
+            Save $40K+ on Your
             <span className='block text-blue-200'>Dream Home</span>
           </h1>
 
           <p className='text-lg md:text-xl text-blue-100 mb-8 max-w-2xl mx-auto'>
-            Discover exceptional properties in prime locations. From luxury
-            homes to cozy apartments, we have the perfect place waiting for you.
+            Pay only 0.9% commission (sellers only) instead of the traditional
+            5%. Buyers pay zero commission, creating a larger pool of motivated
+            buyers that helps properties sell faster. Full-service support from
+            search to closing, plus access to "for sale by owner" properties
+            others won't show you.
           </p>
 
           <div className='flex flex-col sm:flex-row gap-4 justify-center items-center'>
@@ -30,7 +33,7 @@ export default function Hero() {
               href='/signup'
               className='bg-white text-blue-900 hover:bg-gray-100 px-8 py-3 rounded-lg font-semibold transition-colors text-lg'
             >
-              Get Started
+              Start Saving Today
             </Link>
           </div>
         </div>
@@ -38,16 +41,16 @@ export default function Hero() {
         {/* Stats */}
         <div className='mt-16 grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto'>
           <div className='text-center'>
-            <div className='text-3xl font-bold text-blue-200'>500+</div>
-            <div className='text-blue-100'>Properties Listed</div>
+            <div className='text-3xl font-bold text-blue-200'>0.9%</div>
+            <div className='text-blue-100'>Seller Commission</div>
           </div>
           <div className='text-center'>
-            <div className='text-3xl font-bold text-blue-200'>1,200+</div>
+            <div className='text-3xl font-bold text-blue-200'>$40K+</div>
+            <div className='text-blue-100'>Average Savings</div>
+          </div>
+          <div className='text-center'>
+            <div className='text-3xl font-bold text-blue-200'>5K+</div>
             <div className='text-blue-100'>Happy Customers</div>
-          </div>
-          <div className='text-center'>
-            <div className='text-3xl font-bold text-blue-200'>50+</div>
-            <div className='text-blue-100'>Cities Covered</div>
           </div>
         </div>
       </div>

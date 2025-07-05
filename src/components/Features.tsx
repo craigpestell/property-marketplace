@@ -1,33 +1,33 @@
 import {
-  CreditCardIcon,
+  CurrencyDollarIcon,
   HomeIcon,
-  MapPinIcon,
   ShieldCheckIcon,
+  UserGroupIcon,
 } from '@heroicons/react/24/outline';
 
 const features = [
   {
-    name: 'Find Your Perfect Home',
+    name: '0.9% Seller Commission',
     description:
-      'Browse through thousands of verified properties from trusted sellers and real estate agents.',
+      'Sellers save thousands with our 0.9% commission vs. traditional 5%. Buyers pay zero commission, creating faster sales and better offers.',
+    icon: CurrencyDollarIcon,
+  },
+  {
+    name: 'For Sale By Owner',
+    description:
+      'Access all properties including "for sale by owner" listings that traditional realtors won\'t show.',
     icon: HomeIcon,
   },
   {
-    name: 'Prime Locations',
+    name: 'Complete Support',
     description:
-      'Discover properties in the best neighborhoods and up-and-coming areas across the city.',
-    icon: MapPinIcon,
+      'Professional contract management, paperwork processing, and closing support from start to finish.',
+    icon: UserGroupIcon,
   },
   {
-    name: 'Transparent Pricing',
+    name: 'Transparent Process',
     description:
-      'No hidden fees or surprise costs. See all pricing details upfront before making any decisions.',
-    icon: CreditCardIcon,
-  },
-  {
-    name: 'Secure Transactions',
-    description:
-      'All transactions are protected with bank-level security and verified documentation.',
+      'No hidden fees or surprise costs. All pricing and services clearly outlined upfront.',
     icon: ShieldCheckIcon,
   },
 ];
@@ -38,11 +38,11 @@ export default function Features() {
       <div className='layout'>
         <div className='max-w-2xl mx-auto text-center mb-16'>
           <h2 className='text-3xl font-bold text-gray-900 mb-4'>
-            Why Choose Our Platform?
+            Why Choose Real Estate Marketplace?
           </h2>
           <p className='text-lg text-gray-600'>
-            We make finding and buying your dream property simple, secure, and
-            stress-free.
+            Save thousands with our revolutionary 0.9% commission and get access
+            to all properties with full-service support.
           </p>
         </div>
 

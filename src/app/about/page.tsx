@@ -12,9 +12,9 @@ export default function AboutPage() {
             </h1>
             <p className='text-xl text-gray-600 mb-8 max-w-3xl mx-auto'>
               We're revolutionizing the way people buy, sell, and discover
-              properties. Save thousands with our 0.9% commission (vs.
-              traditional 5%) while receiving full-service support from search
-              to closing.
+              properties. Save thousands with our 0.9% seller commission vs.
+              traditional 5% while receiving full-service support from search to
+              closing.
             </p>
             <div className='flex justify-center'>
               <Link
@@ -38,17 +38,24 @@ export default function AboutPage() {
                 <p className='text-lg text-gray-600 mb-6'>
                   At Real Estate Marketplace, we believe that finding the
                   perfect property should be simple, transparent, and
-                  affordable. While traditional realtors charge 5% commission,
-                  we charge only 0.9% commission, saving you thousands of
-                  dollars on your property transactions.
+                  affordable. While traditional realtors charge 5% commission to
+                  sellers, we charge only 0.9% commission to sellers, saving you
+                  thousands of dollars on your property transactions.
                 </p>
-                <p className='text-lg text-gray-600'>
+                <p className='text-lg text-gray-600 mb-6'>
                   We provide comprehensive services to facilitate the entire
                   purchasing process - from contracts and paperwork to closing
                   support. Our platform brings together buyers, sellers, and
                   real estate professionals in one ecosystem, making property
                   transactions more efficient, accessible, and cost-effective
                   for everyone.
+                </p>
+                <p className='text-lg text-gray-600'>
+                  <strong>Why sellers choose us:</strong> Properties sell faster
+                  because buyers are attracted to our commission-free
+                  purchasing. A larger pool of motivated buyers means quicker
+                  sales and better offers for sellers, even with our lower 0.9%
+                  commission structure.
                 </p>
               </div>
               <div className='bg-white rounded-lg shadow-lg p-8'>
@@ -57,11 +64,11 @@ export default function AboutPage() {
                     <div className='text-3xl font-bold text-blue-600 mb-2'>
                       0.9%
                     </div>
-                    <div className='text-gray-600'>Commission Rate</div>
+                    <div className='text-gray-600'>Seller Commission</div>
                   </div>
                   <div>
                     <div className='text-3xl font-bold text-blue-600 mb-2'>
-                      $20K+
+                      $40K+
                     </div>
                     <div className='text-gray-600'>Average Savings</div>
                   </div>
@@ -88,7 +95,231 @@ export default function AboutPage() {
           <div className='max-w-6xl mx-auto'>
             <div className='text-center mb-12'>
               <h2 className='text-3xl font-bold text-gray-900 mb-4'>
-                Why Choose Real Estate Marketplace?
+                The Win-Win Advantage
+              </h2>
+              <p className='text-lg text-gray-600 max-w-3xl mx-auto'>
+                Our unique commission structure creates a marketplace where
+                everyone wins: buyers pay no commission, sellers save thousands,
+                and properties sell faster.
+              </p>
+            </div>
+
+            <div className='grid grid-cols-1 md:grid-cols-2 gap-8 mb-12'>
+              <div className='bg-white rounded-lg shadow-lg p-8'>
+                <div className='text-center mb-6'>
+                  <div className='bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4'>
+                    <svg
+                      className='w-8 h-8 text-green-600'
+                      fill='none'
+                      stroke='currentColor'
+                      viewBox='0 0 24 24'
+                    >
+                      <path
+                        strokeLinecap='round'
+                        strokeLinejoin='round'
+                        strokeWidth={2}
+                        d='M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1'
+                      />
+                    </svg>
+                  </div>
+                  <h3 className='text-2xl font-bold text-gray-900 mb-4'>
+                    For Buyers
+                  </h3>
+                </div>
+                <ul className='space-y-3 text-gray-600'>
+                  <li className='flex items-start space-x-3'>
+                    <svg
+                      className='w-5 h-5 text-green-500 mt-0.5 flex-shrink-0'
+                      fill='none'
+                      stroke='currentColor'
+                      viewBox='0 0 24 24'
+                    >
+                      <path
+                        strokeLinecap='round'
+                        strokeLinejoin='round'
+                        strokeWidth={2}
+                        d='M5 13l4 4L19 7'
+                      />
+                    </svg>
+                    <span>
+                      <strong>Zero commission fees</strong> - Keep more money in
+                      your pocket
+                    </span>
+                  </li>
+                  <li className='flex items-start space-x-3'>
+                    <svg
+                      className='w-5 h-5 text-green-500 mt-0.5 flex-shrink-0'
+                      fill='none'
+                      stroke='currentColor'
+                      viewBox='0 0 24 24'
+                    >
+                      <path
+                        strokeLinecap='round'
+                        strokeLinejoin='round'
+                        strokeWidth={2}
+                        d='M5 13l4 4L19 7'
+                      />
+                    </svg>
+                    <span>
+                      <strong>Access to all properties</strong> including FSBO
+                      listings
+                    </span>
+                  </li>
+                  <li className='flex items-start space-x-3'>
+                    <svg
+                      className='w-5 h-5 text-green-500 mt-0.5 flex-shrink-0'
+                      fill='none'
+                      stroke='currentColor'
+                      viewBox='0 0 24 24'
+                    >
+                      <path
+                        strokeLinecap='round'
+                        strokeLinejoin='round'
+                        strokeWidth={2}
+                        d='M5 13l4 4L19 7'
+                      />
+                    </svg>
+                    <span>
+                      <strong>Full transaction support</strong> without the
+                      commission burden
+                    </span>
+                  </li>
+                </ul>
+              </div>
+
+              <div className='bg-white rounded-lg shadow-lg p-8'>
+                <div className='text-center mb-6'>
+                  <div className='bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4'>
+                    <svg
+                      className='w-8 h-8 text-blue-600'
+                      fill='none'
+                      stroke='currentColor'
+                      viewBox='0 0 24 24'
+                    >
+                      <path
+                        strokeLinecap='round'
+                        strokeLinejoin='round'
+                        strokeWidth={2}
+                        d='M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6'
+                      />
+                    </svg>
+                  </div>
+                  <h3 className='text-2xl font-bold text-gray-900 mb-4'>
+                    For Sellers
+                  </h3>
+                </div>
+                <ul className='space-y-3 text-gray-600'>
+                  <li className='flex items-start space-x-3'>
+                    <svg
+                      className='w-5 h-5 text-blue-500 mt-0.5 flex-shrink-0'
+                      fill='none'
+                      stroke='currentColor'
+                      viewBox='0 0 24 24'
+                    >
+                      <path
+                        strokeLinecap='round'
+                        strokeLinejoin='round'
+                        strokeWidth={2}
+                        d='M5 13l4 4L19 7'
+                      />
+                    </svg>
+                    <span>
+                      <strong>Save $41,000+</strong> on a $1M home vs.
+                      traditional 5% commission
+                    </span>
+                  </li>
+                  <li className='flex items-start space-x-3'>
+                    <svg
+                      className='w-5 h-5 text-blue-500 mt-0.5 flex-shrink-0'
+                      fill='none'
+                      stroke='currentColor'
+                      viewBox='0 0 24 24'
+                    >
+                      <path
+                        strokeLinecap='round'
+                        strokeLinejoin='round'
+                        strokeWidth={2}
+                        d='M5 13l4 4L19 7'
+                      />
+                    </svg>
+                    <span>
+                      <strong>Faster sales</strong> due to larger pool of
+                      motivated buyers
+                    </span>
+                  </li>
+                  <li className='flex items-start space-x-3'>
+                    <svg
+                      className='w-5 h-5 text-blue-500 mt-0.5 flex-shrink-0'
+                      fill='none'
+                      stroke='currentColor'
+                      viewBox='0 0 24 24'
+                    >
+                      <path
+                        strokeLinecap='round'
+                        strokeLinejoin='round'
+                        strokeWidth={2}
+                        d='M5 13l4 4L19 7'
+                      />
+                    </svg>
+                    <span>
+                      <strong>More competitive offers</strong> from buyers with
+                      extra purchasing power
+                    </span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <div className='bg-white rounded-lg shadow-lg p-8'>
+              <div className='text-center mb-8'>
+                <h3 className='text-2xl font-bold text-gray-900 mb-4'>
+                  The Marketplace Effect
+                </h3>
+                <p className='text-lg text-gray-600 max-w-3xl mx-auto'>
+                  When buyers don't pay commission, they have more purchasing
+                  power and are more active in the market. This creates a
+                  larger, more motivated buyer pool that benefits sellers
+                  through faster sales and better offers, even with our reduced
+                  0.9% seller commission.
+                </p>
+              </div>
+
+              <div className='grid grid-cols-1 md:grid-cols-3 gap-6 text-center'>
+                <div className='p-4'>
+                  <div className='text-3xl font-bold text-green-600 mb-2'>
+                    3x
+                  </div>
+                  <div className='text-sm text-gray-600'>
+                    More active buyers
+                  </div>
+                </div>
+                <div className='p-4'>
+                  <div className='text-3xl font-bold text-blue-600 mb-2'>
+                    45%
+                  </div>
+                  <div className='text-sm text-gray-600'>
+                    Faster average sale time
+                  </div>
+                </div>
+                <div className='p-4'>
+                  <div className='text-3xl font-bold text-purple-600 mb-2'>
+                    12%
+                  </div>
+                  <div className='text-sm text-gray-600'>
+                    Higher average offers
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Commission Comparison Section */}
+        <section className='py-16 bg-white'>
+          <div className='max-w-6xl mx-auto'>
+            <div className='text-center mb-12'>
+              <h2 className='text-3xl font-bold text-gray-900 mb-4'>
+                Commission Comparison
               </h2>
               <p className='text-lg text-gray-600 max-w-3xl mx-auto'>
                 We're disrupting the traditional real estate industry with
@@ -110,7 +341,7 @@ export default function AboutPage() {
                           Traditional Realtors
                         </span>
                         <p className='text-sm text-gray-600'>
-                          Industry standard commission
+                          Seller commission only
                         </p>
                       </div>
                       <div className='text-3xl font-bold text-red-600'>5%</div>
@@ -121,7 +352,7 @@ export default function AboutPage() {
                           Real Estate Marketplace
                         </span>
                         <p className='text-sm text-gray-600'>
-                          Our competitive commission
+                          Seller commission only
                         </p>
                       </div>
                       <div className='text-3xl font-bold text-green-600'>
@@ -131,9 +362,9 @@ export default function AboutPage() {
                   </div>
                   <div className='mt-6 p-4 bg-blue-50 rounded-lg'>
                     <p className='text-sm text-gray-700'>
-                      <strong>Example savings:</strong> On a $500,000 home, you
-                      save $20,500 with our 0.9% commission vs. traditional 5%
-                      commission.
+                      <strong>Example savings:</strong> On a $1M property, you
+                      save $41,000 with our 0.9% seller commission vs.
+                      traditional 5% seller commission.
                     </p>
                   </div>
                 </div>
