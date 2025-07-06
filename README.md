@@ -38,7 +38,27 @@ This property marketplace includes cutting-edge AI capabilities:
 - **Comprehensive Error Handling** with retry logic and validation
 - **Professional Development Workflow** with automated testing and deployment
 
-## 🚀 Quick Start
+## � Documentation
+
+Comprehensive documentation is available in the [`docs/`](docs/) directory:
+
+- **[📖 Documentation Index](docs/INDEX.md)** - Complete overview of all documentation
+- **[🚀 Setup Guides](docs/setup/)** - Installation and configuration instructions
+- **[⚡ Feature Documentation](docs/features/)** - Implementation details for key features
+- **[📚 Developer Guides](docs/guides/)** - Testing, development workflows, and best practices
+
+### Quick Links
+
+| Topic               | Document                                                               | Description                   |
+| ------------------- | ---------------------------------------------------------------------- | ----------------------------- |
+| **Getting Started** | [Setup Guides](docs/setup/)                                            | Database, OAuth, and AI setup |
+| **AI Features**     | [Image Processing](docs/features/WEBP_IMAGE_PROCESSING_ENHANCEMENT.md) | AI-powered image analysis     |
+| **Notifications**   | [Notifications System](docs/features/NOTIFICATIONS_IMPLEMENTATION.md)  | Real-time updates             |
+| **Offers**          | [Offer System](docs/features/OFFER_SYSTEM.md)                          | Property offer management     |
+| **Testing**         | [Testing Guide](tests/README.md)                                       | Test suites and validation    |
+| **Database**        | [Database Guide](database/README.md)                                   | Schema and migrations         |
+
+## �🚀 Quick Start
 
 ### Prerequisites
 
