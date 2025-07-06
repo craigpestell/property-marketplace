@@ -168,7 +168,7 @@ ${
   address
     ? `Property Address/Location: ${address}
 
-Consider this location information when making your suggestions, especially for pricing, property type expectations, and market context for this area.
+Consider this location information when making your suggestions, especially for pricing, property type expectations, and market context for this area. When suggesting price, use the appropriate currency for the country where this address is located (e.g., USD for United States, CAD for Canada, EUR for European countries, GBP for United Kingdom, AUD for Australia, etc.).
 
 `
     : ''
@@ -181,7 +181,8 @@ Consider this location information when making your suggestions, especially for 
   "bathrooms": "Number of bathrooms you can estimate for this property (as number with decimals allowed, or null if unclear)",
   "squareFootage": "Estimated square footage of this property (as integer, or null if unclear)",
   "yearBuilt": "Estimated year this property was built based on its architectural style (as integer, or null if unclear)",
-  "price": "Suggested price range for this property based on its type, visible features${address ? `, and the location (${address})` : ''} (as integer, or null if unclear)",
+  "price": "Suggested price range for this property based on its type, visible features${address ? `, and the location (${address}) in the appropriate local currency` : ''} (as integer, or null if unclear)",
+  "currency": "${address ? 'The appropriate currency code for the country (e.g., USD, EUR, GBP, CAD, AUD, etc.)' : 'Currency code if price is suggested (optional)'}",
   "description": "Detailed description of this property focusing on what you can see${address ? ` and mentioning the location context` : ''}",
   "features": ["Array of notable features visible in this property${address ? ' and location-relevant amenities' : ''}"],
   "confidence": "Your confidence level in these suggestions about this property (low/medium/high)"

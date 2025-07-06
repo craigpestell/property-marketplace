@@ -35,14 +35,41 @@ response=$(curl -s -X POST http://localhost:$PORT/api/generate-suggestions \
 echo "API Response (without address):"
 echo "$response"
 
-echo -e "\nTesting property suggestions generation (with address)..."
-response_with_address=$(curl -s -X POST http://localhost:$PORT/api/generate-suggestions \
+echo -e "\nTesting property suggestions generation (US address - USD)..."
+response_us=$(curl -s -X POST http://localhost:$PORT/api/generate-suggestions \
   -F "image=@test_property.png" \
-  -F "address=123 Main Street, San Francisco, CA 94102" \
+  -F "address=123 Main Street, San Francisco, CA 94102, USA" \
   -w "HTTP Status: %{http_code}\n")
 
-echo "API Response (with address):"
-echo "$response_with_address"
+echo "API Response (US address):"
+echo "$response_us"
+
+echo -e "\nTesting property suggestions generation (UK address - GBP)..."
+response_uk=$(curl -s -X POST http://localhost:$PORT/api/generate-suggestions \
+  -F "image=@test_property.png" \
+  -F "address=10 Downing Street, London SW1A 2AA, United Kingdom" \
+  -w "HTTP Status: %{http_code}\n")
+
+echo "API Response (UK address):"
+echo "$response_uk"
+
+echo -e "\nTesting property suggestions generation (Canada address - CAD)..."
+response_ca=$(curl -s -X POST http://localhost:$PORT/api/generate-suggestions \
+  -F "image=@test_property.png" \
+  -F "address=24 Sussex Drive, Ottawa, ON K1M 1M4, Canada" \
+  -w "HTTP Status: %{http_code}\n")
+
+echo "API Response (Canada address):"
+echo "$response_ca"
+
+echo -e "\nTesting property suggestions generation (Germany address - EUR)..."
+response_de=$(curl -s -X POST http://localhost:$PORT/api/generate-suggestions \
+  -F "image=@test_property.png" \
+  -F "address=Unter den Linden 1, 10117 Berlin, Germany" \
+  -w "HTTP Status: %{http_code}\n")
+
+echo "API Response (Germany address):"
+echo "$response_de"
 
 # Clean up
 rm -f test_property.png
