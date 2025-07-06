@@ -2,14 +2,25 @@ import Link from 'next/link';
 
 import { Property } from '@/types';
 
+import SavePropertyButton from '@/components/SavePropertyButton';
+
 interface PropertyCardProps {
   property: Property;
 }
 
 export default function PropertyCard({ property }: PropertyCardProps) {
   return (
-    <Link href={`/property/${property.property_uid}`}>
-      <div className='bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 cursor-pointer'>
+    <div className='bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 relative group'>
+      {/* Save button overlay */}
+      <div className='absolute top-3 right-3 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-200'>
+        <SavePropertyButton
+          propertyUid={property.property_uid}
+          className='bg-white bg-opacity-90 hover:bg-opacity-100 p-2 rounded-full shadow-lg'
+          size='md'
+        />
+      </div>
+
+      <Link href={`/property/${property.property_uid}`} className='block'>
         <img
           src={property.image_url || '/placeholder-property.jpg'}
           alt={property.title}
@@ -32,7 +43,7 @@ export default function PropertyCard({ property }: PropertyCardProps) {
             Listed: {new Date(property.created_at).toLocaleDateString()}
           </p>
         </div>
-      </div>
-    </Link>
+      </Link>
+    </div>
   );
 }

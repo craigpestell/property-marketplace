@@ -141,6 +141,13 @@ export default function Header() {
                         My Offers
                       </Link>
                       <Link
+                        href='/saved-properties'
+                        className='block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100'
+                        onClick={() => setIsDropdownOpen(false)}
+                      >
+                        Saved Properties
+                      </Link>
+                      <Link
                         href='/settings'
                         className='block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100'
                         onClick={() => setIsDropdownOpen(false)}
@@ -261,6 +268,13 @@ export default function Header() {
                     onClick={() => setIsMenuOpen(false)}
                   >
                     Profile
+                  </Link>
+                  <Link
+                    href='/saved-properties'
+                    className='hover:text-primary-200 transition-colors'
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Saved Properties
                   </Link>
                   <Link
                     href='/settings'
