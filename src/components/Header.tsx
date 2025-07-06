@@ -69,12 +69,6 @@ export default function Header() {
             >
               About
             </Link>
-            <Link
-              href='/notifications'
-              className='hover:text-primary-200 transition-colors'
-            >
-              Notifications
-            </Link>
 
             {/* Debug Links - Only visible to test users */}
             {showDebugFeatures(session?.user?.email) && (
@@ -221,13 +215,6 @@ export default function Header() {
                 onClick={() => setIsMenuOpen(false)}
               >
                 About
-              </Link>
-              <Link
-                href='/notifications'
-                className='hover:text-primary-200 transition-colors'
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Notifications
               </Link>
 
               {/* Debug Links - Only visible to test users (Mobile) */}
