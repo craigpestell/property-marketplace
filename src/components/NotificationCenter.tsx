@@ -153,18 +153,23 @@ export default function NotificationCenter() {
           <BellIcon className='h-6 w-6' />
         )}
 
-        {/* Connection Status Indicator */}
-        <div
-          className={`absolute -top-1 -right-1 w-3 h-3 rounded-full ${
-            isConnected ? 'bg-green-400' : 'bg-gray-400'
-          }`}
-        />
-
-        {/* Unread Count Badge */}
-        {unreadCount > 0 && (
+        {/* Unread Count Badge - takes priority over connection indicator */}
+        {unreadCount > 0 ? (
           <span className='absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center'>
             {unreadCount > 9 ? '9+' : unreadCount}
           </span>
+        ) : (
+          /* Connection Status Indicator - only shown when no unread notifications */
+          <div
+            className={`absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full ${
+              isConnected ? 'bg-green-400' : 'bg-gray-400'
+            }`}
+            title={
+              isConnected
+                ? 'Connected to notifications'
+                : 'Disconnected from notifications'
+            }
+          />
         )}
       </button>
 
