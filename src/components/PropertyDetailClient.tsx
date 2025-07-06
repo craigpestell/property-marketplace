@@ -447,8 +447,8 @@ export default function PropertyDetailClient({
               </div>
 
               {/* Contact Form */}
-              <div className='bg-white rounded-xl p-6 shadow-sm'>
-                <h3 className='text-xl font-semibold text-gray-900 mb-4'>
+              <div className='bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm dark:shadow-gray-900/20 border border-gray-200 dark:border-gray-700'>
+                <h3 className='text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4'>
                   Interested in this property?
                 </h3>
 
@@ -456,14 +456,14 @@ export default function PropertyDetailClient({
                   <div>
                     <label
                       htmlFor='name'
-                      className='block text-sm font-medium text-gray-700 mb-1'
+                      className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1'
                     >
                       Full Name
                     </label>
                     <input
                       type='text'
                       id='name'
-                      className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent'
+                      className='w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400'
                       placeholder='Your full name'
                     />
                   </div>
@@ -471,14 +471,14 @@ export default function PropertyDetailClient({
                   <div>
                     <label
                       htmlFor='email'
-                      className='block text-sm font-medium text-gray-700 mb-1'
+                      className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1'
                     >
                       Email Address
                     </label>
                     <input
                       type='email'
                       id='email'
-                      className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent'
+                      className='w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400'
                       placeholder='your.email@example.com'
                     />
                   </div>
@@ -486,14 +486,14 @@ export default function PropertyDetailClient({
                   <div>
                     <label
                       htmlFor='message'
-                      className='block text-sm font-medium text-gray-700 mb-1'
+                      className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1'
                     >
                       Message
                     </label>
                     <textarea
                       id='message'
                       rows={4}
-                      className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent'
+                      className='w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400'
                       placeholder="I'm interested in this property..."
                       defaultValue={`I'm interested in ${property.title} (${property.property_uid}) at ${property.address}. Please contact me with more information.`}
                     />
@@ -501,7 +501,7 @@ export default function PropertyDetailClient({
 
                   <button
                     type='submit'
-                    className='w-full bg-primary-600 text-white py-3 px-4 rounded-lg hover:bg-primary-700 transition-colors font-medium'
+                    className='w-full bg-primary-600 dark:bg-primary-700 text-white py-3 px-4 rounded-lg hover:bg-primary-700 dark:hover:bg-primary-600 transition-colors font-medium'
                   >
                     Send Message
                   </button>
@@ -515,7 +515,7 @@ export default function PropertyDetailClient({
       {/* Offer Form Modal */}
       {showOfferForm && (
         <div className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50'>
-          <div className='bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto'>
+          <div className='bg-white dark:bg-gray-800 rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto'>
             <OfferForm
               propertyUid={property.property_uid}
               listingPrice={property.price}

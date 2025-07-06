@@ -39,7 +39,7 @@ export default function SimpleThemeSwitch() {
   // Prevent hydration mismatch by not rendering until mounted
   if (!mounted) {
     return (
-      <div className='relative p-2 rounded-lg border border-gray-300 bg-white w-9 h-9 animate-pulse'></div>
+      <div className='relative p-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 w-9 h-9 animate-pulse'></div>
     );
   }
 

@@ -39,25 +39,27 @@ export default function SettingsPage() {
 
   if (status === 'loading') {
     return (
-      <div className='min-h-screen bg-gray-50 flex items-center justify-center'>
+      <div className='min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center'>
         <div className='text-center'>
           <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4'></div>
-          <p className='text-gray-600'>Loading settings...</p>
+          <p className='text-gray-600 dark:text-gray-400'>
+            Loading settings...
+          </p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className='min-h-screen bg-gray-50 py-12'>
+    <div className='min-h-screen bg-gray-50 dark:bg-gray-900 py-12'>
       <div className='layout'>
         <div className='max-w-2xl mx-auto'>
-          <div className='bg-white rounded-lg shadow-sm'>
-            <div className='px-6 py-8 border-b border-gray-200'>
-              <h1 className='text-2xl font-bold text-gray-900'>
+          <div className='bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700'>
+            <div className='px-6 py-8 border-b border-gray-200 dark:border-gray-700'>
+              <h1 className='text-2xl font-bold text-gray-900 dark:text-gray-100'>
                 Account Settings
               </h1>
-              <p className='text-gray-600 mt-2'>
+              <p className='text-gray-600 dark:text-gray-400 mt-2'>
                 Manage your account preferences and security
               </p>
             </div>
@@ -65,22 +67,22 @@ export default function SettingsPage() {
             <div className='px-6 py-6 space-y-8'>
               {/* Security Section */}
               <div>
-                <h2 className='text-lg font-semibold text-gray-900 mb-4'>
+                <h2 className='text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4'>
                   Security
                 </h2>
                 <div className='space-y-4'>
-                  <div className='flex items-center justify-between p-4 border border-gray-200 rounded-lg'>
+                  <div className='flex items-center justify-between p-4 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700'>
                     <div>
-                      <h3 className='font-medium text-gray-900'>
+                      <h3 className='font-medium text-gray-900 dark:text-gray-100'>
                         Sign out of all devices
                       </h3>
-                      <p className='text-sm text-gray-600'>
+                      <p className='text-sm text-gray-600 dark:text-gray-400'>
                         This will sign you out of all your active sessions
                       </p>
                     </div>
                     <button
                       onClick={() => signOut()}
-                      className='bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition-colors'
+                      className='bg-gray-600 dark:bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-700 dark:hover:bg-gray-400 transition-colors'
                     >
                       Sign Out
                     </button>
@@ -90,69 +92,75 @@ export default function SettingsPage() {
 
               {/* Notifications Section */}
               <div>
-                <h2 className='text-lg font-semibold text-gray-900 mb-4'>
+                <h2 className='text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4'>
                   Notifications
                 </h2>
                 <div className='space-y-4'>
-                  <div className='flex items-center justify-between p-4 border border-gray-200 rounded-lg opacity-75'>
+                  <div className='flex items-center justify-between p-4 border border-gray-200 dark:border-gray-600 rounded-lg opacity-75 bg-white dark:bg-gray-700'>
                     <div>
-                      <h3 className='font-medium text-gray-900'>
+                      <h3 className='font-medium text-gray-900 dark:text-gray-100'>
                         Email notifications
                       </h3>
-                      <p className='text-sm text-gray-600'>
+                      <p className='text-sm text-gray-600 dark:text-gray-400'>
                         Receive updates about new properties and account
                         activity
                       </p>
                     </div>
-                    <div className='text-sm text-gray-500'>Coming soon</div>
+                    <div className='text-sm text-gray-500 dark:text-gray-400'>
+                      Coming soon
+                    </div>
                   </div>
 
-                  <div className='flex items-center justify-between p-4 border border-gray-200 rounded-lg opacity-75'>
+                  <div className='flex items-center justify-between p-4 border border-gray-200 dark:border-gray-600 rounded-lg opacity-75 bg-white dark:bg-gray-700'>
                     <div>
-                      <h3 className='font-medium text-gray-900'>
+                      <h3 className='font-medium text-gray-900 dark:text-gray-100'>
                         Push notifications
                       </h3>
-                      <p className='text-sm text-gray-600'>
+                      <p className='text-sm text-gray-600 dark:text-gray-400'>
                         Get notified about saved property updates
                       </p>
                     </div>
-                    <div className='text-sm text-gray-500'>Coming soon</div>
+                    <div className='text-sm text-gray-500 dark:text-gray-400'>
+                      Coming soon
+                    </div>
                   </div>
                 </div>
               </div>
 
               {/* Privacy Section */}
               <div>
-                <h2 className='text-lg font-semibold text-gray-900 mb-4'>
+                <h2 className='text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4'>
                   Privacy
                 </h2>
                 <div className='space-y-4'>
-                  <div className='flex items-center justify-between p-4 border border-gray-200 rounded-lg opacity-75'>
+                  <div className='flex items-center justify-between p-4 border border-gray-200 dark:border-gray-600 rounded-lg opacity-75 bg-white dark:bg-gray-700'>
                     <div>
-                      <h3 className='font-medium text-gray-900'>
+                      <h3 className='font-medium text-gray-900 dark:text-gray-100'>
                         Profile visibility
                       </h3>
-                      <p className='text-sm text-gray-600'>
+                      <p className='text-sm text-gray-600 dark:text-gray-400'>
                         Control who can see your profile information
                       </p>
                     </div>
-                    <div className='text-sm text-gray-500'>Coming soon</div>
+                    <div className='text-sm text-gray-500 dark:text-gray-400'>
+                      Coming soon
+                    </div>
                   </div>
                 </div>
               </div>
 
               {/* Danger Zone */}
-              <div className='border-t border-gray-200 pt-8'>
-                <h2 className='text-lg font-semibold text-red-600 mb-4'>
+              <div className='border-t border-gray-200 dark:border-gray-700 pt-8'>
+                <h2 className='text-lg font-semibold text-red-600 dark:text-red-400 mb-4'>
                   Danger Zone
                 </h2>
-                <div className='border border-red-200 rounded-lg p-4 bg-red-50'>
+                <div className='border border-red-200 dark:border-red-800 rounded-lg p-4 bg-red-50 dark:bg-red-900/20'>
                   <div className='flex items-center justify-between'>
                     <div>
-                      <h3 className='font-medium text-red-900'>
+                      <h3 className='font-medium text-red-900 dark:text-red-400'>
                         Delete Account
                       </h3>
-                      <p className='text-sm text-red-700'>
+                      <p className='text-sm text-red-700 dark:text-red-300'>
                         Permanently delete your account and all associated data.
                         This action cannot be undone.
                       </p>
@@ -172,11 +180,11 @@ export default function SettingsPage() {
           {/* Delete Confirmation Modal */}
           {showDeleteConfirm && (
             <div className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50'>
-              <div className='bg-white rounded-lg p-6 max-w-md w-full mx-4'>
-                <h3 className='text-lg font-semibold text-gray-900 mb-4'>
+              <div className='bg-white dark:bg-gray-800 rounded-lg p-6 max-w-md w-full mx-4 border border-gray-200 dark:border-gray-700'>
+                <h3 className='text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4'>
                   Confirm Account Deletion
                 </h3>
-                <p className='text-gray-600 mb-6'>
+                <p className='text-gray-600 dark:text-gray-400 mb-6'>
                   Are you sure you want to delete your account? This action will
                   permanently remove all your data and cannot be undone.
                 </p>
@@ -191,7 +199,7 @@ export default function SettingsPage() {
                   <button
                     onClick={() => setShowDeleteConfirm(false)}
                     disabled={isDeleting}
-                    className='bg-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-400 transition-colors disabled:opacity-50'
+                    className='bg-gray-300 dark:bg-gray-600 text-gray-700 dark:text-gray-300 px-4 py-2 rounded-md hover:bg-gray-400 dark:hover:bg-gray-500 transition-colors disabled:opacity-50'
                   >
                     Cancel
                   </button>

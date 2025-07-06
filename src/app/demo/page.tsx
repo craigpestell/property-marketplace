@@ -158,17 +158,17 @@ export default function OfferFlowDemoPage() {
   return (
     <div className='container mx-auto px-4 py-8'>
       <div className='max-w-3xl mx-auto'>
-        <h1 className='text-3xl font-bold text-gray-900 mb-8'>
+        <h1 className='text-3xl font-bold text-gray-900 dark:text-gray-100 mb-8'>
           Offer Flow Demo with Real-Time Notifications
         </h1>
 
-        <div className='bg-white rounded-lg shadow-lg p-6 space-y-6'>
+        <div className='bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 space-y-6 border border-gray-200 dark:border-gray-700'>
           {!session ? (
             <div className='text-center py-8'>
-              <h2 className='text-xl font-semibold text-gray-700 mb-4'>
+              <h2 className='text-xl font-semibold text-gray-700 dark:text-gray-300 mb-4'>
                 Authentication Required
               </h2>
-              <p className='text-gray-600 mb-4'>
+              <p className='text-gray-600 dark:text-gray-400 mb-4'>
                 Please sign in to test the offer flow and notifications.
               </p>
               <Button
@@ -181,10 +181,10 @@ export default function OfferFlowDemoPage() {
           ) : (
             <>
               <div className='text-center'>
-                <h2 className='text-xl font-semibold text-gray-800 mb-4'>
+                <h2 className='text-xl font-semibold text-gray-800 dark:text-gray-200 mb-4'>
                   Welcome, {session.user?.email}!
                 </h2>
-                <p className='text-gray-600 mb-6'>
+                <p className='text-gray-600 dark:text-gray-400 mb-6'>
                   Test the complete offer flow with real-time notifications and
                   toast feedback.
                 </p>

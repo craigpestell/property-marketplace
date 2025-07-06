@@ -66,12 +66,12 @@ export default function ToastTestPage() {
   return (
     <div className='container mx-auto px-4 py-8'>
       <div className='max-w-2xl mx-auto'>
-        <h1 className='text-3xl font-bold text-gray-900 mb-8'>
+        <h1 className='text-3xl font-bold text-gray-900 dark:text-gray-100 mb-8'>
           Toast Notification Testing
         </h1>
 
-        <div className='bg-white rounded-lg shadow-lg p-6 space-y-4'>
-          <h2 className='text-xl font-semibold text-gray-800 mb-4'>
+        <div className='bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 space-y-4 border border-gray-200 dark:border-gray-700'>
+          <h2 className='text-xl font-semibold text-gray-800 dark:text-gray-200 mb-4'>
             Test Different Toast Types
           </h2>
 

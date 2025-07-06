@@ -27,7 +27,7 @@ export default function DebugPageWrapper({ children }: DebugPageWrapperProps) {
       <main className='layout py-20'>
         <div className='text-center'>
           <div className='animate-spin rounded-full h-32 w-32 border-b-2 border-primary-600 mx-auto'></div>
-          <p className='text-gray-600 mt-4'>Loading...</p>
+          <p className='text-gray-600 dark:text-gray-400 mt-4'>Loading...</p>
         </div>
       </main>
     );
@@ -37,13 +37,13 @@ export default function DebugPageWrapper({ children }: DebugPageWrapperProps) {
     return (
       <main className='layout py-20'>
         <div className='text-center'>
-          <h1 className='text-4xl font-bold text-red-600 mb-6'>
+          <h1 className='text-4xl font-bold text-red-600 dark:text-red-400 mb-6'>
             Access Denied
           </h1>
-          <p className='text-lg text-gray-600 mb-8'>
+          <p className='text-lg text-gray-600 dark:text-gray-400 mb-8'>
             You don't have permission to access this page.
           </p>
-          <p className='text-sm text-gray-500'>
+          <p className='text-sm text-gray-500 dark:text-gray-500'>
             This page is only available to authorized test users and in
             development mode.
           </p>

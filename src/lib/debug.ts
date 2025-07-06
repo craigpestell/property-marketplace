@@ -26,5 +26,6 @@ export function isDevelopment(): boolean {
 
 // Show debug features if user is a debug user OR if in development mode
 export function showDebugFeatures(email?: string | null): boolean {
-  return isDebugUser(email) || isDevelopment();
+  //return isDebugUser(email) || isDevelopment();
+  return isDebugUser(email);
 }

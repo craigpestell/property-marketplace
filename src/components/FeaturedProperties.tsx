@@ -39,23 +39,23 @@ export default function FeaturedProperties({
 
   if (loading) {
     return (
-      <section className='bg-gray-50 py-16'>
+      <section className='bg-gray-50 dark:bg-gray-800 py-16'>
         <div className='layout'>
           <div className='text-center'>
-            <h2 className='text-3xl font-bold text-gray-900 mb-8'>
+            <h2 className='text-3xl font-bold text-gray-900 dark:text-white mb-8'>
               Featured Properties
             </h2>
             <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6'>
               {Array.from({ length: limit }).map((_, index) => (
                 <div
                   key={index}
-                  className='bg-white rounded-lg shadow-md overflow-hidden animate-pulse'
+                  className='bg-white dark:bg-gray-700 rounded-lg shadow-md overflow-hidden animate-pulse'
                 >
-                  <div className='h-48 bg-gray-300'></div>
+                  <div className='h-48 bg-gray-300 dark:bg-gray-600'></div>
                   <div className='p-4'>
-                    <div className='h-4 bg-gray-300 rounded mb-2'></div>
-                    <div className='h-3 bg-gray-300 rounded mb-2 w-3/4'></div>
-                    <div className='h-3 bg-gray-300 rounded w-1/2'></div>
+                    <div className='h-4 bg-gray-300 dark:bg-gray-600 rounded mb-2'></div>
+                    <div className='h-3 bg-gray-300 dark:bg-gray-600 rounded mb-2 w-3/4'></div>
+                    <div className='h-3 bg-gray-300 dark:bg-gray-600 rounded w-1/2'></div>
                   </div>
                 </div>
               ))}
@@ -68,13 +68,15 @@ export default function FeaturedProperties({
 
   if (error) {
     return (
-      <section className='bg-gray-50 py-16'>
+      <section className='bg-gray-50 dark:bg-gray-800 py-16'>
         <div className='layout'>
           <div className='text-center'>
-            <h2 className='text-3xl font-bold text-gray-900 mb-8'>
+            <h2 className='text-3xl font-bold text-gray-900 dark:text-white mb-8'>
               Featured Properties
             </h2>
-            <div className='text-red-600'>Error loading properties</div>
+            <div className='text-red-600 dark:text-red-400'>
+              Error loading properties
+            </div>
           </div>
         </div>
       </section>
@@ -82,20 +84,20 @@ export default function FeaturedProperties({
   }
 
   return (
-    <section className='bg-gray-50 py-16'>
+    <section className='bg-gray-50 dark:bg-gray-800 py-16'>
       <div className='layout'>
         <div className='text-center mb-12'>
-          <h2 className='text-3xl font-bold text-gray-900 mb-4'>
+          <h2 className='text-3xl font-bold text-gray-900 dark:text-white mb-4'>
             Featured Properties
           </h2>
-          <p className='text-lg text-gray-600 max-w-2xl mx-auto'>
+          <p className='text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto'>
             Discover our handpicked selection of the finest properties currently
             available in the market.
           </p>
         </div>
 
         {properties.length === 0 ? (
-          <div className='text-center text-gray-500'>
+          <div className='text-center text-gray-500 dark:text-gray-400'>
             <p>No properties available at the moment.</p>
           </div>
         ) : (
@@ -109,7 +111,7 @@ export default function FeaturedProperties({
             <div className='text-center'>
               <Link
                 href='/listings'
-                className='inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 transition-colors'
+                className='inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 dark:bg-blue-700 hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors'
               >
                 View All Properties
                 <svg

@@ -69,24 +69,24 @@ const ButtonLink = React.forwardRef<HTMLAnchorElement, ButtonLinkProps>(
               'disabled:bg-primary-700',
             ],
             variant === 'outline' && [
-              'text-primary-500',
-              'border-primary-500 border',
-              'hover:bg-primary-50 active:bg-primary-100 disabled:bg-primary-100',
+              'text-primary-500 dark:text-primary-400',
+              'border-primary-500 dark:border-primary-400 border',
+              'hover:bg-primary-50 dark:hover:bg-primary-900/20 active:bg-primary-100 dark:active:bg-primary-900/30 disabled:bg-primary-100 dark:disabled:bg-primary-900/20',
               isDarkBg &&
                 'hover:bg-gray-900 active:bg-gray-800 disabled:bg-gray-800',
             ],
             variant === 'ghost' && [
-              'text-primary-500',
+              'text-primary-500 dark:text-primary-400',
               'shadow-none',
-              'hover:bg-primary-50 active:bg-primary-100 disabled:bg-primary-100',
+              'hover:bg-primary-50 dark:hover:bg-primary-900/20 active:bg-primary-100 dark:active:bg-primary-900/30 disabled:bg-primary-100 dark:disabled:bg-primary-900/20',
               isDarkBg &&
                 'hover:bg-gray-900 active:bg-gray-800 disabled:bg-gray-800',
             ],
             variant === 'light' && [
-              'bg-white text-gray-700',
-              'border border-gray-300',
-              'hover:text-dark hover:bg-gray-100',
-              'active:bg-white/80 disabled:bg-gray-200',
+              'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300',
+              'border border-gray-300 dark:border-gray-600',
+              'hover:text-dark dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700',
+              'active:bg-white/80 dark:active:bg-gray-800/80 disabled:bg-gray-200 dark:disabled:bg-gray-700',
             ],
             variant === 'dark' && [
               'bg-gray-900 text-white',

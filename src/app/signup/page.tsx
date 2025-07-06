@@ -96,17 +96,17 @@ export default function SignUpPage() {
   };
 
   return (
-    <div className='min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8'>
+    <div className='min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8 transition-colors duration-200'>
       <div className='max-w-md w-full space-y-8'>
         <div>
-          <h2 className='mt-6 text-center text-3xl font-extrabold text-gray-900'>
+          <h2 className='mt-6 text-center text-3xl font-extrabold text-gray-900 dark:text-gray-100'>
             Create your account
           </h2>
-          <p className='mt-2 text-center text-sm text-gray-600'>
+          <p className='mt-2 text-center text-sm text-gray-600 dark:text-gray-400'>
             Already have an account?{' '}
             <Link
               href='/login'
-              className='font-medium text-blue-600 hover:text-blue-500'
+              className='font-medium text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300'
             >
               Sign in
             </Link>
@@ -119,7 +119,7 @@ export default function SignUpPage() {
             <button
               onClick={handleGoogleSignUp}
               disabled={isLoading}
-              className='group relative w-full flex justify-center py-3 px-4 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed'
+              className='group relative w-full flex justify-center py-3 px-4 border border-gray-300 dark:border-gray-600 text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-900 disabled:opacity-50 disabled:cursor-not-allowed'
             >
               <svg className='w-5 h-5 mr-2' viewBox='0 0 24 24'>
                 <path
@@ -145,10 +145,10 @@ export default function SignUpPage() {
 
           <div className='relative'>
             <div className='absolute inset-0 flex items-center'>
-              <div className='w-full border-t border-gray-300' />
+              <div className='w-full border-t border-gray-300 dark:border-gray-600' />
             </div>
             <div className='relative flex justify-center text-sm'>
-              <span className='px-2 bg-gray-50 text-gray-500'>
+              <span className='px-2 bg-gray-50 dark:bg-gray-900 text-gray-500 dark:text-gray-400'>
                 Or continue with email
               </span>
             </div>
@@ -157,7 +157,7 @@ export default function SignUpPage() {
           {/* Email/Password Form */}
           <form className='space-y-6' onSubmit={handleSubmit}>
             {error && (
-              <div className='bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md'>
+              <div className='bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 px-4 py-3 rounded-md'>
                 {error}
               </div>
             )}
@@ -166,7 +166,7 @@ export default function SignUpPage() {
               <div>
                 <label
                   htmlFor='name'
-                  className='block text-sm font-medium text-gray-700'
+                  className='block text-sm font-medium text-gray-700 dark:text-gray-300'
                 >
                   Full Name
                 </label>
@@ -177,7 +177,7 @@ export default function SignUpPage() {
                   required
                   value={formData.name}
                   onChange={handleInputChange}
-                  className='mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm'
+                  className='mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-800 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-400 dark:focus:border-blue-400 focus:z-10 sm:text-sm'
                   placeholder='Enter your full name'
                 />
               </div>
@@ -185,7 +185,7 @@ export default function SignUpPage() {
               <div>
                 <label
                   htmlFor='email'
-                  className='block text-sm font-medium text-gray-700'
+                  className='block text-sm font-medium text-gray-700 dark:text-gray-300'
                 >
                   Email Address
                 </label>
@@ -196,7 +196,7 @@ export default function SignUpPage() {
                   required
                   value={formData.email}
                   onChange={handleInputChange}
-                  className='mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm'
+                  className='mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-800 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-400 dark:focus:border-blue-400 focus:z-10 sm:text-sm'
                   placeholder='Enter your email address'
                 />
               </div>
@@ -204,7 +204,7 @@ export default function SignUpPage() {
               <div>
                 <label
                   htmlFor='password'
-                  className='block text-sm font-medium text-gray-700'
+                  className='block text-sm font-medium text-gray-700 dark:text-gray-300'
                 >
                   Password
                 </label>
@@ -215,7 +215,7 @@ export default function SignUpPage() {
                   required
                   value={formData.password}
                   onChange={handleInputChange}
-                  className='mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm'
+                  className='mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-800 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-400 dark:focus:border-blue-400 focus:z-10 sm:text-sm'
                   placeholder='Create a password (min 6 characters)'
                 />
               </div>
@@ -223,7 +223,7 @@ export default function SignUpPage() {
               <div>
                 <label
                   htmlFor='confirmPassword'
-                  className='block text-sm font-medium text-gray-700'
+                  className='block text-sm font-medium text-gray-700 dark:text-gray-300'
                 >
                   Confirm Password
                 </label>
@@ -234,7 +234,7 @@ export default function SignUpPage() {
                   required
                   value={formData.confirmPassword}
                   onChange={handleInputChange}
-                  className='mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm'
+                  className='mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-800 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-400 dark:focus:border-blue-400 focus:z-10 sm:text-sm'
                   placeholder='Confirm your password'
                 />
               </div>
@@ -244,21 +244,24 @@ export default function SignUpPage() {
               <button
                 type='submit'
                 disabled={isLoading}
-                className='group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed'
+                className='group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 dark:bg-blue-700 hover:bg-blue-700 dark:hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-900 dark:focus:ring-blue-400 disabled:opacity-50 disabled:cursor-not-allowed'
               >
                 {isLoading ? 'Creating Account...' : 'Create Account'}
               </button>
             </div>
 
-            <div className='text-xs text-gray-500 text-center'>
+            <div className='text-xs text-gray-500 dark:text-gray-400 text-center'>
               By creating an account, you agree to our{' '}
-              <Link href='/terms' className='text-blue-600 hover:text-blue-500'>
+              <Link
+                href='/terms'
+                className='text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300'
+              >
                 Terms of Service
               </Link>{' '}
               and{' '}
               <Link
                 href='/privacy'
-                className='text-blue-600 hover:text-blue-500'
+                className='text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300'
               >
                 Privacy Policy
               </Link>

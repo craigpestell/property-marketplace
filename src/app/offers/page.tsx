@@ -63,10 +63,12 @@ export default function OffersPage() {
 
   if (status === 'loading' || loading) {
     return (
-      <div className='min-h-screen bg-gray-50 flex items-center justify-center'>
+      <div className='min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center'>
         <div className='text-center'>
           <div className='animate-spin rounded-full h-32 w-32 border-b-2 border-primary-600 mx-auto'></div>
-          <p className='mt-4 text-gray-600'>Loading offers...</p>
+          <p className='mt-4 text-gray-600 dark:text-gray-400'>
+            Loading offers...
+          </p>
         </div>
       </div>
     );
@@ -74,12 +76,12 @@ export default function OffersPage() {
 
   if (status === 'unauthenticated') {
     return (
-      <div className='min-h-screen bg-gray-50 flex items-center justify-center'>
+      <div className='min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center'>
         <div className='text-center'>
-          <h1 className='text-2xl font-bold text-gray-900 mb-4'>
+          <h1 className='text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4'>
             Sign In Required
           </h1>
-          <p className='text-gray-600 mb-6'>
+          <p className='text-gray-600 dark:text-gray-400 mb-6'>
             You need to be signed in to view your offers.
           </p>
           <Link
@@ -101,24 +103,26 @@ export default function OffersPage() {
   );
 
   return (
-    <div className='min-h-screen bg-gray-50 py-8'>
+    <div className='min-h-screen bg-gray-50 dark:bg-gray-900 py-8'>
       <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
         <div className='mb-8'>
-          <h1 className='text-3xl font-bold text-gray-900'>My Offers</h1>
-          <p className='text-gray-600 mt-2'>
+          <h1 className='text-3xl font-bold text-gray-900 dark:text-gray-100'>
+            My Offers
+          </h1>
+          <p className='text-gray-600 dark:text-gray-400 mt-2'>
             Manage offers you've made and received
           </p>
         </div>
 
         {/* Tab Navigation */}
-        <div className='border-b border-gray-200 mb-8'>
+        <div className='border-b border-gray-200 dark:border-gray-700 mb-8'>
           <nav className='-mb-px flex space-x-8'>
             <button
               onClick={() => setActiveTab('all')}
               className={`py-2 px-1 border-b-2 font-medium text-sm ${
                 activeTab === 'all'
-                  ? 'border-primary-500 text-primary-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  ? 'border-primary-500 text-primary-600 dark:text-primary-400'
+                  : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600'
               }`}
             >
               All Offers ({offers.length})
@@ -127,8 +131,8 @@ export default function OffersPage() {
               onClick={() => setActiveTab('buyer')}
               className={`py-2 px-1 border-b-2 font-medium text-sm ${
                 activeTab === 'buyer'
-                  ? 'border-primary-500 text-primary-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  ? 'border-primary-500 text-primary-600 dark:text-primary-400'
+                  : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600'
               }`}
             >
               My Offers ({buyerOffers.length})
@@ -137,8 +141,8 @@ export default function OffersPage() {
               onClick={() => setActiveTab('seller')}
               className={`py-2 px-1 border-b-2 font-medium text-sm ${
                 activeTab === 'seller'
-                  ? 'border-primary-500 text-primary-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  ? 'border-primary-500 text-primary-600 dark:text-primary-400'
+                  : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600'
               }`}
             >
               Offers Received ({sellerOffers.length})
@@ -149,11 +153,13 @@ export default function OffersPage() {
         {/* Offers Grid */}
         {offers.length === 0 ? (
           <div className='text-center py-12'>
-            <div className='text-gray-400 text-6xl mb-4'>📋</div>
-            <h3 className='text-xl font-semibold text-gray-900 mb-2'>
+            <div className='text-gray-400 dark:text-gray-600 text-6xl mb-4'>
+              📋
+            </div>
+            <h3 className='text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2'>
               No offers yet
             </h3>
-            <p className='text-gray-600 mb-6'>
+            <p className='text-gray-600 dark:text-gray-400 mb-6'>
               {activeTab === 'buyer'
                 ? "You haven't made any offers yet. Browse properties to get started!"
                 : activeTab === 'seller'

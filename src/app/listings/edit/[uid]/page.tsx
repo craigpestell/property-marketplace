@@ -68,10 +68,12 @@ export default function EditListingPage({
 
   if (status === 'loading' || loading) {
     return (
-      <section className='bg-white'>
+      <section className='bg-white dark:bg-gray-900'>
         <div className='layout min-h-screen py-12'>
           <div className='text-center'>
-            <div className='text-lg'>Loading...</div>
+            <div className='text-lg text-gray-900 dark:text-gray-100'>
+              Loading...
+            </div>
           </div>
         </div>
       </section>
@@ -84,13 +86,15 @@ export default function EditListingPage({
 
   if (error) {
     return (
-      <section className='bg-white'>
+      <section className='bg-white dark:bg-gray-900'>
         <div className='layout min-h-screen py-12'>
           <div className='text-center'>
-            <div className='text-red-600 text-lg'>{error}</div>
+            <div className='text-red-600 dark:text-red-400 text-lg'>
+              {error}
+            </div>
             <button
               onClick={() => router.back()}
-              className='mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700'
+              className='mt-4 px-4 py-2 bg-blue-600 dark:bg-blue-700 text-white rounded hover:bg-blue-700 dark:hover:bg-blue-600'
             >
               Go Back
             </button>
@@ -102,10 +106,12 @@ export default function EditListingPage({
 
   if (!property) {
     return (
-      <section className='bg-white'>
+      <section className='bg-white dark:bg-gray-900'>
         <div className='layout min-h-screen py-12'>
           <div className='text-center'>
-            <div className='text-gray-600 text-lg'>Property not found</div>
+            <div className='text-gray-600 dark:text-gray-400 text-lg'>
+              Property not found
+            </div>
           </div>
         </div>
       </section>
@@ -113,7 +119,7 @@ export default function EditListingPage({
   }
 
   return (
-    <section className='bg-white'>
+    <section className='bg-white dark:bg-gray-900'>
       <div className='layout min-h-screen py-12'>
         <PropertyForm mode='edit' property={property} />
       </div>

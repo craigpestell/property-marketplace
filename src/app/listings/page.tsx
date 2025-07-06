@@ -400,7 +400,7 @@ export default function ListingsPage() {
                       setSearchQuery('');
                       setCurrentPage(1); // Reset pagination
                     }}
-                    className='px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'
+                    className='px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-900'
                   >
                     Clear All Filters
                   </button>
@@ -615,8 +615,8 @@ export default function ListingsPage() {
                       disabled={!hasPrev}
                       className={`px-3 py-2 text-sm font-medium rounded-md ${
                         hasPrev
-                          ? 'text-gray-700 bg-white border border-gray-300 hover:bg-gray-50'
-                          : 'text-gray-400 bg-gray-100 border border-gray-200 cursor-not-allowed'
+                          ? 'text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700'
+                          : 'text-gray-400 dark:text-gray-500 bg-gray-100 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 cursor-not-allowed'
                       }`}
                     >
                       Previous
@@ -629,7 +629,7 @@ export default function ListingsPage() {
                         <>
                           <button
                             onClick={() => handlePageChange(1)}
-                            className='px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50'
+                            className='px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700'
                           >
                             1
                           </button>
@@ -643,14 +643,14 @@ export default function ListingsPage() {
                       {currentPage > 1 && (
                         <button
                           onClick={() => handlePageChange(currentPage - 1)}
-                          className='px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50'
+                          className='px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700'
                         >
                           {currentPage - 1}
                         </button>
                       )}
 
                       {/* Current page */}
-                      <button className='px-3 py-2 text-sm font-medium text-white bg-blue-600 border border-blue-600 rounded-md'>
+                      <button className='px-3 py-2 text-sm font-medium text-white bg-blue-600 dark:bg-blue-700 border border-blue-600 dark:border-blue-700 rounded-md'>
                         {currentPage}
                       </button>
 
@@ -658,7 +658,7 @@ export default function ListingsPage() {
                       {currentPage < totalPages && (
                         <button
                           onClick={() => handlePageChange(currentPage + 1)}
-                          className='px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50'
+                          className='px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700'
                         >
                           {currentPage + 1}
                         </button>
@@ -672,7 +672,7 @@ export default function ListingsPage() {
                           )}
                           <button
                             onClick={() => handlePageChange(totalPages)}
-                            className='px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50'
+                            className='px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700'
                           >
                             {totalPages}
                           </button>
@@ -686,8 +686,8 @@ export default function ListingsPage() {
                       disabled={!hasNext}
                       className={`px-3 py-2 text-sm font-medium rounded-md ${
                         hasNext
-                          ? 'text-gray-700 bg-white border border-gray-300 hover:bg-gray-50'
-                          : 'text-gray-400 bg-gray-100 border border-gray-200 cursor-not-allowed'
+                          ? 'text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700'
+                          : 'text-gray-400 dark:text-gray-500 bg-gray-100 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 cursor-not-allowed'
                       }`}
                     >
                       Next

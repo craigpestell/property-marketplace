@@ -99,14 +99,16 @@ export default function OfferCard({
   const isExpired = new Date() > new Date(offer.expires_at);
 
   return (
-    <div className='bg-white rounded-lg shadow-md border border-gray-200 p-6'>
+    <div className='bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 p-6'>
       {/* Header */}
       <div className='flex justify-between items-start mb-4'>
         <div>
-          <h3 className='text-lg font-semibold text-gray-900'>
+          <h3 className='text-lg font-semibold text-gray-900 dark:text-white'>
             {offer.property_title}
           </h3>
-          <p className='text-sm text-gray-600'>{offer.property_address}</p>
+          <p className='text-sm text-gray-600 dark:text-gray-400'>
+            {offer.property_address}
+          </p>
         </div>
         <span
           className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(
@@ -120,26 +122,32 @@ export default function OfferCard({
       {/* Offer Details */}
       <div className='grid grid-cols-2 gap-4 mb-4'>
         <div>
-          <p className='text-sm text-gray-600'>Offer Amount</p>
+          <p className='text-sm text-gray-600 dark:text-gray-400'>
+            Offer Amount
+          </p>
           <p className='text-lg font-semibold text-green-600'>
             ${offer.offer_amount.toLocaleString()}
           </p>
         </div>
         <div>
-          <p className='text-sm text-gray-600'>Listing Price</p>
-          <p className='text-lg font-semibold text-gray-900'>
+          <p className='text-sm text-gray-600 dark:text-gray-400'>
+            Listing Price
+          </p>
+          <p className='text-lg font-semibold text-gray-900 dark:text-white'>
             ${offer.listing_price.toLocaleString()}
           </p>
         </div>
         <div>
-          <p className='text-sm text-gray-600'>Financing</p>
-          <p className='text-sm font-medium text-gray-900 capitalize'>
+          <p className='text-sm text-gray-600 dark:text-gray-400'>Financing</p>
+          <p className='text-sm font-medium text-gray-900 dark:text-white capitalize'>
             {offer.financing_type}
           </p>
         </div>
         <div>
-          <p className='text-sm text-gray-600'>Earnest Money</p>
-          <p className='text-sm font-medium text-gray-900'>
+          <p className='text-sm text-gray-600 dark:text-gray-400'>
+            Earnest Money
+          </p>
+          <p className='text-sm font-medium text-gray-900 dark:text-white'>
             {offer.earnest_money
               ? `$${offer.earnest_money.toLocaleString()}`
               : 'Not specified'}
@@ -150,8 +158,10 @@ export default function OfferCard({
       {/* Additional Details */}
       {offer.closing_date && (
         <div className='mb-4'>
-          <p className='text-sm text-gray-600'>Proposed Closing Date</p>
-          <p className='text-sm font-medium text-gray-900'>
+          <p className='text-sm text-gray-600 dark:text-gray-400'>
+            Proposed Closing Date
+          </p>
+          <p className='text-sm font-medium text-gray-900 dark:text-white'>
             {formatDate(offer.closing_date)}
           </p>
         </div>
@@ -159,12 +169,14 @@ export default function OfferCard({
 
       {offer.contingencies && offer.contingencies.length > 0 && (
         <div className='mb-4'>
-          <p className='text-sm text-gray-600'>Contingencies</p>
+          <p className='text-sm text-gray-600 dark:text-gray-400'>
+            Contingencies
+          </p>
           <div className='flex flex-wrap gap-1 mt-1'>
             {offer.contingencies.map((contingency, index) => (
               <span
                 key={index}
-                className='px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded'
+                className='px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-xs rounded'
               >
                 {contingency}
               </span>
@@ -175,15 +187,15 @@ export default function OfferCard({
 
       {offer.message && (
         <div className='mb-4'>
-          <p className='text-sm text-gray-600'>Message</p>
-          <p className='text-sm text-gray-900 bg-gray-50 p-3 rounded'>
+          <p className='text-sm text-gray-600 dark:text-gray-400'>Message</p>
+          <p className='text-sm text-gray-900 dark:text-white bg-gray-50 dark:bg-gray-700 p-3 rounded'>
             {offer.message}
           </p>
         </div>
       )}
 
       {/* Timeline */}
-      <div className='mb-4 text-xs text-gray-500'>
+      <div className='mb-4 text-xs text-gray-500 dark:text-gray-400'>
         <p>Submitted: {formatDate(offer.created_at)}</p>
         {offer.updated_at !== offer.created_at && (
           <p>Updated: {formatDate(offer.updated_at)}</p>

@@ -137,27 +137,33 @@ export default function NotificationTestPage() {
 
   return (
     <div className='container mx-auto px-4 py-8 max-w-4xl'>
-      <h1 className='text-3xl font-bold mb-8'>Notification Click Test</h1>
+      <h1 className='text-3xl font-bold text-gray-900 dark:text-gray-100 mb-8'>
+        Notification Click Test
+      </h1>
 
       {/* Test Results */}
-      <div className='mb-8 p-4 bg-gray-100 rounded-lg'>
+      <div className='mb-8 p-4 bg-gray-100 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700'>
         <div className='flex justify-between items-center mb-4'>
-          <h2 className='text-xl font-semibold'>Test Results:</h2>
+          <h2 className='text-xl font-semibold text-gray-900 dark:text-gray-100'>
+            Test Results:
+          </h2>
           <button
             onClick={clearResults}
-            className='px-3 py-1 bg-red-500 text-white rounded text-sm'
+            className='px-3 py-1 bg-red-500 text-white rounded text-sm hover:bg-red-600'
           >
             Clear
           </button>
         </div>
         <div className='space-y-1 max-h-60 overflow-y-auto'>
           {testResults.length === 0 ? (
-            <p className='text-gray-500'>No tests run yet...</p>
+            <p className='text-gray-500 dark:text-gray-400'>
+              No tests run yet...
+            </p>
           ) : (
             testResults.map((result, index) => (
               <div
                 key={index}
-                className='text-sm font-mono bg-white p-2 rounded'
+                className='text-sm font-mono bg-white dark:bg-gray-700 p-2 rounded border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-gray-100'
               >
                 {result}
               </div>
@@ -167,8 +173,10 @@ export default function NotificationTestPage() {
       </div>
 
       {/* Router Test */}
-      <div className='mb-8 p-4 border rounded-lg'>
-        <h2 className='text-xl font-semibold mb-4'>Router Tests</h2>
+      <div className='mb-8 p-4 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800'>
+        <h2 className='text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4'>
+          Router Tests
+        </h2>
         <div className='space-x-2 mb-4'>
           <button
             onClick={testRouterOnly}
@@ -193,7 +201,9 @@ export default function NotificationTestPage() {
 
       {/* Mock Notifications */}
       <div className='space-y-4'>
-        <h2 className='text-xl font-semibold'>Mock Notifications:</h2>
+        <h2 className='text-xl font-semibold text-gray-900 dark:text-gray-100'>
+          Mock Notifications:
+        </h2>
 
         {mockNotifications.map((notification) => {
           const link = getNotificationLink(notification);

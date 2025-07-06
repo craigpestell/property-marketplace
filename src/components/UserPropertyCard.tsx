@@ -37,13 +37,13 @@ export default function UserPropertyCard({
   };
 
   return (
-    <div className='bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 relative'>
+    <div className='bg-white dark:bg-gray-800 rounded-lg shadow-md dark:shadow-gray-900/20 overflow-hidden hover:shadow-lg dark:hover:shadow-gray-900/30 transition-shadow duration-300 relative border border-gray-200 dark:border-gray-700'>
       {/* Action Buttons */}
       <div className='absolute top-2 right-2 z-10 flex space-x-2'>
         {/* Edit Button */}
         <Link
           href={`/listings/edit/${property.property_uid}`}
-          className='bg-blue-500 hover:bg-blue-600 text-white p-2 rounded-full shadow-lg transition-colors'
+          className='bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white p-2 rounded-full shadow-lg transition-colors'
           title='Edit listing'
           onClick={(e) => e.stopPropagation()}
         >
@@ -67,7 +67,7 @@ export default function UserPropertyCard({
           <button
             onClick={handleDeleteClick}
             disabled={isDeleting}
-            className='bg-red-500 hover:bg-red-600 text-white p-2 rounded-full shadow-lg transition-colors disabled:opacity-50'
+            className='bg-red-500 hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700 text-white p-2 rounded-full shadow-lg transition-colors disabled:opacity-50'
             title='Delete listing'
           >
             {isDeleting ? (
@@ -89,18 +89,20 @@ export default function UserPropertyCard({
             )}
           </button>
         ) : (
-          <div className='bg-white rounded-lg shadow-lg p-3 border'>
-            <p className='text-sm text-gray-700 mb-3'>Delete this listing?</p>
+          <div className='bg-white dark:bg-gray-800 rounded-lg shadow-lg p-3 border border-gray-200 dark:border-gray-700'>
+            <p className='text-sm text-gray-700 dark:text-gray-300 mb-3'>
+              Delete this listing?
+            </p>
             <div className='flex space-x-2'>
               <button
                 onClick={handleConfirmDelete}
-                className='bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-xs'
+                className='bg-red-500 hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700 text-white px-3 py-1 rounded text-xs'
               >
                 Delete
               </button>
               <button
                 onClick={handleCancelDelete}
-                className='bg-gray-300 hover:bg-gray-400 text-gray-700 px-3 py-1 rounded text-xs'
+                className='bg-gray-300 hover:bg-gray-400 dark:bg-gray-600 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 px-3 py-1 rounded text-xs'
               >
                 Cancel
               </button>
@@ -119,18 +121,20 @@ export default function UserPropertyCard({
         />
         <div className='p-4'>
           <div className='flex justify-between items-start mb-2'>
-            <h3 className='text-lg font-semibold text-gray-900'>
+            <h3 className='text-lg font-semibold text-gray-900 dark:text-gray-100'>
               {property.title}
             </h3>
-            <span className='text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded font-mono'>
+            <span className='text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded font-mono'>
               {property.property_uid}
             </span>
           </div>
-          <p className='text-xl font-bold text-primary-600 mb-2'>
+          <p className='text-xl font-bold text-primary-600 dark:text-primary-400 mb-2'>
             ${property.price.toLocaleString()}
           </p>
-          <p className='text-gray-600 text-sm mb-2'>{property.address}</p>
-          <p className='text-gray-500 text-xs'>
+          <p className='text-gray-600 dark:text-gray-400 text-sm mb-2'>
+            {property.address}
+          </p>
+          <p className='text-gray-500 dark:text-gray-500 text-xs'>
             Listed: {new Date(property.created_at).toLocaleDateString()}
           </p>
         </div>

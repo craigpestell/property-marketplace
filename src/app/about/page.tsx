@@ -2,15 +2,15 @@ import Link from 'next/link';
 
 export default function AboutPage() {
   return (
-    <div className='min-h-screen bg-gray-50'>
+    <div className='min-h-screen bg-gray-50 dark:bg-gray-900'>
       <div className='layout'>
         {/* Hero Section */}
-        <section className='py-20 bg-white'>
+        <section className='py-20 bg-white dark:bg-gray-800'>
           <div className='max-w-4xl mx-auto text-center'>
-            <h1 className='text-4xl md:text-5xl font-bold text-gray-900 mb-6'>
+            <h1 className='text-4xl md:text-5xl font-bold text-gray-900 dark:text-gray-100 mb-6'>
               About Real Estate Marketplace
             </h1>
-            <p className='text-xl text-gray-600 mb-8 max-w-3xl mx-auto'>
+            <p className='text-xl text-gray-600 dark:text-gray-400 mb-8 max-w-3xl mx-auto'>
               We're revolutionizing the way people buy, sell, and discover
               properties. Save thousands with our 0.9% seller commission and
               zero buyer commission vs. traditional 5% total commission while
@@ -32,10 +32,10 @@ export default function AboutPage() {
           <div className='max-w-6xl mx-auto'>
             <div className='grid grid-cols-1 lg:grid-cols-2 gap-12 items-center'>
               <div>
-                <h2 className='text-3xl font-bold text-gray-900 mb-6'>
+                <h2 className='text-3xl font-bold text-gray-900 dark:text-gray-100 mb-6'>
                   Our Mission
                 </h2>
-                <p className='text-lg text-gray-600 mb-6'>
+                <p className='text-lg text-gray-600 dark:text-gray-400 mb-6'>
                   At Real Estate Marketplace, we believe that finding the
                   perfect property should be simple, transparent, and
                   affordable. Traditional real estate transactions involve 5%
@@ -44,7 +44,7 @@ export default function AboutPage() {
                   zero commission to buyers, saving both parties thousands of
                   dollars on your property transactions.
                 </p>
-                <p className='text-lg text-gray-600 mb-6'>
+                <p className='text-lg text-gray-600 dark:text-gray-400 mb-6'>
                   We provide comprehensive services to facilitate the entire
                   purchasing process - from contracts and paperwork to closing
                   support. Our platform brings together buyers, sellers, and
@@ -52,7 +52,7 @@ export default function AboutPage() {
                   transactions more efficient, accessible, and cost-effective
                   for everyone.
                 </p>
-                <p className='text-lg text-gray-600'>
+                <p className='text-lg text-gray-600 dark:text-gray-400'>
                   <strong>Why sellers choose us:</strong> Properties sell faster
                   because buyers are attracted to our commission-free
                   purchasing. A larger pool of motivated buyers means quicker
@@ -60,31 +60,39 @@ export default function AboutPage() {
                   commission structure.
                 </p>
               </div>
-              <div className='bg-white rounded-lg shadow-lg p-8'>
+              <div className='bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8 border border-gray-200 dark:border-gray-700'>
                 <div className='grid grid-cols-2 gap-6 text-center'>
                   <div>
-                    <div className='text-3xl font-bold text-blue-600 mb-2'>
+                    <div className='text-3xl font-bold text-blue-600 dark:text-blue-400 mb-2'>
                       0.9%
                     </div>
-                    <div className='text-gray-600'>Seller Commission</div>
+                    <div className='text-gray-600 dark:text-gray-400'>
+                      Seller Commission
+                    </div>
                   </div>
                   <div>
-                    <div className='text-3xl font-bold text-blue-600 mb-2'>
+                    <div className='text-3xl font-bold text-blue-600 dark:text-blue-400 mb-2'>
                       $41K+
                     </div>
-                    <div className='text-gray-600'>Combined Savings</div>
+                    <div className='text-gray-600 dark:text-gray-400'>
+                      Combined Savings
+                    </div>
                   </div>
                   <div>
-                    <div className='text-3xl font-bold text-blue-600 mb-2'>
+                    <div className='text-3xl font-bold text-blue-600 dark:text-blue-400 mb-2'>
                       5K+
                     </div>
-                    <div className='text-gray-600'>Happy Customers</div>
+                    <div className='text-gray-600 dark:text-gray-400'>
+                      Happy Customers
+                    </div>
                   </div>
                   <div>
-                    <div className='text-3xl font-bold text-blue-600 mb-2'>
+                    <div className='text-3xl font-bold text-blue-600 dark:text-blue-400 mb-2'>
                       99%
                     </div>
-                    <div className='text-gray-600'>Success Rate</div>
+                    <div className='text-gray-600 dark:text-gray-400'>
+                      Success Rate
+                    </div>
                   </div>
                 </div>
               </div>
@@ -93,13 +101,13 @@ export default function AboutPage() {
         </section>
 
         {/* Why Choose Us Section */}
-        <section className='py-16 bg-blue-50'>
+        <section className='py-16 bg-blue-50 dark:bg-blue-900/20'>
           <div className='max-w-6xl mx-auto'>
             <div className='text-center mb-12'>
-              <h2 className='text-3xl font-bold text-gray-900 mb-4'>
+              <h2 className='text-3xl font-bold text-gray-900 dark:text-gray-100 mb-4'>
                 The Win-Win Advantage
               </h2>
-              <p className='text-lg text-gray-600 max-w-3xl mx-auto'>
+              <p className='text-lg text-gray-600 dark:text-gray-400 max-w-3xl mx-auto'>
                 Our unique commission structure creates a marketplace where
                 everyone wins: buyers pay no commission, sellers save thousands,
                 and properties sell faster.
@@ -107,11 +115,11 @@ export default function AboutPage() {
             </div>
 
             <div className='grid grid-cols-1 md:grid-cols-2 gap-8 mb-12'>
-              <div className='bg-white rounded-lg shadow-lg p-8'>
+              <div className='bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8 border border-gray-200 dark:border-gray-700'>
                 <div className='text-center mb-6'>
-                  <div className='bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4'>
+                  <div className='bg-green-100 dark:bg-green-900/30 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4'>
                     <svg
-                      className='w-8 h-8 text-green-600'
+                      className='w-8 h-8 text-green-600 dark:text-green-400'
                       fill='none'
                       stroke='currentColor'
                       viewBox='0 0 24 24'
@@ -124,14 +132,14 @@ export default function AboutPage() {
                       />
                     </svg>
                   </div>
-                  <h3 className='text-2xl font-bold text-gray-900 mb-4'>
+                  <h3 className='text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4'>
                     For Buyers
                   </h3>
                 </div>
-                <ul className='space-y-3 text-gray-600'>
+                <ul className='space-y-3 text-gray-600 dark:text-gray-400'>
                   <li className='flex items-start space-x-3'>
                     <svg
-                      className='w-5 h-5 text-green-500 mt-0.5 flex-shrink-0'
+                      className='w-5 h-5 text-green-500 dark:text-green-400 mt-0.5 flex-shrink-0'
                       fill='none'
                       stroke='currentColor'
                       viewBox='0 0 24 24'
@@ -150,7 +158,7 @@ export default function AboutPage() {
                   </li>
                   <li className='flex items-start space-x-3'>
                     <svg
-                      className='w-5 h-5 text-green-500 mt-0.5 flex-shrink-0'
+                      className='w-5 h-5 text-green-500 dark:text-green-400 mt-0.5 flex-shrink-0'
                       fill='none'
                       stroke='currentColor'
                       viewBox='0 0 24 24'
@@ -169,7 +177,7 @@ export default function AboutPage() {
                   </li>
                   <li className='flex items-start space-x-3'>
                     <svg
-                      className='w-5 h-5 text-green-500 mt-0.5 flex-shrink-0'
+                      className='w-5 h-5 text-green-500 dark:text-green-400 mt-0.5 flex-shrink-0'
                       fill='none'
                       stroke='currentColor'
                       viewBox='0 0 24 24'
@@ -189,11 +197,11 @@ export default function AboutPage() {
                 </ul>
               </div>
 
-              <div className='bg-white rounded-lg shadow-lg p-8'>
+              <div className='bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8 border border-gray-200 dark:border-gray-700'>
                 <div className='text-center mb-6'>
-                  <div className='bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4'>
+                  <div className='bg-blue-100 dark:bg-blue-900/30 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4'>
                     <svg
-                      className='w-8 h-8 text-blue-600'
+                      className='w-8 h-8 text-blue-600 dark:text-blue-400'
                       fill='none'
                       stroke='currentColor'
                       viewBox='0 0 24 24'
@@ -206,14 +214,14 @@ export default function AboutPage() {
                       />
                     </svg>
                   </div>
-                  <h3 className='text-2xl font-bold text-gray-900 mb-4'>
+                  <h3 className='text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4'>
                     For Sellers
                   </h3>
                 </div>
-                <ul className='space-y-3 text-gray-600'>
+                <ul className='space-y-3 text-gray-600 dark:text-gray-400'>
                   <li className='flex items-start space-x-3'>
                     <svg
-                      className='w-5 h-5 text-blue-500 mt-0.5 flex-shrink-0'
+                      className='w-5 h-5 text-blue-500 dark:text-blue-400 mt-0.5 flex-shrink-0'
                       fill='none'
                       stroke='currentColor'
                       viewBox='0 0 24 24'
@@ -232,7 +240,7 @@ export default function AboutPage() {
                   </li>
                   <li className='flex items-start space-x-3'>
                     <svg
-                      className='w-5 h-5 text-blue-500 mt-0.5 flex-shrink-0'
+                      className='w-5 h-5 text-blue-500 dark:text-blue-400 mt-0.5 flex-shrink-0'
                       fill='none'
                       stroke='currentColor'
                       viewBox='0 0 24 24'
@@ -272,12 +280,12 @@ export default function AboutPage() {
               </div>
             </div>
 
-            <div className='bg-white rounded-lg shadow-lg p-8'>
+            <div className='bg-white dark:bg-gray-700 rounded-lg shadow-lg p-8 border border-gray-200 dark:border-gray-600'>
               <div className='text-center mb-8'>
-                <h3 className='text-2xl font-bold text-gray-900 mb-4'>
+                <h3 className='text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4'>
                   The Marketplace Effect
                 </h3>
-                <p className='text-lg text-gray-600 max-w-3xl mx-auto'>
+                <p className='text-lg text-gray-600 dark:text-gray-400 max-w-3xl mx-auto'>
                   When buyers don't pay commission, they have more purchasing
                   power and are more active in the market. This creates a
                   larger, more motivated buyer pool that benefits sellers
@@ -288,26 +296,26 @@ export default function AboutPage() {
 
               <div className='grid grid-cols-1 md:grid-cols-3 gap-6 text-center'>
                 <div className='p-4'>
-                  <div className='text-3xl font-bold text-green-600 mb-2'>
+                  <div className='text-3xl font-bold text-green-600 dark:text-green-400 mb-2'>
                     3x
                   </div>
-                  <div className='text-sm text-gray-600'>
+                  <div className='text-sm text-gray-600 dark:text-gray-400'>
                     More active buyers
                   </div>
                 </div>
                 <div className='p-4'>
-                  <div className='text-3xl font-bold text-blue-600 mb-2'>
+                  <div className='text-3xl font-bold text-blue-600 dark:text-blue-400 mb-2'>
                     45%
                   </div>
-                  <div className='text-sm text-gray-600'>
+                  <div className='text-sm text-gray-600 dark:text-gray-400'>
                     Faster average sale time
                   </div>
                 </div>
                 <div className='p-4'>
-                  <div className='text-3xl font-bold text-purple-600 mb-2'>
+                  <div className='text-3xl font-bold text-purple-600 dark:text-purple-400 mb-2'>
                     12%
                   </div>
-                  <div className='text-sm text-gray-600'>
+                  <div className='text-sm text-gray-600 dark:text-gray-400'>
                     Higher average offers
                   </div>
                 </div>
@@ -317,13 +325,13 @@ export default function AboutPage() {
         </section>
 
         {/* Commission Comparison Section */}
-        <section className='py-16 bg-white'>
+        <section className='py-16 bg-white dark:bg-gray-800'>
           <div className='max-w-6xl mx-auto'>
             <div className='text-center mb-12'>
-              <h2 className='text-3xl font-bold text-gray-900 mb-4'>
+              <h2 className='text-3xl font-bold text-gray-900 dark:text-gray-100 mb-4'>
                 Commission Comparison
               </h2>
-              <p className='text-lg text-gray-600 max-w-3xl mx-auto'>
+              <p className='text-lg text-gray-600 dark:text-gray-400 max-w-3xl mx-auto'>
                 We're disrupting the traditional real estate industry with
                 transparent pricing, comprehensive services, and fair access to
                 all properties.
@@ -332,38 +340,40 @@ export default function AboutPage() {
 
             <div className='grid grid-cols-1 lg:grid-cols-2 gap-12 items-center'>
               <div>
-                <div className='bg-white rounded-lg shadow-lg p-8'>
-                  <h3 className='text-2xl font-bold text-gray-900 mb-6'>
+                <div className='bg-white dark:bg-gray-700 rounded-lg shadow-lg p-8 border border-gray-200 dark:border-gray-600'>
+                  <h3 className='text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6'>
                     Commission Comparison
                   </h3>
                   <div className='space-y-4'>
-                    <div className='flex items-center justify-between p-4 bg-red-50 rounded-lg'>
+                    <div className='flex items-center justify-between p-4 bg-red-50 dark:bg-red-900/20 rounded-lg border border-red-200 dark:border-red-800'>
                       <div>
-                        <span className='text-lg font-semibold text-gray-900'>
+                        <span className='text-lg font-semibold text-gray-900 dark:text-gray-100'>
                           Traditional Realtors
                         </span>
-                        <p className='text-sm text-gray-600'>
+                        <p className='text-sm text-gray-600 dark:text-gray-400'>
                           Total commission (2.5% buyer + 2.5% seller)
                         </p>
                       </div>
-                      <div className='text-3xl font-bold text-red-600'>5%</div>
+                      <div className='text-3xl font-bold text-red-600 dark:text-red-400'>
+                        5%
+                      </div>
                     </div>
-                    <div className='flex items-center justify-between p-4 bg-green-50 rounded-lg'>
+                    <div className='flex items-center justify-between p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800'>
                       <div>
-                        <span className='text-lg font-semibold text-gray-900'>
+                        <span className='text-lg font-semibold text-gray-900 dark:text-gray-100'>
                           Real Estate Marketplace
                         </span>
-                        <p className='text-sm text-gray-600'>
+                        <p className='text-sm text-gray-600 dark:text-gray-400'>
                           No buyer commission, 0.9% seller commission
                         </p>
                       </div>
-                      <div className='text-3xl font-bold text-green-600'>
+                      <div className='text-3xl font-bold text-green-600 dark:text-green-400'>
                         0.9%
                       </div>
                     </div>
                   </div>
-                  <div className='mt-6 p-4 bg-blue-50 rounded-lg'>
-                    <p className='text-sm text-gray-700'>
+                  <div className='mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800'>
+                    <p className='text-sm text-gray-700 dark:text-gray-300'>
                       <strong>Combined savings:</strong> On a $1M property,
                       buyers save $25,000 (no 2.5% commission) and sellers save
                       $16,000 (0.9% vs 2.5%), for total savings of $41,000.
@@ -373,14 +383,14 @@ export default function AboutPage() {
               </div>
 
               <div>
-                <h3 className='text-2xl font-bold text-gray-900 mb-6'>
+                <h3 className='text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6'>
                   Complete Transaction Support
                 </h3>
                 <div className='space-y-4'>
                   <div className='flex items-start space-x-3'>
-                    <div className='bg-blue-100 w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-1'>
+                    <div className='bg-blue-100 dark:bg-blue-900/30 w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-1'>
                       <svg
-                        className='w-4 h-4 text-blue-600'
+                        className='w-4 h-4 text-blue-600 dark:text-blue-400'
                         fill='none'
                         stroke='currentColor'
                         viewBox='0 0 24 24'
@@ -394,19 +404,19 @@ export default function AboutPage() {
                       </svg>
                     </div>
                     <div>
-                      <h4 className='text-lg font-semibold text-gray-900'>
+                      <h4 className='text-lg font-semibold text-gray-900 dark:text-gray-100'>
                         Contract Management
                       </h4>
-                      <p className='text-gray-600'>
+                      <p className='text-gray-600 dark:text-gray-400'>
                         Professional contract preparation and review services
                       </p>
                     </div>
                   </div>
 
                   <div className='flex items-start space-x-3'>
-                    <div className='bg-blue-100 w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-1'>
+                    <div className='bg-blue-100 dark:bg-blue-900/30 w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-1'>
                       <svg
-                        className='w-4 h-4 text-blue-600'
+                        className='w-4 h-4 text-blue-600 dark:text-blue-400'
                         fill='none'
                         stroke='currentColor'
                         viewBox='0 0 24 24'
@@ -420,19 +430,19 @@ export default function AboutPage() {
                       </svg>
                     </div>
                     <div>
-                      <h4 className='text-lg font-semibold text-gray-900'>
+                      <h4 className='text-lg font-semibold text-gray-900 dark:text-gray-100'>
                         Paperwork Processing
                       </h4>
-                      <p className='text-gray-600'>
+                      <p className='text-gray-600 dark:text-gray-400'>
                         Handle all necessary documentation and legal paperwork
                       </p>
                     </div>
                   </div>
 
                   <div className='flex items-start space-x-3'>
-                    <div className='bg-blue-100 w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-1'>
+                    <div className='bg-blue-100 dark:bg-blue-900/30 w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-1'>
                       <svg
-                        className='w-4 h-4 text-blue-600'
+                        className='w-4 h-4 text-blue-600 dark:text-blue-400'
                         fill='none'
                         stroke='currentColor'
                         viewBox='0 0 24 24'
@@ -446,19 +456,19 @@ export default function AboutPage() {
                       </svg>
                     </div>
                     <div>
-                      <h4 className='text-lg font-semibold text-gray-900'>
+                      <h4 className='text-lg font-semibold text-gray-900 dark:text-gray-100'>
                         Closing Support
                       </h4>
-                      <p className='text-gray-600'>
+                      <p className='text-gray-600 dark:text-gray-400'>
                         Comprehensive support throughout the closing process
                       </p>
                     </div>
                   </div>
 
                   <div className='flex items-start space-x-3'>
-                    <div className='bg-blue-100 w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-1'>
+                    <div className='bg-blue-100 dark:bg-blue-900/30 w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-1'>
                       <svg
-                        className='w-4 h-4 text-blue-600'
+                        className='w-4 h-4 text-blue-600 dark:text-blue-400'
                         fill='none'
                         stroke='currentColor'
                         viewBox='0 0 24 24'
@@ -472,10 +482,10 @@ export default function AboutPage() {
                       </svg>
                     </div>
                     <div>
-                      <h4 className='text-lg font-semibold text-gray-900'>
+                      <h4 className='text-lg font-semibold text-gray-900 dark:text-gray-100'>
                         For Sale By Owner Support
                       </h4>
-                      <p className='text-gray-600'>
+                      <p className='text-gray-600 dark:text-gray-400'>
                         List and discover "for sale by owner" properties that
                         traditional realtors often won't show because they're
                         not listed through the real estate board
@@ -489,13 +499,13 @@ export default function AboutPage() {
         </section>
 
         {/* Values Section */}
-        <section className='py-16 bg-white'>
+        <section className='py-16 bg-white dark:bg-gray-800'>
           <div className='max-w-6xl mx-auto'>
             <div className='text-center mb-12'>
-              <h2 className='text-3xl font-bold text-gray-900 mb-4'>
+              <h2 className='text-3xl font-bold text-gray-900 dark:text-gray-100 mb-4'>
                 Our Values
               </h2>
-              <p className='text-lg text-gray-600 max-w-2xl mx-auto'>
+              <p className='text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto'>
                 These core values guide everything we do and shape the way we
                 serve our community.
               </p>
@@ -518,10 +528,10 @@ export default function AboutPage() {
                     />
                   </svg>
                 </div>
-                <h3 className='text-xl font-bold text-gray-900 mb-3'>
+                <h3 className='text-xl font-bold text-gray-900 dark:text-gray-100 mb-3'>
                   Transparency
                 </h3>
-                <p className='text-gray-600'>
+                <p className='text-gray-600 dark:text-gray-400'>
                   We believe in complete transparency in all our dealings,
                   providing clear and accurate information to help you make
                   informed decisions.
@@ -529,9 +539,9 @@ export default function AboutPage() {
               </div>
 
               <div className='text-center'>
-                <div className='bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4'>
+                <div className='bg-green-100 dark:bg-green-900/30 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4'>
                   <svg
-                    className='w-8 h-8 text-green-600'
+                    className='w-8 h-8 text-green-600 dark:text-green-400'
                     fill='none'
                     stroke='currentColor'
                     viewBox='0 0 24 24'
@@ -544,19 +554,19 @@ export default function AboutPage() {
                     />
                   </svg>
                 </div>
-                <h3 className='text-xl font-bold text-gray-900 mb-3'>
+                <h3 className='text-xl font-bold text-gray-900 dark:text-gray-100 mb-3'>
                   Innovation
                 </h3>
-                <p className='text-gray-600'>
+                <p className='text-gray-600 dark:text-gray-400'>
                   We continuously innovate and improve our platform to provide
                   the best possible experience for our users through technology.
                 </p>
               </div>
 
               <div className='text-center'>
-                <div className='bg-purple-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4'>
+                <div className='bg-purple-100 dark:bg-purple-900/30 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4'>
                   <svg
-                    className='w-8 h-8 text-purple-600'
+                    className='w-8 h-8 text-purple-600 dark:text-purple-400'
                     fill='none'
                     stroke='currentColor'
                     viewBox='0 0 24 24'
@@ -569,10 +579,10 @@ export default function AboutPage() {
                     />
                   </svg>
                 </div>
-                <h3 className='text-xl font-bold text-gray-900 mb-3'>
+                <h3 className='text-xl font-bold text-gray-900 dark:text-gray-100 mb-3'>
                   Community
                 </h3>
-                <p className='text-gray-600'>
+                <p className='text-gray-600 dark:text-gray-400'>
                   We're committed to building strong communities and helping
                   people find their perfect homes in neighborhoods they'll love.
                 </p>
@@ -585,54 +595,60 @@ export default function AboutPage() {
         <section className='py-16'>
           <div className='max-w-6xl mx-auto'>
             <div className='text-center mb-12'>
-              <h2 className='text-3xl font-bold text-gray-900 mb-4'>
+              <h2 className='text-3xl font-bold text-gray-900 dark:text-gray-100 mb-4'>
                 Meet Our Team
               </h2>
-              <p className='text-lg text-gray-600 max-w-2xl mx-auto'>
+              <p className='text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto'>
                 Our dedicated team of professionals is committed to providing
                 you with the best real estate experience.
               </p>
             </div>
 
             <div className='grid grid-cols-1 md:grid-cols-3 gap-8'>
-              <div className='text-center bg-white rounded-lg shadow-lg p-6'>
+              <div className='text-center bg-white dark:bg-gray-700 rounded-lg shadow-lg p-6 border border-gray-200 dark:border-gray-600'>
                 <div className='w-24 h-24 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-4'>
                   <span className='text-2xl font-bold text-white'>CP</span>
                 </div>
-                <h3 className='text-xl font-bold text-gray-900 mb-2'>
+                <h3 className='text-xl font-bold text-gray-900 dark:text-gray-100 mb-2'>
                   Craig Pestell
                 </h3>
-                <p className='text-blue-600 mb-3'>Founder & CEO</p>
-                <p className='text-gray-600'>
+                <p className='text-blue-600 dark:text-blue-400 mb-3'>
+                  Founder & CEO
+                </p>
+                <p className='text-gray-600 dark:text-gray-400'>
                   Passionate about technology and real estate, Craig founded
                   Real Estate Marketplace to revolutionize how people find their
                   dream homes.
                 </p>
               </div>
 
-              <div className='text-center bg-white rounded-lg shadow-lg p-6'>
+              <div className='text-center bg-white dark:bg-gray-700 rounded-lg shadow-lg p-6 border border-gray-200 dark:border-gray-600'>
                 <div className='w-24 h-24 bg-green-600 rounded-full flex items-center justify-center mx-auto mb-4'>
                   <span className='text-2xl font-bold text-white'>MK</span>
                 </div>
-                <h3 className='text-xl font-bold text-gray-900 mb-2'>
+                <h3 className='text-xl font-bold text-gray-900 dark:text-gray-100 mb-2'>
                   Michelle Kessler
                 </h3>
-                <p className='text-green-600 mb-3'>Head of Operations</p>
-                <p className='text-gray-600'>
+                <p className='text-green-600 dark:text-green-400 mb-3'>
+                  Head of Operations
+                </p>
+                <p className='text-gray-600 dark:text-gray-400'>
                   With over 10 years in real estate operations, Michelle ensures
                   our platform runs smoothly and efficiently for all users.
                 </p>
               </div>
 
-              <div className='text-center bg-white rounded-lg shadow-lg p-6'>
+              <div className='text-center bg-white dark:bg-gray-700 rounded-lg shadow-lg p-6 border border-gray-200 dark:border-gray-600'>
                 <div className='w-24 h-24 bg-purple-600 rounded-full flex items-center justify-center mx-auto mb-4'>
                   <span className='text-2xl font-bold text-white'>DJ</span>
                 </div>
-                <h3 className='text-xl font-bold text-gray-900 mb-2'>
+                <h3 className='text-xl font-bold text-gray-900 dark:text-gray-100 mb-2'>
                   David Johnson
                 </h3>
-                <p className='text-purple-600 mb-3'>Lead Developer</p>
-                <p className='text-gray-600'>
+                <p className='text-purple-600 dark:text-purple-400 mb-3'>
+                  Lead Developer
+                </p>
+                <p className='text-gray-600 dark:text-gray-400'>
                   David leads our technical team, building innovative features
                   that make property searching and listing a breeze.
                 </p>
@@ -655,7 +671,7 @@ export default function AboutPage() {
             <div className='flex flex-col sm:flex-row gap-4 justify-center'>
               <Link
                 href='/listings'
-                className='bg-white text-blue-600 px-8 py-3 rounded-lg hover:bg-gray-100 transition-colors font-semibold'
+                className='bg-white dark:bg-gray-100 text-blue-600 dark:text-blue-700 px-8 py-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-200 transition-colors font-semibold'
               >
                 Browse Properties
               </Link>
@@ -670,22 +686,22 @@ export default function AboutPage() {
         </section>
 
         {/* Contact Information */}
-        <section className='py-16 bg-white'>
+        <section className='py-16 bg-white dark:bg-gray-800'>
           <div className='max-w-4xl mx-auto'>
             <div className='text-center mb-12'>
-              <h2 className='text-3xl font-bold text-gray-900 mb-4'>
+              <h2 className='text-3xl font-bold text-gray-900 dark:text-gray-100 mb-4'>
                 Get in Touch
               </h2>
-              <p className='text-lg text-gray-600'>
+              <p className='text-lg text-gray-600 dark:text-gray-400'>
                 Have questions? We'd love to hear from you.
               </p>
             </div>
 
             <div className='grid grid-cols-1 md:grid-cols-3 gap-8'>
               <div className='text-center'>
-                <div className='bg-blue-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4'>
+                <div className='bg-blue-100 dark:bg-blue-900/30 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4'>
                   <svg
-                    className='w-6 h-6 text-blue-600'
+                    className='w-6 h-6 text-blue-600 dark:text-blue-400'
                     fill='none'
                     stroke='currentColor'
                     viewBox='0 0 24 24'
@@ -698,16 +714,18 @@ export default function AboutPage() {
                     />
                   </svg>
                 </div>
-                <h3 className='text-lg font-semibold text-gray-900 mb-2'>
+                <h3 className='text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2'>
                   Email
                 </h3>
-                <p className='text-gray-600'>hello@propertymarketplace.com</p>
+                <p className='text-gray-600 dark:text-gray-400'>
+                  hello@propertymarketplace.com
+                </p>
               </div>
 
               <div className='text-center'>
-                <div className='bg-green-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4'>
+                <div className='bg-green-100 dark:bg-green-900/30 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4'>
                   <svg
-                    className='w-6 h-6 text-green-600'
+                    className='w-6 h-6 text-green-600 dark:text-green-400'
                     fill='none'
                     stroke='currentColor'
                     viewBox='0 0 24 24'
@@ -720,16 +738,18 @@ export default function AboutPage() {
                     />
                   </svg>
                 </div>
-                <h3 className='text-lg font-semibold text-gray-900 mb-2'>
+                <h3 className='text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2'>
                   Phone
                 </h3>
-                <p className='text-gray-600'>+1 (555) 123-4567</p>
+                <p className='text-gray-600 dark:text-gray-400'>
+                  +1 (555) 123-4567
+                </p>
               </div>
 
               <div className='text-center'>
-                <div className='bg-purple-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4'>
+                <div className='bg-purple-100 dark:bg-purple-900/30 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4'>
                   <svg
-                    className='w-6 h-6 text-purple-600'
+                    className='w-6 h-6 text-purple-600 dark:text-purple-400'
                     fill='none'
                     stroke='currentColor'
                     viewBox='0 0 24 24'
@@ -748,10 +768,10 @@ export default function AboutPage() {
                     />
                   </svg>
                 </div>
-                <h3 className='text-lg font-semibold text-gray-900 mb-2'>
+                <h3 className='text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2'>
                   Office
                 </h3>
-                <p className='text-gray-600'>
+                <p className='text-gray-600 dark:text-gray-400'>
                   123 Property Street
                   <br />
                   Real Estate City, RE 12345

@@ -270,19 +270,19 @@ export default function PropertyForm({ property, mode }: PropertyFormProps) {
 
   return (
     <div className='max-w-2xl mx-auto'>
-      <div className='bg-white rounded-lg shadow-md p-6'>
-        <h1 className='text-2xl font-bold mb-6'>
+      <div className='bg-white dark:bg-gray-800 rounded-lg shadow-md p-6'>
+        <h1 className='text-2xl font-bold mb-6 text-gray-900 dark:text-white'>
           {mode === 'create' ? 'Add New Property' : 'Edit Property'}
         </h1>
 
         {error && (
-          <div className='bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4'>
+          <div className='bg-red-50 dark:bg-red-900/50 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 px-4 py-3 rounded mb-4'>
             {error}
           </div>
         )}
 
         {suggestionsApplied && (
-          <div className='bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded mb-4'>
+          <div className='bg-green-50 dark:bg-green-900/50 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-300 px-4 py-3 rounded mb-4'>
             ✅ <strong>Suggestions applied!</strong> The form has been populated
             with AI-generated property details based on your image. Please
             review and adjust as needed.
@@ -295,9 +295,9 @@ export default function PropertyForm({ property, mode }: PropertyFormProps) {
           className='space-y-6'
         >
           {/* Image Upload - Moved to Top */}
-          <div className='bg-blue-50 border border-blue-200 rounded-lg p-6'>
+          <div className='bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-6'>
             <div className='flex items-center justify-between mb-4'>
-              <h3 className='text-lg font-semibold text-blue-900'>
+              <h3 className='text-lg font-semibold text-blue-900 dark:text-blue-100'>
                 Property Image
               </h3>
               {imageFile && (
@@ -305,7 +305,7 @@ export default function PropertyForm({ property, mode }: PropertyFormProps) {
                   type='button'
                   onClick={generateSuggestions}
                   disabled={isGeneratingSuggestions}
-                  className='inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed'
+                  className='inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 dark:bg-blue-700 border border-transparent rounded-md hover:bg-blue-700 dark:hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-800 disabled:opacity-50 disabled:cursor-not-allowed'
                 >
                   {isGeneratingSuggestions ? (
                     <>
@@ -342,7 +342,7 @@ export default function PropertyForm({ property, mode }: PropertyFormProps) {
               <div>
                 <label
                   htmlFor='image'
-                  className='block text-sm font-medium text-gray-700 mb-2'
+                  className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2'
                 >
                   Upload Property Image *{' '}
                   {mode === 'edit' && '(leave empty to keep current image)'}
@@ -352,14 +352,14 @@ export default function PropertyForm({ property, mode }: PropertyFormProps) {
                   id='image'
                   accept='image/*'
                   onChange={handleImageChange}
-                  className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500'
+                  className='w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-400 dark:focus:border-blue-400'
                 />
               </div>
 
               {/* Image Preview */}
               {imagePreview && (
                 <div className='mt-4'>
-                  <p className='text-sm font-medium text-gray-700 mb-2'>
+                  <p className='text-sm font-medium text-gray-700 dark:text-gray-300 mb-2'>
                     Preview:
                   </p>
                   <Image
@@ -367,7 +367,7 @@ export default function PropertyForm({ property, mode }: PropertyFormProps) {
                     alt='Property preview'
                     width={300}
                     height={200}
-                    className='w-full max-w-md h-48 object-cover rounded-lg border border-gray-200'
+                    className='w-full max-w-md h-48 object-cover rounded-lg border border-gray-200 dark:border-gray-600'
                   />
                 </div>
               )}
@@ -375,7 +375,7 @@ export default function PropertyForm({ property, mode }: PropertyFormProps) {
               {/* Current image for edit mode */}
               {mode === 'edit' && property?.image_url && !imagePreview && (
                 <div className='mt-4'>
-                  <p className='text-sm font-medium text-gray-700 mb-2'>
+                  <p className='text-sm font-medium text-gray-700 dark:text-gray-300 mb-2'>
                     Current image:
                   </p>
                   <Image
@@ -383,15 +383,15 @@ export default function PropertyForm({ property, mode }: PropertyFormProps) {
                     alt='Current property'
                     width={300}
                     height={200}
-                    className='w-full max-w-md h-48 object-cover rounded-lg border border-gray-200'
+                    className='w-full max-w-md h-48 object-cover rounded-lg border border-gray-200 dark:border-gray-600'
                   />
                 </div>
               )}
 
               {/* Help text */}
               {imageFile && (
-                <div className='bg-green-50 border border-green-200 rounded-md p-3'>
-                  <p className='text-sm text-green-800'>
+                <div className='bg-green-50 dark:bg-green-900/50 border border-green-200 dark:border-green-800 rounded-md p-3'>
+                  <p className='text-sm text-green-800 dark:text-green-300'>
                     💡 <strong>Image uploaded!</strong> Click "Generate
                     Suggestions" above to automatically fill in property details
                     based on your image.
@@ -402,13 +402,15 @@ export default function PropertyForm({ property, mode }: PropertyFormProps) {
           </div>
           {/* Basic Information */}
           <div>
-            <h3 className='text-lg font-semibold mb-4'>Basic Information</h3>
+            <h3 className='text-lg font-semibold mb-4 text-gray-900 dark:text-white'>
+              Basic Information
+            </h3>
 
             <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
               <div>
                 <label
                   htmlFor='title'
-                  className='block text-sm font-medium text-gray-700 mb-2'
+                  className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2'
                 >
                   Property Title *
                 </label>
@@ -419,14 +421,14 @@ export default function PropertyForm({ property, mode }: PropertyFormProps) {
                   value={formData.title}
                   onChange={handleInputChange}
                   required
-                  className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500'
+                  className='w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-400 dark:focus:border-blue-400'
                 />
               </div>
 
               <div>
                 <label
                   htmlFor='price'
-                  className='block text-sm font-medium text-gray-700 mb-2'
+                  className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2'
                 >
                   Price *
                 </label>
@@ -439,7 +441,7 @@ export default function PropertyForm({ property, mode }: PropertyFormProps) {
                   required
                   min='0'
                   step='1000'
-                  className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500'
+                  className='w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-400 dark:focus:border-blue-400'
                 />
               </div>
             </div>
@@ -447,7 +449,7 @@ export default function PropertyForm({ property, mode }: PropertyFormProps) {
             <div className='mt-4'>
               <label
                 htmlFor='address'
-                className='block text-sm font-medium text-gray-700 mb-2'
+                className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2'
               >
                 Address *
               </label>
@@ -458,20 +460,22 @@ export default function PropertyForm({ property, mode }: PropertyFormProps) {
                 value={formData.address}
                 onChange={handleInputChange}
                 required
-                className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500'
+                className='w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-400 dark:focus:border-blue-400'
               />
             </div>
           </div>
 
           {/* Property Details */}
           <div>
-            <h3 className='text-lg font-semibold mb-4'>Property Details</h3>
+            <h3 className='text-lg font-semibold mb-4 text-gray-900 dark:text-white'>
+              Property Details
+            </h3>
 
             <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
               <div>
                 <label
                   htmlFor='propertyType'
-                  className='block text-sm font-medium text-gray-700 mb-2'
+                  className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2'
                 >
                   Property Type
                 </label>
@@ -480,7 +484,7 @@ export default function PropertyForm({ property, mode }: PropertyFormProps) {
                   name='propertyType'
                   value={formData.propertyType}
                   onChange={handleInputChange}
-                  className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500'
+                  className='w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-400 dark:focus:border-blue-400'
                 >
                   <option value=''>Select Type</option>
                   <option value='house'>House</option>
@@ -494,7 +498,7 @@ export default function PropertyForm({ property, mode }: PropertyFormProps) {
               <div>
                 <label
                   htmlFor='bedrooms'
-                  className='block text-sm font-medium text-gray-700 mb-2'
+                  className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2'
                 >
                   Bedrooms
                 </label>
@@ -506,14 +510,14 @@ export default function PropertyForm({ property, mode }: PropertyFormProps) {
                   onChange={handleInputChange}
                   min='0'
                   max='20'
-                  className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500'
+                  className='w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-400 dark:focus:border-blue-400'
                 />
               </div>
 
               <div>
                 <label
                   htmlFor='bathrooms'
-                  className='block text-sm font-medium text-gray-700 mb-2'
+                  className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2'
                 >
                   Bathrooms
                 </label>
@@ -526,14 +530,14 @@ export default function PropertyForm({ property, mode }: PropertyFormProps) {
                   min='0'
                   max='20'
                   step='0.5'
-                  className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500'
+                  className='w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-400 dark:focus:border-blue-400'
                 />
               </div>
 
               <div>
                 <label
                   htmlFor='squareFootage'
-                  className='block text-sm font-medium text-gray-700 mb-2'
+                  className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2'
                 >
                   Square Footage
                 </label>
@@ -544,14 +548,14 @@ export default function PropertyForm({ property, mode }: PropertyFormProps) {
                   value={formData.squareFootage}
                   onChange={handleInputChange}
                   min='0'
-                  className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500'
+                  className='w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-400 dark:focus:border-blue-400'
                 />
               </div>
 
               <div>
                 <label
                   htmlFor='yearBuilt'
-                  className='block text-sm font-medium text-gray-700 mb-2'
+                  className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2'
                 >
                   Year Built
                 </label>
@@ -563,7 +567,7 @@ export default function PropertyForm({ property, mode }: PropertyFormProps) {
                   onChange={handleInputChange}
                   min='1800'
                   max={new Date().getFullYear() + 1}
-                  className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500'
+                  className='w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-400 dark:focus:border-blue-400'
                 />
               </div>
             </div>
@@ -574,7 +578,7 @@ export default function PropertyForm({ property, mode }: PropertyFormProps) {
             <div className='flex items-center justify-between mb-2'>
               <label
                 htmlFor='description'
-                className='block text-sm font-medium text-gray-700'
+                className='block text-sm font-medium text-gray-700 dark:text-gray-300'
               >
                 Description
               </label>
@@ -583,12 +587,12 @@ export default function PropertyForm({ property, mode }: PropertyFormProps) {
                   type='button'
                   onClick={generateDescription}
                   disabled={isGeneratingDescription}
-                  className='inline-flex items-center px-3 py-1 text-xs font-medium text-blue-600 bg-blue-50 border border-blue-200 rounded-md hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed'
+                  className='inline-flex items-center px-3 py-1 text-xs font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-md hover:bg-blue-100 dark:hover:bg-blue-900/30 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-800 dark:focus:ring-blue-400 disabled:opacity-50 disabled:cursor-not-allowed'
                 >
                   {isGeneratingDescription ? (
                     <>
                       <svg
-                        className='animate-spin -ml-1 mr-2 h-3 w-3 text-blue-600'
+                        className='animate-spin -ml-1 mr-2 h-3 w-3 text-blue-600 dark:text-blue-400'
                         xmlns='http://www.w3.org/2000/svg'
                         fill='none'
                         viewBox='0 0 24 24'
@@ -621,17 +625,17 @@ export default function PropertyForm({ property, mode }: PropertyFormProps) {
               value={formData.description}
               onChange={handleInputChange}
               rows={4}
-              className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500'
+              className='w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-400 dark:focus:border-blue-400'
               placeholder='Describe the property features, amenities, and other details...'
             />
           </div>
 
           {/* Action Buttons */}
-          <div className='flex items-center justify-between pt-6 border-t border-gray-200'>
+          <div className='flex items-center justify-between pt-6 border-t border-gray-200 dark:border-gray-600'>
             <button
               type='button'
               onClick={() => router.back()}
-              className='px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'
+              className='px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-800 dark:focus:ring-blue-400'
             >
               Cancel
             </button>
@@ -639,7 +643,7 @@ export default function PropertyForm({ property, mode }: PropertyFormProps) {
             <button
               type='submit'
               disabled={loading}
-              className='px-6 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed'
+              className='px-6 py-2 text-sm font-medium text-white bg-blue-600 dark:bg-blue-700 border border-transparent rounded-md hover:bg-blue-700 dark:hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-800 dark:focus:ring-blue-400 disabled:opacity-50 disabled:cursor-not-allowed'
             >
               {loading
                 ? 'Saving...'

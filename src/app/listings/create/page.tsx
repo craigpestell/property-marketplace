@@ -19,10 +19,12 @@ export default function CreateListingPage() {
 
   if (status === 'loading') {
     return (
-      <section className='bg-white'>
+      <section className='bg-white dark:bg-gray-900'>
         <div className='layout min-h-screen py-12'>
           <div className='text-center'>
-            <div className='text-lg'>Loading...</div>
+            <div className='text-lg text-gray-900 dark:text-gray-100'>
+              Loading...
+            </div>
           </div>
         </div>
       </section>
@@ -34,7 +36,7 @@ export default function CreateListingPage() {
   }
 
   return (
-    <section className='bg-white'>
+    <section className='bg-white dark:bg-gray-900'>
       <div className='layout min-h-screen py-12'>
         <PropertyForm mode='create' />
       </div>

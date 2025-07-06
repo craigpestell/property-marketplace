@@ -34,13 +34,13 @@ const features = [
 
 export default function Features() {
   return (
-    <section className='py-16 bg-white'>
+    <section className='py-16 bg-white dark:bg-gray-900'>
       <div className='layout'>
         <div className='max-w-2xl mx-auto text-center mb-16'>
-          <h2 className='text-3xl font-bold text-gray-900 mb-4'>
+          <h2 className='text-3xl font-bold text-gray-900 dark:text-white mb-4'>
             Why Choose Real Estate Marketplace?
           </h2>
-          <p className='text-lg text-gray-600'>
+          <p className='text-lg text-gray-600 dark:text-gray-400'>
             Save thousands with our revolutionary 0.9% commission and get access
             to all properties with full-service support.
           </p>
@@ -50,14 +50,16 @@ export default function Features() {
           {features.map((feature) => (
             <div key={feature.name} className='text-center'>
               <div className='flex justify-center mb-4'>
-                <div className='flex items-center justify-center h-16 w-16 rounded-full bg-blue-100 text-blue-600'>
+                <div className='flex items-center justify-center h-16 w-16 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400'>
                   <feature.icon className='h-8 w-8' aria-hidden='true' />
                 </div>
               </div>
-              <h3 className='text-lg font-semibold text-gray-900 mb-2'>
+              <h3 className='text-lg font-semibold text-gray-900 dark:text-white mb-2'>
                 {feature.name}
               </h3>
-              <p className='text-gray-600'>{feature.description}</p>
+              <p className='text-gray-600 dark:text-gray-400'>
+                {feature.description}
+              </p>
             </div>
           ))}
         </div>
