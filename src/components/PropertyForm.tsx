@@ -31,8 +31,12 @@ export default function PropertyForm({ property, mode }: PropertyFormProps) {
     description: '',
   });
   const [imageFile, setImageFile] = React.useState<File | null>(null);
+  const [imagePreview, setImagePreview] = React.useState<string | null>(null);
   const [isGeneratingDescription, setIsGeneratingDescription] =
     React.useState(false);
+  const [isGeneratingSuggestions, setIsGeneratingSuggestions] =
+    React.useState(false);
+  const [suggestionsApplied, setSuggestionsApplied] = React.useState(false);
 
   React.useEffect(() => {
     if (property?.details) {
@@ -57,6 +61,15 @@ export default function PropertyForm({ property, mode }: PropertyFormProps) {
     }
   }, [property]);
 
+  // Cleanup image preview URL on unmount
+  React.useEffect(() => {
+    return () => {
+      if (imagePreview) {
+        URL.revokeObjectURL(imagePreview);
+      }
+    };
+  }, [imagePreview]);
+
   const handleInputChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
@@ -71,7 +84,12 @@ export default function PropertyForm({ property, mode }: PropertyFormProps) {
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      setImageFile(e.target.files[0]);
+      const file = e.target.files[0];
+      setImageFile(file);
+
+      // Create preview URL
+      const previewUrl = URL.createObjectURL(file);
+      setImagePreview(previewUrl);
     }
   };
 
@@ -117,6 +135,62 @@ export default function PropertyForm({ property, mode }: PropertyFormProps) {
       );
     } finally {
       setIsGeneratingDescription(false);
+    }
+  };
+
+  const generateSuggestions = async () => {
+    if (!imageFile) {
+      setError('Please select an image first');
+      return;
+    }
+
+    setIsGeneratingSuggestions(true);
+    setError(null);
+
+    try {
+      const formDataPayload = new FormData();
+      formDataPayload.append('image', imageFile);
+
+      const response = await fetch('/api/generate-suggestions', {
+        method: 'POST',
+        body: formDataPayload,
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Failed to generate suggestions');
+      }
+
+      const suggestions = result.suggestions;
+
+      // Update form data with suggestions
+      setFormData((prev) => ({
+        ...prev,
+        title: suggestions.title || prev.title,
+        propertyType: suggestions.propertyType || prev.propertyType,
+        bedrooms: suggestions.bedrooms?.toString() || prev.bedrooms,
+        bathrooms: suggestions.bathrooms?.toString() || prev.bathrooms,
+        squareFootage:
+          suggestions.squareFootage?.toString() || prev.squareFootage,
+        yearBuilt: suggestions.yearBuilt?.toString() || prev.yearBuilt,
+        price: suggestions.price?.toString() || prev.price,
+        description: suggestions.description || prev.description,
+      }));
+
+      // Show a success message
+      if (suggestions.confidence) {
+        setError(null);
+        setSuggestionsApplied(true);
+        // Auto-hide the success message after 5 seconds
+        setTimeout(() => setSuggestionsApplied(false), 5000);
+      }
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : 'Failed to generate suggestions',
+      );
+    } finally {
+      setIsGeneratingSuggestions(false);
     }
   };
 
@@ -202,11 +276,125 @@ export default function PropertyForm({ property, mode }: PropertyFormProps) {
           </div>
         )}
 
+        {suggestionsApplied && (
+          <div className='bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded mb-4'>
+            ✅ <strong>Suggestions applied!</strong> The form has been populated
+            with AI-generated property details based on your image. Please
+            review and adjust as needed.
+          </div>
+        )}
+
         <form
           onSubmit={handleSubmit}
           onKeyDown={handleKeyDown}
           className='space-y-6'
         >
+          {/* Image Upload - Moved to Top */}
+          <div className='bg-blue-50 border border-blue-200 rounded-lg p-6'>
+            <div className='flex items-center justify-between mb-4'>
+              <h3 className='text-lg font-semibold text-blue-900'>
+                Property Image
+              </h3>
+              {imageFile && (
+                <button
+                  type='button'
+                  onClick={generateSuggestions}
+                  disabled={isGeneratingSuggestions}
+                  className='inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed'
+                >
+                  {isGeneratingSuggestions ? (
+                    <>
+                      <svg
+                        className='animate-spin -ml-1 mr-2 h-4 w-4 text-white'
+                        xmlns='http://www.w3.org/2000/svg'
+                        fill='none'
+                        viewBox='0 0 24 24'
+                      >
+                        <circle
+                          className='opacity-25'
+                          cx='12'
+                          cy='12'
+                          r='10'
+                          stroke='currentColor'
+                          strokeWidth='4'
+                        ></circle>
+                        <path
+                          className='opacity-75'
+                          fill='currentColor'
+                          d='M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z'
+                        ></path>
+                      </svg>
+                      Analyzing Image...
+                    </>
+                  ) : (
+                    <>🤖 Generate Suggestions</>
+                  )}
+                </button>
+              )}
+            </div>
+
+            <div className='space-y-4'>
+              <div>
+                <label
+                  htmlFor='image'
+                  className='block text-sm font-medium text-gray-700 mb-2'
+                >
+                  Upload Property Image *{' '}
+                  {mode === 'edit' && '(leave empty to keep current image)'}
+                </label>
+                <input
+                  type='file'
+                  id='image'
+                  accept='image/*'
+                  onChange={handleImageChange}
+                  className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500'
+                />
+              </div>
+
+              {/* Image Preview */}
+              {imagePreview && (
+                <div className='mt-4'>
+                  <p className='text-sm font-medium text-gray-700 mb-2'>
+                    Preview:
+                  </p>
+                  <Image
+                    src={imagePreview}
+                    alt='Property preview'
+                    width={300}
+                    height={200}
+                    className='w-full max-w-md h-48 object-cover rounded-lg border border-gray-200'
+                  />
+                </div>
+              )}
+
+              {/* Current image for edit mode */}
+              {mode === 'edit' && property?.image_url && !imagePreview && (
+                <div className='mt-4'>
+                  <p className='text-sm font-medium text-gray-700 mb-2'>
+                    Current image:
+                  </p>
+                  <Image
+                    src={property.image_url}
+                    alt='Current property'
+                    width={300}
+                    height={200}
+                    className='w-full max-w-md h-48 object-cover rounded-lg border border-gray-200'
+                  />
+                </div>
+              )}
+
+              {/* Help text */}
+              {imageFile && (
+                <div className='bg-green-50 border border-green-200 rounded-md p-3'>
+                  <p className='text-sm text-green-800'>
+                    💡 <strong>Image uploaded!</strong> Click "Generate
+                    Suggestions" above to automatically fill in property details
+                    based on your image.
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
           {/* Basic Information */}
           <div>
             <h3 className='text-lg font-semibold mb-4'>Basic Information</h3>
@@ -376,36 +564,6 @@ export default function PropertyForm({ property, mode }: PropertyFormProps) {
             </div>
           </div>
 
-          {/* Image Upload */}
-          <div>
-            <label
-              htmlFor='image'
-              className='block text-sm font-medium text-gray-700 mb-2'
-            >
-              Property Image{' '}
-              {mode === 'edit' && '(leave empty to keep current image)'}
-            </label>
-            <input
-              type='file'
-              id='image'
-              accept='image/*'
-              onChange={handleImageChange}
-              className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500'
-            />
-            {mode === 'edit' && property?.image_url && (
-              <div className='mt-2'>
-                <p className='text-sm text-gray-600'>Current image:</p>
-                <Image
-                  src={property.image_url}
-                  alt='Current property'
-                  width={128}
-                  height={96}
-                  className='mt-1 w-32 h-24 object-cover rounded border'
-                />
-              </div>
-            )}
-          </div>
-
           {/* Description */}
           <div>
             <div className='flex items-center justify-between mb-2'>
@@ -461,12 +619,6 @@ export default function PropertyForm({ property, mode }: PropertyFormProps) {
               className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500'
               placeholder='Describe the property features, amenities, and other details...'
             />
-            {imageFile && !formData.description && (
-              <p className='mt-1 text-xs text-gray-500'>
-                💡 Image uploaded! Click "Generate from Image" above to
-                automatically create a description
-              </p>
-            )}
           </div>
 
           {/* Action Buttons */}

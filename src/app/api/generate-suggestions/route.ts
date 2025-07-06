@@ -117,7 +117,7 @@ export async function POST(request: NextRequest) {
       );
 
       try {
-        processedBuffer = await sharp(processedBuffer)
+        processedBuffer = await sharp(Buffer.from(bytes))
           .jpeg({ quality: 90 })
           .toBuffer();
       } catch (conversionError) {
@@ -137,7 +137,7 @@ export async function POST(request: NextRequest) {
     const base64Image = processedBuffer.toString('base64');
 
     // eslint-disable-next-line no-console
-    console.log('Processing image:', {
+    console.log('Processing image for property suggestions:', {
       fileName: imageFile.name,
       fileSize: imageFile.size,
       detectedMimeType: actualMimeType,
@@ -145,7 +145,7 @@ export async function POST(request: NextRequest) {
       base64Length: base64Image.length,
     });
 
-    // Generate description using Ollama Vision model
+    // Generate property suggestions using Ollama Vision model
     let retryCount = 0;
     const maxRetries = 2;
 
@@ -158,19 +158,26 @@ export async function POST(request: NextRequest) {
           },
           body: JSON.stringify({
             model: OLLAMA_MODEL,
-            prompt: `You are viewing a photograph of a real estate property. Write a compelling property description for a real estate listing based on what you can see in this property photograph.
+            prompt: `You are viewing a photograph of a real estate property. Analyze this property and provide specific suggestions for a real estate listing form based on THE PROPERTY you can see in the photograph.
 
-Focus on describing THE PROPERTY ITSELF, not the image:
+Look at the actual property in the photo and respond with a JSON object containing these fields:
 
-1. Property type and architectural style of this home/building
-2. Exterior features of this property (siding, roofing, windows, doors)  
-3. Landscaping and outdoor spaces of this property
-4. Overall condition and curb appeal of this property
-5. Notable features of this property that would attract buyers
+{
+  "title": "Suggested property title for this specific property (be specific and appealing based on what you see, e.g., 'Modern 3-Bedroom Colonial with Garden Views')",
+  "propertyType": "Choose one based on this property: house, apartment, condo, townhouse, or commercial",
+  "bedrooms": "Number of bedrooms you can estimate for this property (as integer, or null if unclear)",
+  "bathrooms": "Number of bathrooms you can estimate for this property (as number with decimals allowed, or null if unclear)",
+  "squareFootage": "Estimated square footage of this property (as integer, or null if unclear)",
+  "yearBuilt": "Estimated year this property was built based on its architectural style (as integer, or null if unclear)",
+  "price": "Suggested price range for this property based on its type and visible features (as integer, or null if unclear)",
+  "description": "Detailed description of this property focusing on what you can see",
+  "features": ["Array of notable features visible in this property"],
+  "confidence": "Your confidence level in these suggestions about this property (low/medium/high)"
+}
 
-Write as if you are describing the actual property for potential buyers. Use present tense and speak about the property directly (e.g., "This charming home features..." not "The image shows...").
+Focus on what you can actually see about this specific property. Be conservative with estimates when unclear. Provide realistic values based on this property's type and visible characteristics.
 
-Keep the description between 100-200 words. Write in a compelling, professional tone suitable for a real estate listing. Do not make assumptions about interior features you cannot see from the exterior.`,
+IMPORTANT: Respond ONLY with valid JSON. Do not include any other text before or after the JSON.`,
             images: [base64Image],
             stream: false,
           }),
@@ -219,13 +226,53 @@ Keep the description between 100-200 words. Write in a compelling, professional 
         }
 
         const result = await response.json();
-        const description = result.response;
+        let suggestions = result.response;
 
-        if (!description) {
-          throw new Error('No description returned from model');
+        if (!suggestions) {
+          throw new Error('No suggestions returned from model');
         }
 
-        return NextResponse.json({ description });
+        // Try to parse as JSON
+        try {
+          // Clean up the response - remove any markdown code blocks
+          suggestions = suggestions
+            .replace(/```json\n?/g, '')
+            .replace(/```\n?/g, '')
+            .trim();
+          const parsedSuggestions = JSON.parse(suggestions);
+
+          // Validate the response structure
+          if (
+            typeof parsedSuggestions !== 'object' ||
+            parsedSuggestions === null
+          ) {
+            throw new Error('Invalid suggestions format');
+          }
+
+          return NextResponse.json({ suggestions: parsedSuggestions });
+        } catch (parseError) {
+          // If JSON parsing fails, return the raw response as description
+          // eslint-disable-next-line no-console
+          console.warn(
+            'Failed to parse suggestions as JSON, using as description:',
+            parseError,
+          );
+
+          return NextResponse.json({
+            suggestions: {
+              title: 'Property Listing',
+              description: suggestions,
+              confidence: 'low',
+              features: [],
+              propertyType: null,
+              bedrooms: null,
+              bathrooms: null,
+              squareFootage: null,
+              yearBuilt: null,
+              price: null,
+            },
+          });
+        }
       } catch (fetchError) {
         if (
           retryCount < maxRetries &&
@@ -241,11 +288,11 @@ Keep the description between 100-200 words. Write in a compelling, professional 
     // Log error for debugging
     if (process.env.NODE_ENV === 'development') {
       // eslint-disable-next-line no-console
-      console.error('Error generating description:', error);
+      console.error('Error generating property suggestions:', error);
     }
 
     // Provide more specific error messages
-    let errorMessage = 'Failed to generate description';
+    let errorMessage = 'Failed to generate property suggestions';
 
     if (error instanceof Error) {
       if (error.message.includes('unable to make llava embedding from image')) {
