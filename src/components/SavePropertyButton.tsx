@@ -3,7 +3,7 @@ import { HeartIcon as HeartIconSolid } from '@heroicons/react/24/solid';
 import { useSession } from 'next-auth/react';
 import { useState } from 'react';
 
-import { useSavedProperties } from '@/hooks/useSavedProperties';
+import { useSavedProperties } from '@/contexts/SavedPropertiesContext';
 
 interface SavePropertyButtonProps {
   propertyUid: string;

@@ -3,10 +3,10 @@
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
 
-import { useSavedProperties } from '@/hooks/useSavedProperties';
-
 import PropertyCard from '@/components/PropertyCard';
 import Skeleton from '@/components/Skeleton';
+
+import { useSavedProperties } from '@/contexts/SavedPropertiesContext';
 
 export default function SavedPropertiesPage() {
   const { data: session, status } = useSession();

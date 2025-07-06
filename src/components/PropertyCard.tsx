@@ -2,6 +2,8 @@ import Link from 'next/link';
 
 import SavePropertyButton from '@/components/SavePropertyButton';
 
+import { useSavedProperties } from '@/contexts/SavedPropertiesContext';
+
 import { Property } from '@/types';
 
 interface PropertyCardProps {
@@ -9,10 +11,17 @@ interface PropertyCardProps {
 }
 
 export default function PropertyCard({ property }: PropertyCardProps) {
+  const { isPropertySaved } = useSavedProperties();
+  const isSaved = isPropertySaved(property.property_uid);
+
   return (
     <div className='bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 relative group'>
-      {/* Save button overlay */}
-      <div className='absolute top-3 right-3 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-200'>
+      {/* Save button overlay - show always if saved, or on hover if not saved */}
+      <div
+        className={`absolute top-3 right-3 z-10 transition-opacity duration-200 ${
+          isSaved ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+        }`}
+      >
         <SavePropertyButton
           propertyUid={property.property_uid}
           className='bg-white bg-opacity-90 hover:bg-opacity-100 p-2 rounded-full shadow-lg'
