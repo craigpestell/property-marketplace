@@ -243,12 +243,12 @@ export default function ProfileTab() {
           <div className='space-y-6'>
             <div className='bg-blue-50 dark:bg-blue-900/20 p-6 rounded-lg border border-blue-200 dark:border-blue-800'>
               <h3 className='text-lg font-semibold text-blue-900 dark:text-blue-100 mb-4'>
-                Account Statistics
+                Account Overview
               </h3>
               <div className='space-y-3'>
                 <div className='flex justify-between'>
                   <span className='text-blue-700 dark:text-blue-300'>
-                    Listed Properties:
+                    Property Listings:
                   </span>
                   <span className='font-medium text-blue-900 dark:text-blue-100'>
                     {profile?.propertyCount || 0}
@@ -262,28 +262,38 @@ export default function ProfileTab() {
                     Active
                   </span>
                 </div>
+                <div className='flex justify-between'>
+                  <span className='text-blue-700 dark:text-blue-300'>
+                    Profile Completion:
+                  </span>
+                  <span className='font-medium text-blue-900 dark:text-blue-100'>
+                    {profile?.name && profile?.email ? '100%' : '75%'}
+                  </span>
+                </div>
               </div>
             </div>
 
-            <div className='space-y-4'>
-              <h3 className='text-lg font-semibold text-gray-900 dark:text-white'>
-                Quick Actions
-              </h3>
-              <div className='space-y-2'>
-                <Link
-                  href='/listings/create'
-                  className='block w-full bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 text-white text-center px-4 py-2 rounded-lg transition-colors'
-                >
-                  Create New Listing
-                </Link>
-                <Link
-                  href='/listings'
-                  className='block w-full bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-900 dark:text-white text-center px-4 py-2 rounded-lg transition-colors'
-                >
-                  Browse Properties
-                </Link>
+            {!isEditing && (
+              <div className='space-y-4'>
+                <h3 className='text-lg font-semibold text-gray-900 dark:text-white'>
+                  Quick Actions
+                </h3>
+                <div className='space-y-2'>
+                  <Link
+                    href='/settings'
+                    className='block w-full bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-900 dark:text-white text-center px-4 py-2 rounded-lg transition-colors'
+                  >
+                    Account Settings
+                  </Link>
+                  <Link
+                    href='/help'
+                    className='block w-full bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-900 dark:text-white text-center px-4 py-2 rounded-lg transition-colors'
+                  >
+                    Help & Support
+                  </Link>
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
       )}

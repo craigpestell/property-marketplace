@@ -1,30 +1,57 @@
 'use client';
 
 import dynamic from 'next/dynamic';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 
-// Import the actual content from existing pages to avoid duplicating logic
-// Dynamically import to avoid SSR issues
-const ProfileContent = dynamic(() => import('@/app/profile/page'), {
+// Import the dashboard tab components
+const ProfileTab = dynamic(() => import('@/components/dashboard/ProfileTab'), {
   ssr: false,
 });
-const SettingsContent = dynamic(() => import('@/app/settings/page'), {
-  ssr: false,
-});
-const OffersContent = dynamic(() => import('@/app/offers/page'), {
-  ssr: false,
-});
-const NotificationsContent = dynamic(() => import('@/app/notifications/page'), {
-  ssr: false,
-});
+const SettingsTab = dynamic(
+  () => import('@/components/dashboard/SettingsTab'),
+  {
+    ssr: false,
+  },
+);
+const MyListingsTab = dynamic(
+  () => import('@/components/dashboard/MyListingsTab'),
+  {
+    ssr: false,
+  },
+);
+const MyOffersTab = dynamic(
+  () => import('@/components/dashboard/MyOffersTab'),
+  {
+    ssr: false,
+  },
+);
+const NotificationsTab = dynamic(
+  () => import('@/components/dashboard/NotificationsTab'),
+  {
+    ssr: false,
+  },
+);
+const SavedPropertiesTab = dynamic(
+  () => import('@/components/dashboard/SavedPropertiesTab'),
+  {
+    ssr: false,
+  },
+);
 
-type TabType = 'profile' | 'settings' | 'listings' | 'offers' | 'notifications';
+type TabType =
+  | 'profile'
+  | 'settings'
+  | 'listings'
+  | 'offers'
+  | 'notifications'
+  | 'saved';
 
 export default function DashboardPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [activeTab, setActiveTab] = useState<TabType>('profile');
 
   useEffect(() => {
@@ -32,6 +59,32 @@ export default function DashboardPage() {
       router.push('/login');
     }
   }, [status, router]);
+
+  const handleTabChange = (tabId: TabType) => {
+    setActiveTab(tabId);
+    // Update URL without page reload
+    const url = new URL(window.location.href);
+    url.searchParams.set('tab', tabId);
+    window.history.replaceState({}, '', url.toString());
+  };
+
+  // Handle URL tab parameter
+  useEffect(() => {
+    const tabParam = searchParams.get('tab') as TabType;
+    if (
+      tabParam &&
+      [
+        'profile',
+        'settings',
+        'listings',
+        'offers',
+        'notifications',
+        'saved',
+      ].includes(tabParam)
+    ) {
+      setActiveTab(tabParam);
+    }
+  }, [searchParams]);
 
   if (status === 'loading') {
     return (
@@ -151,7 +204,26 @@ export default function DashboardPage() {
             strokeLinecap='round'
             strokeLinejoin='round'
             strokeWidth={2}
-            d='M15 17h5l-5 5-5-5h5V3h2v14z'
+            d='M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9'
+          />
+        </svg>
+      ),
+    },
+    {
+      id: 'saved' as TabType,
+      name: 'Saved Properties',
+      icon: (
+        <svg
+          className='w-5 h-5'
+          fill='none'
+          stroke='currentColor'
+          viewBox='0 0 24 24'
+        >
+          <path
+            strokeLinecap='round'
+            strokeLinejoin='round'
+            strokeWidth={2}
+            d='M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z'
           />
         </svg>
       ),
@@ -167,7 +239,8 @@ export default function DashboardPage() {
             Dashboard
           </h1>
           <p className='text-gray-600 dark:text-gray-400'>
-            Manage your profile, listings, offers, and notifications
+            Manage your profile, settings, listings, offers, and saved
+            properties
           </p>
         </div>
 
@@ -178,7 +251,7 @@ export default function DashboardPage() {
               {tabs.map((tab) => (
                 <button
                   key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
+                  onClick={() => handleTabChange(tab.id)}
                   className={`group inline-flex items-center py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                     activeTab === tab.id
                       ? 'border-blue-500 text-blue-600 dark:text-blue-400'
@@ -195,43 +268,12 @@ export default function DashboardPage() {
 
         {/* Tab Content */}
         <div className='bg-white dark:bg-gray-800 rounded-lg shadow-sm min-h-[600px]'>
-          {activeTab === 'profile' && <ProfileContent />}
-          {activeTab === 'settings' && <SettingsContent />}
-          {activeTab === 'listings' && (
-            <div className='p-6'>
-              <div className='mb-6'>
-                <h2 className='text-2xl font-bold text-gray-900 dark:text-white mb-2'>
-                  My Listings
-                </h2>
-                <p className='text-gray-600 dark:text-gray-400'>
-                  View and manage your property listings from your profile page
-                  or create new ones.
-                </p>
-              </div>
-              <div className='space-y-4'>
-                <button
-                  onClick={() => router.push('/profile')}
-                  className='w-full bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 text-white px-6 py-3 rounded-lg transition-colors'
-                >
-                  View My Listings (Profile Page)
-                </button>
-                <button
-                  onClick={() => router.push('/listings/create')}
-                  className='w-full bg-green-600 hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-600 text-white px-6 py-3 rounded-lg transition-colors'
-                >
-                  Create New Listing
-                </button>
-                <button
-                  onClick={() => router.push('/listings')}
-                  className='w-full bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-900 dark:text-white px-6 py-3 rounded-lg transition-colors'
-                >
-                  Browse All Properties
-                </button>
-              </div>
-            </div>
-          )}
-          {activeTab === 'offers' && <OffersContent />}
-          {activeTab === 'notifications' && <NotificationsContent />}
+          {activeTab === 'profile' && <ProfileTab />}
+          {activeTab === 'settings' && <SettingsTab />}
+          {activeTab === 'listings' && <MyListingsTab />}
+          {activeTab === 'offers' && <MyOffersTab />}
+          {activeTab === 'notifications' && <NotificationsTab />}
+          {activeTab === 'saved' && <SavedPropertiesTab />}
         </div>
       </div>
     </div>

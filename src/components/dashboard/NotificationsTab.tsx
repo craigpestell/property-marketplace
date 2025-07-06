@@ -170,12 +170,6 @@ export default function NotificationsTab() {
               Stay updated with your property activity
             </p>
           </div>
-          <Link
-            href='/notifications'
-            className='text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 text-sm font-medium'
-          >
-            View Full Page →
-          </Link>
         </div>
       </div>
 

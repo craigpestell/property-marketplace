@@ -94,12 +94,6 @@ export default function Header() {
                   >
                     Test
                   </Link>
-                  <Link
-                    href='/notifications'
-                    className='hover:text-primary-200 dark:hover:text-primary-300 transition-colors text-primary-300 dark:text-gray-300'
-                  >
-                    Notifications
-                  </Link>
                 </div>
               </>
             )}
@@ -127,44 +121,34 @@ export default function Header() {
 
                   {isDropdownOpen && (
                     <div className='absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg py-1 z-50 border dark:border-gray-700'>
-                      <div className='px-4 py-2 text-sm text-gray-700 dark:text-gray-300 border-b dark:border-gray-700'>
-                        Welcome, {session.user?.name || session.user?.email}
-                      </div>
+                      {/* Account Management */}
                       <Link
                         href='/dashboard'
-                        className='block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+                        className='block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 font-medium'
                         onClick={() => setIsDropdownOpen(false)}
                       >
-                        Dashboard
+                        📊 Dashboard
                       </Link>
+
+                      {/* Divider */}
+                      <div className='border-t dark:border-gray-700 my-1'></div>
+
+                      {/* Quick Actions */}
+                      <div className='px-4 py-1 text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide'>
+                        Quick Actions
+                      </div>
                       <Link
-                        href='/profile'
+                        href='/listings/create'
                         className='block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
                         onClick={() => setIsDropdownOpen(false)}
                       >
-                        Profile
+                        ➕ Create Listing
                       </Link>
-                      <Link
-                        href='/offers'
-                        className='block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
-                        onClick={() => setIsDropdownOpen(false)}
-                      >
-                        My Offers
-                      </Link>
-                      <Link
-                        href='/saved-properties'
-                        className='block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
-                        onClick={() => setIsDropdownOpen(false)}
-                      >
-                        Saved Properties
-                      </Link>
-                      <Link
-                        href='/settings'
-                        className='block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
-                        onClick={() => setIsDropdownOpen(false)}
-                      >
-                        Settings
-                      </Link>
+
+                      {/* Divider */}
+                      <div className='border-t dark:border-gray-700 my-1'></div>
+
+                      {/* System Actions */}
                       <button
                         onClick={() => {
                           handleSignOut();
@@ -172,7 +156,7 @@ export default function Header() {
                         }}
                         className='block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
                       >
-                        Logout
+                        🚪 Logout
                       </button>
                     </div>
                   )}
@@ -264,13 +248,6 @@ export default function Header() {
                     >
                       Test
                     </Link>
-                    <Link
-                      href='/notifications'
-                      className='hover:text-primary-200 dark:hover:text-primary-300 transition-colors text-sm text-primary-300 dark:text-gray-400 block mt-2'
-                      onClick={() => setIsMenuOpen(false)}
-                    >
-                      Debug Notifications
-                    </Link>
                   </div>
                 </>
               )}
@@ -278,38 +255,38 @@ export default function Header() {
               {/* Mobile Auth Links */}
               {status === 'authenticated' ? (
                 <div className='flex flex-col space-y-3 pt-3 border-t border-primary-800 dark:border-gray-700'>
-                  <span className='text-sm text-primary-200 dark:text-gray-300'>
-                    Welcome, {session.user?.name || session.user?.email}
-                  </span>
+                  {/* Account Management */}
                   <Link
-                    href='/profile'
-                    className='hover:text-primary-200 dark:hover:text-primary-300 transition-colors'
+                    href='/dashboard'
+                    className='hover:text-primary-200 dark:hover:text-primary-300 transition-colors font-medium'
                     onClick={() => setIsMenuOpen(false)}
                   >
-                    Profile
+                    📊 Dashboard
                   </Link>
-                  <Link
-                    href='/saved-properties'
-                    className='hover:text-primary-200 dark:hover:text-primary-300 transition-colors'
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    Saved Properties
-                  </Link>
-                  <Link
-                    href='/settings'
-                    className='hover:text-primary-200 dark:hover:text-primary-300 transition-colors'
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    Settings
-                  </Link>
+
+                  {/* Quick Actions */}
+                  <div className='pt-2 border-t border-primary-700 dark:border-gray-600'>
+                    <div className='text-xs text-primary-300 dark:text-gray-400 mb-2 uppercase tracking-wide'>
+                      Quick Actions
+                    </div>
+                    <Link
+                      href='/listings/create'
+                      className='hover:text-primary-200 dark:hover:text-primary-300 transition-colors text-sm'
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      ➕ Create Listing
+                    </Link>
+                  </div>
+
+                  {/* System Actions */}
                   <button
                     onClick={() => {
                       handleSignOut();
                       setIsMenuOpen(false);
                     }}
-                    className='bg-primary-800 dark:bg-gray-700 hover:bg-primary-700 dark:hover:bg-gray-600 px-3 py-2 rounded transition-colors text-sm text-left'
+                    className='bg-primary-800 dark:bg-gray-700 hover:bg-primary-700 dark:hover:bg-gray-600 px-3 py-2 rounded transition-colors text-sm text-left mt-3'
                   >
-                    Logout
+                    🚪 Logout
                   </button>
                 </div>
               ) : (

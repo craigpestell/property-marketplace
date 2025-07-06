@@ -266,10 +266,10 @@ export default function ListingsPage() {
             {/* Filter Panel */}
             {showFilters && (
               <div className='bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6 mb-6'>
-                <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4'>
+                <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
                   {/* Price Range */}
-                  <div className='col-span-1 md:col-span-2'>
-                    <label className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2'>
+                  <div className='col-span-full md:col-span-2 lg:col-span-2 xl:col-span-2'>
+                    <label className='block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2'>
                       Price Range
                     </label>
                     <div className='flex items-center space-x-2'>
@@ -295,13 +295,13 @@ export default function ListingsPage() {
 
                   {/* Property Type */}
                   <div>
-                    <label className='block text-sm font-medium text-gray-700 mb-2'>
+                    <label className='block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2'>
                       Property Type
                     </label>
                     <select
                       value={propertyType}
                       onChange={(e) => setPropertyType(e.target.value)}
-                      className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500'
+                      className='w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500'
                     >
                       <option value=''>All Types</option>
                       <option value='house'>House</option>
@@ -314,13 +314,13 @@ export default function ListingsPage() {
 
                   {/* Bedrooms */}
                   <div>
-                    <label className='block text-sm font-medium text-gray-700 mb-2'>
+                    <label className='block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2'>
                       Bedrooms
                     </label>
                     <select
                       value={bedrooms}
                       onChange={(e) => setBedrooms(e.target.value)}
-                      className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500'
+                      className='w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500'
                     >
                       <option value=''>Any</option>
                       <option value='1'>1+</option>
@@ -333,13 +333,13 @@ export default function ListingsPage() {
 
                   {/* Bathrooms */}
                   <div>
-                    <label className='block text-sm font-medium text-gray-700 mb-2'>
+                    <label className='block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2'>
                       Bathrooms
                     </label>
                     <select
                       value={bathrooms}
                       onChange={(e) => setBathrooms(e.target.value)}
-                      className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500'
+                      className='w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500'
                     >
                       <option value=''>Any</option>
                       <option value='1'>1+</option>
@@ -351,13 +351,13 @@ export default function ListingsPage() {
 
                   {/* Sort By */}
                   <div>
-                    <label className='block text-sm font-medium text-gray-700 mb-2'>
+                    <label className='block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2'>
                       Sort By
                     </label>
                     <select
                       value={sortBy}
                       onChange={(e) => setSortBy(e.target.value)}
-                      className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500'
+                      className='w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500'
                     >
                       <option value='created_at'>Newest First</option>
                       <option value='price'>Price</option>
@@ -368,13 +368,13 @@ export default function ListingsPage() {
 
                   {/* Sort Order */}
                   <div>
-                    <label className='block text-sm font-medium text-gray-700 mb-2'>
+                    <label className='block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2'>
                       Order
                     </label>
                     <select
                       value={sortOrder}
                       onChange={(e) => setSortOrder(e.target.value)}
-                      className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500'
+                      className='w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500'
                     >
                       <option value='DESC'>
                         {sortBy === 'price' ? 'High to Low' : 'Descending'}
@@ -606,7 +606,7 @@ export default function ListingsPage() {
                 </div>
 
                 {/* Pagination Navigation */}
-                <div className='flex items-center justify-center gap-4'>
+                <div className='flex items-center justify-center gap-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg'>
                   {/* Pagination Buttons */}
                   <div className='flex items-center gap-2'>
                     {/* Previous Button */}
