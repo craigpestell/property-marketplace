@@ -21,6 +21,22 @@ export default function NotificationCenter() {
 
   const [isOpen, setIsOpen] = useState(false);
   const prevUnreadCountRef = useRef(unreadCount);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsOpen(false);
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   // Determine if notification is clickable and get link
   const getNotificationLink = (notification: Notification) => {
@@ -175,7 +191,10 @@ export default function NotificationCenter() {
 
       {/* Notification Dropdown */}
       {isOpen && (
-        <div className='absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg border border-gray-200 z-50'>
+        <div
+          ref={dropdownRef}
+          className='absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg border border-gray-200 z-50'
+        >
           {/* Header */}
           <div className='px-4 py-3 border-b border-gray-200 flex items-center justify-between'>
             <h3 className='text-lg font-semibold text-gray-900'>
