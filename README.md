@@ -1,107 +1,70 @@
-# Next.js + Tailwind CSS + TypeScript Starter and Boilerplate
+# Property Marketplace v2 🏠
 
 <div align="center">
-  <h2>🔋 ts-nextjs-tailwind-starter</h2>
-  <p>Next.js + Tailwind CSS + TypeScript starter packed with useful development features.</p>
-  <p>Made by <a href="https://theodorusclarence.com">Theodorus Clarence</a></p>
-
-[![GitHub Repo stars](https://img.shields.io/github/stars/theodorusclarence/ts-nextjs-tailwind-starter)](https://github.com/theodorusclarence/ts-nextjs-tailwind-starter/stargazers)
-[![Depfu](https://badges.depfu.com/badges/fc6e730632ab9dacaf7df478a08684a7/overview.svg)](https://depfu.com/github/theodorusclarence/ts-nextjs-tailwind-starter?project_id=30160)
-[![Last Update](https://img.shields.io/badge/deps%20update-every%20sunday-blue.svg)](https://shields.io/)
-
+  <h2>🤖 AI-Powered Property Marketplace</h2>
+  <p>A modern real estate platform with intelligent image analysis and automated property suggestions</p>
 </div>
 
-## Features
+## 🌟 Features
 
-This repository is 🔋 battery packed with:
+This property marketplace includes cutting-edge AI capabilities:
 
-- ⚡️ Next.js 14 with App Router
-- ⚛️ React 18
-- ✨ TypeScript
-- 💨 Tailwind CSS 3 — Configured with CSS Variables to extend the **primary** color
-- 💎 Pre-built Components — Components that will **automatically adapt** with your brand color, [check here for the demo](https://tsnext-tw.thcl.dev/components)
-- 🃏 Jest — Configured for unit testing
-- 📈 Absolute Import and Path Alias — Import components using `@/` prefix
-- 📏 ESLint — Find and fix problems in your code, also will **auto sort** your imports
-- 💖 Prettier — Format your code consistently
-- 🐶 Husky & Lint Staged — Run scripts on your staged files before they are committed
-- 🤖 Conventional Commit Lint — Make sure you & your teammates follow conventional commit
-- ⏰ Release Please — Generate your changelog by activating the `release-please` workflow
-- 👷 Github Actions — Lint your code on PR
-- 🚘 Automatic Branch and Issue Autolink — Branch will be automatically created on issue **assign**, and auto linked on PR
-- 🔥 Snippets — A collection of useful snippets
-- 👀 Open Graph Helper Function — Awesome open graph generated using [og](https://github.com/theodorusclarence/og), fork it and deploy!
-- 🗺 Site Map — Automatically generate sitemap.xml
-- 📦 Expansion Pack — Easily install common libraries, additional components, and configs.
+### 🤖 **AI-Powered Property Analysis**
 
-See the 👉 [feature details and changelog](https://github.com/theodorusclarence/ts-nextjs-tailwind-starter/blob/main/CHANGELOG.md) 👈 for more.
+- **Image Description Generation**: Upload property photos and get professional real estate descriptions
+- **Smart Property Suggestions**: AI analyzes images to suggest titles, pricing, features, and property details
+- **Location-Aware Pricing**: Automatic currency detection and market-appropriate pricing based on address
+- **Property-Focused Analysis**: AI descriptions focus on structural features, excluding furniture and temporary items
 
-You can also check all of the **details and demos** on my blog post:
+### 🌍 **Global Market Support**
 
-- [One-stop Starter to Maximize Efficiency on Next.js & Tailwind CSS Projects](https://theodorusclarence.com/blog/one-stop-starter)
+- **Multi-Currency Pricing**: Supports USD, EUR, GBP, CAD, and other major currencies
+- **Location Context**: AI considers local market conditions and regional property characteristics
+- **International Addresses**: Works with addresses from multiple countries
 
-## Getting Started
+### � **Technical Architecture**
 
-### 1. Clone this template using one of the three ways
+- **Next.js 14** with App Router and TypeScript
+- **Ollama Integration** for local AI processing with LLaVA vision model
+- **Advanced Image Processing** with Sharp (supports WebP, PNG, JPEG, GIF, BMP)
+- **Automatic Format Conversion** for optimal AI model compatibility
+- **Real-time Notifications** system for property updates
+- **UID-Based Architecture** for secure and scalable property management
 
-1. Use this repository as template
+### 🛡️ **Enterprise Features**
 
-   **Disclosure:** by using this repository as a template, there will be an attribution on your repository.
+- **Authentication System** with NextAuth.js
+- **Database Migration Scripts** for offer UID implementation
+- **Comprehensive Error Handling** with retry logic and validation
+- **Professional Development Workflow** with automated testing and deployment
 
-   I'll appreciate if you do, so this template can be known by others too 😄
+## 🚀 Quick Start
 
-   ![Use as template](https://user-images.githubusercontent.com/55318172/129183039-1a61e68d-dd90-4548-9489-7b3ccbb35810.png)
+### Prerequisites
 
-2. Using `create-next-app`
+- **Node.js** (v18 or later)
+- **pnpm** package manager
+- **Ollama** for AI functionality
 
-   ```bash
-   pnpm create next-app  -e https://github.com/theodorusclarence/ts-nextjs-tailwind-starter ts-pnpm
-   ```
+### Installation
 
-   If you still want to use **pages directory** (_is not actively maintained_) you can use this command
+1. **Clone the repository**:
 
    ```bash
-   npx create-next-app -e https://github.com/theodorusclarence/ts-nextjs-tailwind-starter/tree/pages-directory project-name
+   git clone https://github.com/craigpestell/property-marketplace.git
+   cd property-marketplace-v2
    ```
 
-3. Using `degit`
+2. **Install dependencies**:
 
    ```bash
-   npx degit theodorusclarence/ts-nextjs-tailwind-starter YOUR_APP_NAME
+   pnpm install
    ```
 
-4. Deploy to Vercel
-
-   [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/git/external?repository-url=https%3A%2F%2Fgithub.com%2Ftheodorusclarence%2Fts-nextjs-tailwind-starter)
-
-### 2. Install dependencies
-
-It is encouraged to use **pnpm** so the husky hooks can work properly.
-
-```bash
-pnpm install
-```
-
-### 3. Run the development server
-
-You can start the server using this command:
-
-```bash
-pnpm dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result. You can start editing the page by modifying `src/pages/index.tsx`.
-
-## Development Scripts
-
-This project includes several helpful development scripts for managing the AI-powered property marketplace:
-
-### Quick Start (Recommended)
-
-```bash
-# Start all services (Ollama + Next.js dev server) with one command
-./start-dev.sh
-```
+3. **Start development environment** (one command does everything):
+   ```bash
+   ./start-dev.sh
+   ```
 
 This script will:
 
@@ -111,19 +74,28 @@ This script will:
 - ⚡ Start the Next.js development server
 - 🔧 Install dependencies if needed
 
-### Other Development Commands
+## 🛠️ Development Scripts
+
+### Core Development Commands
 
 ```bash
+# Start all services (Ollama + Next.js dev server)
+./start-dev.sh
+
 # Check status of all services
 ./status-dev.sh
 
 # Stop all development services
 ./stop-dev.sh
+```
 
+### API Testing
+
+```bash
 # Test the AI image description API
 ./test-description-api.sh
 
-# Test the AI property suggestions API
+# Test the AI property suggestions API (includes currency testing)
 ./test-suggestions-api.sh
 ```
 
@@ -131,67 +103,158 @@ This script will:
 
 If you prefer to start services manually:
 
-1. **Start Ollama** (required for AI features):
+1. **Install Ollama**:
+
+   ```bash
+   # macOS
+   brew install ollama
+
+   # Or download from https://ollama.ai/download
+   ```
+
+2. **Start Ollama**:
 
    ```bash
    ollama serve
    ```
 
-2. **Pull the required AI model**:
+3. **Pull the required AI model**:
 
    ```bash
    ollama pull llava:latest
    ```
 
-3. **Start Next.js dev server**:
+4. **Start Next.js dev server**:
    ```bash
    pnpm dev
    ```
 
-### Prerequisites
+## 🎯 AI Features in Detail
 
-- **Ollama**: Install from [ollama.ai](https://ollama.ai/download) or via Homebrew:
-  ```bash
-  brew install ollama
-  ```
-- **Node.js & pnpm**: Required for the Next.js application
+### Image Description API (`/api/generate-description`)
 
-### 4. Change defaults
+Generates professional real estate descriptions from property photos:
 
-There are some things you need to change including title, urls, favicons, etc.
+```typescript
+// Example usage
+const formData = new FormData();
+formData.append('image', imageFile);
 
-Find all comments with !STARTERCONF, then follow the guide.
+const response = await fetch('/api/generate-description', {
+  method: 'POST',
+  body: formData,
+});
 
-Don't forget to change the package name in package.json
+const { description } = await response.json();
+```
 
-### 5. Commit Message Convention
+**Features:**
 
-This starter is using [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/), it is mandatory to use it to commit changes.
+- Automatic image format conversion (WebP, GIF, BMP → JPEG)
+- Professional real estate writing style
+- Focus on permanent property features
+- Error handling with retry logic
 
-## Projects using ts-nextjs-tailwind-starter
+### Property Suggestions API (`/api/generate-suggestions`)
 
-<!--
-TEMPLATE
-- [sitename](https://sitelink.com) ([Source](https://github.com/githublink))
-- [sitename](https://sitelink.com)
--->
+Analyzes property images to suggest listing details:
 
-- [theodorusclarence.com](https://theodorusclarence.com) ([Source](https://github.com/theodorusclarence/theodorusclarence.com))
-- [Notiolink](https://notiolink.thcl.dev/) ([Source](https://github.com/theodorusclarence/notiolink))
-- [NextJs + Materia UI + Typescript](https://github.com/AlexStack/nextjs-materia-mui-typescript-hook-form-scaffold-boilerplate-starter)
+```typescript
+// Example usage with location context
+const formData = new FormData();
+formData.append('image', imageFile);
+formData.append('address', '123 Main St, San Francisco, CA 94102, USA');
 
-Are you using this starter? Please add your page (and repo) to the end of the list via a [Pull Request](https://github.com/theodorusclarence/ts-nextjs-tailwind-starter/edit/main/README.md). 😃
+const response = await fetch('/api/generate-suggestions', {
+  method: 'POST',
+  body: formData,
+});
 
-## Expansion Pack 📦
+const { suggestions } = await response.json();
+// Returns: title, propertyType, bedrooms, bathrooms, price, currency, etc.
+```
 
-This starter is now equipped with an [expansion pack](https://github.com/theodorusclarence/expansion-pack).
+**Features:**
 
-You can easily add expansion such as React Hook Form + Components, Storybook, and more just using a single command line.
+- Location-aware pricing in local currency
+- Structured JSON response with property details
+- Confidence scoring for suggestions
+- Market-appropriate feature recommendations
 
-<https://user-images.githubusercontent.com/55318172/146631994-e1cac137-1664-4cfe-950b-a96decc1eaa6.mp4>
+## 🏗️ Architecture Highlights
 
-Check out the [expansion pack repository](https://github.com/theodorusclarence/expansion-pack) for the commands
+### Offer UID System
 
-### App Router Update
+Migrated from integer IDs to secure UIDs for all offer-related operations:
 
-Due to App Router update, the expansion pack is currently **outdated**. It will be updated in the future. You can still use them by copy and pasting the files.
+- **Database Schema**: Added `offer_uid` columns with proper indexing
+- **API Endpoints**: All routes now use UID-based parameters
+- **Frontend Components**: Updated to handle UID routing and display
+- **Migration Scripts**: Automated migration from legacy `offer_id` system
+
+### Image Processing Pipeline
+
+Robust image handling with multiple format support:
+
+```typescript
+// Automatic format detection and conversion
+const supportedTypes = [
+  'image/jpeg',
+  'image/png',
+  'image/webp',
+  'image/gif',
+  'image/bmp',
+];
+// WebP/GIF/BMP automatically converted to JPEG for AI compatibility
+```
+
+### Real-time Notifications
+
+Event-driven notification system:
+
+- **Server-Sent Events** for real-time updates
+- **Toast Notifications** with user interaction
+- **Notification Center** with filtering and management
+- **Database Integration** for persistent notification storage
+
+## 🧪 Testing
+
+The project includes comprehensive testing scripts:
+
+- **API Validation**: Automated testing of both AI endpoints
+- **Multi-Format Support**: Tests PNG, WebP, and error cases
+- **Currency Testing**: Validates pricing in multiple currencies (USD, EUR, GBP, CAD)
+- **Error Handling**: Tests invalid inputs and edge cases
+
+## 🌍 Global Deployment Ready
+
+- **Multi-Currency Support**: USD, EUR, GBP, CAD, and more
+- **Location Intelligence**: Market-aware pricing and features
+- **Professional Quality**: Real estate industry-standard descriptions
+- **Scalable Architecture**: UID-based system for enterprise use
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature/amazing-feature`
+3. Commit your changes: `git commit -m 'feat: add amazing feature'`
+4. Push to the branch: `git push origin feature/amazing-feature`
+5. Open a Pull Request
+
+### Development Workflow
+
+- Use `./start-dev.sh` for development
+- Run tests with `./test-description-api.sh` and `./test-suggestions-api.sh`
+- Follow conventional commit format
+- Ensure all AI features work before submitting PRs
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- **Ollama** for local AI model hosting
+- **LLaVA** for vision-language capabilities
+- **Next.js** team for the excellent framework
+- **Sharp** for robust image processing
