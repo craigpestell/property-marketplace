@@ -62,8 +62,10 @@ export default function OfferFlowDemoPage() {
             type: 'offer_accepted',
             title: 'Offer Accepted!',
             message:
-              'Great news! Your offer on the Modern Downtown Condo has been accepted.',
+              'Great news! Your offer on the Modern Downtown Condo has been accepted. Click to view the offer details.',
             priority: 'high',
+            related_offer_id: 1,
+            related_property_uid: 'SEED-PROP-001',
             metadata: {
               property_uid: 'SEED-PROP-001',
               offer_amount: 285000,
@@ -74,7 +76,7 @@ export default function OfferFlowDemoPage() {
         if (notificationResponse.ok) {
           showSuccess(
             'Real Notification Created',
-            'A real notification has been added to your notification center',
+            'A clickable offer notification has been added to your notification center - try clicking it!',
           );
         }
       } catch (error) {
@@ -100,24 +102,30 @@ export default function OfferFlowDemoPage() {
       {
         type: 'offer_received',
         title: 'New Offer Received',
-        message: 'You have received a new offer on your Luxury Villa property.',
+        message:
+          'You have received a new offer on your Luxury Villa property. Click to view the offer details.',
         priority: 'high',
+        related_offer_id: 2,
+        related_property_uid: 'SEED-PROP-002',
         metadata: { property_uid: 'SEED-PROP-002', offer_amount: 850000 },
       },
       {
         type: 'offer_countered',
         title: 'Counter Offer',
         message:
-          'The seller has made a counter offer on your Cozy Suburban Home offer.',
+          'The seller has made a counter offer on your Cozy Suburban Home offer. Click to view the updated offer.',
         priority: 'normal',
+        related_offer_id: 3,
+        related_property_uid: 'SEED-PROP-003',
         metadata: { property_uid: 'SEED-PROP-003', offer_amount: 425000 },
       },
       {
         type: 'reminder',
         title: 'Inspection Reminder',
         message:
-          "Don't forget: Your property inspection is scheduled for tomorrow.",
+          "Don't forget: Your property inspection is scheduled for tomorrow. Click to view property details.",
         priority: 'normal',
+        related_property_uid: 'SEED-PROP-004',
         metadata: { property_uid: 'SEED-PROP-004' },
       },
     ];
@@ -143,7 +151,7 @@ export default function OfferFlowDemoPage() {
 
     showSuccess(
       'Test Notifications Created',
-      'Multiple test notifications have been added to your notification center',
+      'Multiple test notifications have been added - some link to offers, others to properties!',
     );
   };
 
@@ -229,6 +237,7 @@ export default function OfferFlowDemoPage() {
                       <li>• Server-Sent Events (SSE)</li>
                       <li>• Notification center updates</li>
                       <li>• Unread count in header</li>
+                      <li>• Clickable property links</li>
                       <li>• Database persistence</li>
                     </ul>
                   </div>
@@ -241,6 +250,7 @@ export default function OfferFlowDemoPage() {
                       <li>• Automatic notification creation</li>
                       <li>• Property owner alerts</li>
                       <li>• Offer status tracking</li>
+                      <li>• Direct navigation to properties</li>
                       <li>• Email integration ready</li>
                     </ul>
                   </div>
@@ -269,12 +279,16 @@ export default function OfferFlowDemoPage() {
                     toast sequence
                   </li>
                   <li>
-                    Click "Create Test Notifications" to add notifications to
-                    your notification center
+                    Click "Create Test Notifications" to add clickable
+                    notifications to your notification center
                   </li>
                   <li>
                     Check the bell icon in the header for your notification
                     count
+                  </li>
+                  <li>
+                    Click on notifications with property links to navigate
+                    directly to the property page
                   </li>
                   <li>
                     Try submitting an actual offer on a property to see the real

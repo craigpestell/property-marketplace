@@ -71,7 +71,7 @@ function ToastNotification({ toast, onClose }: ToastNotificationProps) {
       }`}
     >
       <div
-        className={`max-w-sm w-full bg-white shadow-lg rounded-lg pointer-events-auto border-l-4 ${getBorderColor()}`}
+        className={`w-full bg-white shadow-lg rounded-lg pointer-events-auto border-l-4 ${getBorderColor()}`}
       >
         <div className='p-4'>
           <div className='flex items-start'>
@@ -108,7 +108,7 @@ export default function ToastContainer({
   onClose,
 }: ToastContainerProps) {
   return (
-    <div className='fixed top-4 right-4 z-50 space-y-4'>
+    <div className='fixed top-4 right-4 sm:right-6 z-50 space-y-4 w-80 sm:w-96'>
       {toasts.map((toast) => (
         <ToastNotification key={toast.id} toast={toast} onClose={onClose} />
       ))}

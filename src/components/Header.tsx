@@ -6,11 +6,13 @@ import {
   UserCircleIcon,
   XMarkIcon,
 } from '@heroicons/react/24/outline';
-import Link from 'next/link';
 import { signOut, useSession } from 'next-auth/react';
+import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 
-import NotificationCenter from './NotificationCenter';
+import { showDebugFeatures } from '@/lib/debug';
+
+import NotificationCenter from '@/components/NotificationCenter';
 
 export default function Header() {
   const { data: session, status } = useSession();
@@ -67,6 +69,42 @@ export default function Header() {
             >
               About
             </Link>
+            <Link
+              href='/notifications'
+              className='hover:text-primary-200 transition-colors'
+            >
+              Notifications
+            </Link>
+
+            {/* Debug Links - Only visible to test users */}
+            {showDebugFeatures(session?.user?.email) && (
+              <>
+                <span className='text-primary-400'>|</span>
+                <div className='flex items-center space-x-3 text-xs bg-primary-800 px-3 py-1 rounded'>
+                  <span className='text-primary-300 uppercase tracking-wide'>
+                    Debug
+                  </span>
+                  <Link
+                    href='/demo'
+                    className='hover:text-primary-200 transition-colors text-primary-300'
+                  >
+                    Demo
+                  </Link>
+                  <Link
+                    href='/test'
+                    className='hover:text-primary-200 transition-colors text-primary-300'
+                  >
+                    Test
+                  </Link>
+                  <Link
+                    href='/notifications'
+                    className='hover:text-primary-200 transition-colors text-primary-300'
+                  >
+                    Notifications
+                  </Link>
+                </div>
+              </>
+            )}
 
             {/* Auth Links */}
             {status === 'loading' ? (
@@ -184,6 +222,45 @@ export default function Header() {
               >
                 About
               </Link>
+              <Link
+                href='/notifications'
+                className='hover:text-primary-200 transition-colors'
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Notifications
+              </Link>
+
+              {/* Debug Links - Only visible to test users (Mobile) */}
+              {showDebugFeatures(session?.user?.email) && (
+                <>
+                  <div className='border-t border-primary-700 pt-3 mt-3'>
+                    <div className='text-xs text-primary-300 mb-2 uppercase tracking-wide'>
+                      Debug
+                    </div>
+                    <Link
+                      href='/demo'
+                      className='hover:text-primary-200 transition-colors text-sm text-primary-300 block'
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      Demo
+                    </Link>
+                    <Link
+                      href='/test'
+                      className='hover:text-primary-200 transition-colors text-sm text-primary-300 block mt-2'
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      Test
+                    </Link>
+                    <Link
+                      href='/notifications'
+                      className='hover:text-primary-200 transition-colors text-sm text-primary-300 block mt-2'
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      Debug Notifications
+                    </Link>
+                  </div>
+                </>
+              )}
 
               {/* Mobile Auth Links */}
               {status === 'authenticated' ? (

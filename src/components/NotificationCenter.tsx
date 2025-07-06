@@ -22,6 +22,61 @@ export default function NotificationCenter() {
   const [isOpen, setIsOpen] = useState(false);
   const prevUnreadCountRef = useRef(unreadCount);
 
+  // Determine if notification is clickable and get link
+  const getNotificationLink = (notification: Notification) => {
+    if (notification.related_offer_id) {
+      return `/offers`;
+    }
+    if (notification.related_property_uid) {
+      return `/property/${notification.related_property_uid}`;
+    }
+    return null;
+  };
+
+  // Get hint text for clickable notifications
+  const getClickHintText = (notification: Notification) => {
+    if (notification.related_offer_id) {
+      return 'Click to view offers';
+    }
+    if (notification.related_property_uid) {
+      return 'Click to view property';
+    }
+    return null;
+  };
+
+  // Handle notification click
+  const handleNotificationClick = async (notification: Notification) => {
+    const link = getNotificationLink(notification);
+    if (!link) return;
+
+    try {
+      // Mark as read when clicked
+      if (!notification.read_at) {
+        await markAsRead([notification.notification_id]);
+      }
+
+      // Close dropdown
+      setIsOpen(false);
+
+      // Simple navigation
+      window.location.href = link;
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('Error handling notification click:', error);
+    }
+  };
+
+  // Handle keyboard navigation
+  const handleKeyDown = (
+    notification: Notification,
+    e: React.KeyboardEvent,
+  ) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      handleNotificationClick(notification);
+    }
+  };
+
   // Show toast notifications for new notifications
   useEffect(() => {
     if (prevUnreadCountRef.current < unreadCount && unreadCount > 0) {
@@ -168,68 +223,112 @@ export default function NotificationCenter() {
               </div>
             ) : (
               <div className='divide-y divide-gray-200'>
-                {notifications.map((notification) => (
-                  <div
-                    key={notification.notification_id}
-                    className={`px-4 py-3 hover:bg-gray-50 transition-colors ${
-                      !notification.read_at
-                        ? 'bg-blue-50 border-l-4 border-blue-400'
-                        : ''
-                    }`}
-                  >
-                    <div className='flex items-start space-x-3'>
-                      <div className='text-2xl'>
-                        {getNotificationIcon(notification.type)}
-                      </div>
+                {notifications.map((notification) => {
+                  const notificationLink = getNotificationLink(notification);
+                  const isClickable = !!notificationLink;
 
-                      <div className='flex-1 min-w-0'>
-                        <div className='flex items-start justify-between'>
-                          <div className='flex-1'>
-                            <p className='text-sm font-medium text-gray-900'>
-                              {notification.title}
-                            </p>
-                            <p className='text-sm text-gray-600 mt-1'>
-                              {notification.message}
-                            </p>
-                            <div className='flex items-center space-x-2 mt-2'>
-                              <span
-                                className={`inline-block px-2 py-1 text-xs rounded-full border ${getPriorityColor(
-                                  notification.priority,
-                                )}`}
-                              >
-                                {notification.priority}
-                              </span>
-                              <span className='text-xs text-gray-500'>
-                                {formatTimeAgo(notification.created_at)}
-                              </span>
-                            </div>
+                  return (
+                    <div key={notification.notification_id} className='group'>
+                      <div
+                        className={`px-4 py-3 transition-colors ${
+                          isClickable
+                            ? 'hover:bg-blue-50 cursor-pointer border-l-2 border-transparent hover:border-blue-400'
+                            : 'hover:bg-gray-50'
+                        } ${
+                          !notification.read_at
+                            ? 'bg-blue-50 border-l-4 border-blue-400'
+                            : ''
+                        }`}
+                        onClick={
+                          isClickable
+                            ? () => handleNotificationClick(notification)
+                            : undefined
+                        }
+                        role={isClickable ? 'button' : undefined}
+                        tabIndex={isClickable ? 0 : undefined}
+                        onKeyDown={
+                          isClickable
+                            ? (e) => handleKeyDown(notification, e)
+                            : undefined
+                        }
+                      >
+                        <div className='flex items-start space-x-3'>
+                          <div className='text-2xl'>
+                            {getNotificationIcon(notification.type)}
                           </div>
 
-                          {!notification.read_at && (
-                            <button
-                              onClick={() =>
-                                handleMarkAsRead(notification.notification_id)
-                              }
-                              className='ml-2 p-1 text-gray-400 hover:text-gray-600'
-                              title='Mark as read'
-                            >
-                              <CheckIcon className='h-4 w-4' />
-                            </button>
-                          )}
+                          <div className='flex-1 min-w-0'>
+                            <div className='flex items-start justify-between'>
+                              <div className='flex-1'>
+                                <p
+                                  className={`text-sm font-medium text-gray-900 ${
+                                    isClickable
+                                      ? 'text-blue-600 group-hover:text-blue-700'
+                                      : ''
+                                  }`}
+                                >
+                                  {notification.title}
+                                  {isClickable && (
+                                    <span className='ml-1 text-blue-500 opacity-75 group-hover:opacity-100'>
+                                      →
+                                    </span>
+                                  )}
+                                </p>
+                                <p className='text-sm text-gray-600 mt-1'>
+                                  {notification.message}
+                                </p>
+                                <div className='flex items-center space-x-2 mt-2'>
+                                  <span
+                                    className={`inline-block px-2 py-1 text-xs rounded-full border ${getPriorityColor(
+                                      notification.priority,
+                                    )}`}
+                                  >
+                                    {notification.priority}
+                                  </span>
+                                  <span className='text-xs text-gray-500'>
+                                    {formatTimeAgo(notification.created_at)}
+                                  </span>
+                                  {isClickable && (
+                                    <span className='text-xs text-blue-600 font-medium group-hover:text-blue-700'>
+                                      {getClickHintText(notification)}
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+
+                              {!notification.read_at && (
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleMarkAsRead(
+                                      notification.notification_id,
+                                    );
+                                  }}
+                                  className='ml-2 p-1 text-gray-400 hover:text-gray-600'
+                                  title='Mark as read'
+                                >
+                                  <CheckIcon className='h-4 w-4' />
+                                </button>
+                              )}
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             )}
           </div>
 
           {/* Footer */}
           <div className='px-4 py-3 border-t border-gray-200 bg-gray-50 rounded-b-lg'>
-            <button className='text-sm text-primary-600 hover:text-primary-700 font-medium'>
+            <a
+              href='/notifications'
+              className='text-sm text-primary-600 hover:text-primary-700 font-medium'
+            >
               View all notifications
-            </button>
+            </a>
           </div>
         </div>
       )}

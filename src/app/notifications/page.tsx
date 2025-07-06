@@ -1,0 +1,278 @@
+'use client';
+
+import Link from 'next/link';
+import { useSession } from 'next-auth/react';
+import { useEffect, useState } from 'react';
+
+interface Notification {
+  notification_id: number;
+  title: string;
+  message: string;
+  type: string;
+  related_offer_id?: number;
+  related_property_uid?: string;
+  priority: string;
+  created_at: string;
+  read_at?: string;
+}
+
+export default function NotificationsPage() {
+  const { data: session } = useSession();
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!session?.user?.email) {
+      setLoading(false);
+      return;
+    }
+
+    const fetchNotifications = async () => {
+      try {
+        const response = await fetch('/api/notifications');
+        if (!response.ok) {
+          throw new Error('Failed to fetch notifications');
+        }
+        const data = await response.json();
+        setNotifications(data.notifications || []);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Unknown error');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchNotifications();
+  }, [session]);
+
+  // Generate link for notification
+  const getNotificationLink = (notification: Notification) => {
+    if (notification.related_offer_id) {
+      return `/offers`;
+    }
+    if (notification.related_property_uid) {
+      return `/property/${notification.related_property_uid}`;
+    }
+    return null;
+  };
+
+  const formatTimeAgo = (dateString: string) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+
+    if (diffInSeconds < 60) return 'Just now';
+    if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`;
+    if (diffInSeconds < 86400)
+      return `${Math.floor(diffInSeconds / 3600)}h ago`;
+    return `${Math.floor(diffInSeconds / 86400)}d ago`;
+  };
+
+  const getNotificationIcon = (type: string) => {
+    switch (type) {
+      case 'offer_received':
+        return '💰';
+      case 'offer_accepted':
+        return '✅';
+      case 'offer_rejected':
+        return '❌';
+      case 'offer_countered':
+        return '🔄';
+      case 'offer_withdrawn':
+        return '↩️';
+      case 'offer_expired':
+        return '⏰';
+      case 'system':
+        return '🔔';
+      case 'reminder':
+        return '📅';
+      default:
+        return '📄';
+    }
+  };
+
+  const getPriorityColor = (priority: string) => {
+    switch (priority) {
+      case 'urgent':
+        return 'bg-red-100 border-red-200 text-red-800';
+      case 'high':
+        return 'bg-orange-100 border-orange-200 text-orange-800';
+      case 'normal':
+        return 'bg-blue-100 border-blue-200 text-blue-800';
+      case 'low':
+        return 'bg-gray-100 border-gray-200 text-gray-800';
+      default:
+        return 'bg-blue-100 border-blue-200 text-blue-800';
+    }
+  };
+
+  if (!session?.user?.email) {
+    return (
+      <div className='container mx-auto px-4 py-8'>
+        <div className='max-w-2xl mx-auto text-center'>
+          <h1 className='text-3xl font-bold text-gray-900 mb-4'>
+            Notifications
+          </h1>
+          <p className='text-gray-600'>
+            Please sign in to view your notifications.
+          </p>
+          <Link
+            href='/auth/signin'
+            className='inline-block mt-4 px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600'
+          >
+            Sign In
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className='container mx-auto px-4 py-8'>
+      <div className='max-w-4xl mx-auto'>
+        {/* Header */}
+        <div className='flex justify-between items-center mb-8'>
+          <h1 className='text-3xl font-bold text-gray-900'>
+            All Notifications
+          </h1>
+          <Link
+            href='/'
+            className='px-4 py-2 text-gray-600 hover:text-gray-800 border border-gray-300 rounded hover:border-gray-400'
+          >
+            ← Back to Home
+          </Link>
+        </div>
+
+        {/* Content */}
+        {loading ? (
+          <div className='text-center py-12'>
+            <div className='text-gray-500'>Loading notifications...</div>
+          </div>
+        ) : error ? (
+          <div className='text-center py-12'>
+            <div className='text-red-600'>Error: {error}</div>
+            <button
+              onClick={() => window.location.reload()}
+              className='mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600'
+            >
+              Retry
+            </button>
+          </div>
+        ) : notifications.length === 0 ? (
+          <div className='text-center py-12'>
+            <div className='text-gray-500 mb-4'>No notifications yet</div>
+            <Link
+              href='/demo'
+              className='px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600'
+            >
+              Create Test Notifications
+            </Link>
+          </div>
+        ) : (
+          <div className='space-y-4'>
+            {notifications.map((notification) => {
+              const link = getNotificationLink(notification);
+              const isClickable = !!link;
+
+              return (
+                <div
+                  key={notification.notification_id}
+                  className={`p-6 border rounded-lg ${
+                    !notification.read_at
+                      ? 'bg-blue-50 border-blue-200'
+                      : 'bg-white border-gray-200'
+                  } ${
+                    isClickable ? 'hover:bg-blue-100 transition-colors' : ''
+                  }`}
+                >
+                  <div className='flex items-start space-x-4'>
+                    {/* Icon */}
+                    <div className='text-3xl flex-shrink-0'>
+                      {getNotificationIcon(notification.type)}
+                    </div>
+
+                    {/* Content */}
+                    <div className='flex-1 min-w-0'>
+                      <div className='flex items-start justify-between mb-2'>
+                        <h3 className='text-lg font-semibold text-gray-900'>
+                          {notification.title}
+                        </h3>
+                        <div className='flex items-center space-x-2'>
+                          <span
+                            className={`px-2 py-1 text-xs rounded-full ${getPriorityColor(notification.priority)}`}
+                          >
+                            {notification.priority}
+                          </span>
+                          {!notification.read_at && (
+                            <span className='px-2 py-1 text-xs bg-blue-500 text-white rounded-full'>
+                              New
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
+                      <p className='text-gray-600 mb-4'>
+                        {notification.message}
+                      </p>
+
+                      <div className='flex items-center justify-between'>
+                        <div className='text-sm text-gray-500'>
+                          {formatTimeAgo(notification.created_at)}
+                        </div>
+
+                        {/* Debug info */}
+                        <div className='text-xs text-gray-400'>
+                          Offer ID: {notification.related_offer_id || 'none'} |
+                          Property UID:{' '}
+                          {notification.related_property_uid || 'none'}
+                        </div>
+                      </div>
+
+                      {/* Action buttons */}
+                      <div className='mt-4 flex space-x-2'>
+                        {isClickable ? (
+                          <>
+                            {/* Test different navigation methods */}
+                            <Link
+                              href={link}
+                              className='px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 text-sm'
+                            >
+                              Go with Link (
+                              {notification.related_offer_id
+                                ? 'Offer'
+                                : 'Property'}
+                              )
+                            </Link>
+                            <button
+                              onClick={() => (window.location.href = link)}
+                              className='px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 text-sm'
+                            >
+                              Go with window.location
+                            </button>
+                            <button
+                              onClick={() =>
+                                alert(`Would navigate to: ${link}`)
+                              }
+                              className='px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600 text-sm'
+                            >
+                              Test Alert
+                            </button>
+                          </>
+                        ) : (
+                          <span className='px-4 py-2 bg-gray-200 text-gray-600 rounded text-sm'>
+                            Not clickable (no related data)
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
