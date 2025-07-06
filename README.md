@@ -92,6 +92,70 @@ pnpm dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result. You can start editing the page by modifying `src/pages/index.tsx`.
 
+## Development Scripts
+
+This project includes several helpful development scripts for managing the AI-powered property marketplace:
+
+### Quick Start (Recommended)
+
+```bash
+# Start all services (Ollama + Next.js dev server) with one command
+./start-dev.sh
+```
+
+This script will:
+
+- ✅ Check if Ollama is installed
+- 🚀 Start Ollama service if not running
+- 🤖 Ensure the required LLaVA model is available
+- ⚡ Start the Next.js development server
+- 🔧 Install dependencies if needed
+
+### Other Development Commands
+
+```bash
+# Check status of all services
+./status-dev.sh
+
+# Stop all development services
+./stop-dev.sh
+
+# Test the AI image description API
+./test-description-api.sh
+
+# Test the AI property suggestions API
+./test-suggestions-api.sh
+```
+
+### Manual Setup (Alternative)
+
+If you prefer to start services manually:
+
+1. **Start Ollama** (required for AI features):
+
+   ```bash
+   ollama serve
+   ```
+
+2. **Pull the required AI model**:
+
+   ```bash
+   ollama pull llava:latest
+   ```
+
+3. **Start Next.js dev server**:
+   ```bash
+   pnpm dev
+   ```
+
+### Prerequisites
+
+- **Ollama**: Install from [ollama.ai](https://ollama.ai/download) or via Homebrew:
+  ```bash
+  brew install ollama
+  ```
+- **Node.js & pnpm**: Required for the Next.js application
+
 ### 4. Change defaults
 
 There are some things you need to change including title, urls, favicons, etc.
