@@ -135,15 +135,15 @@ export default function NotificationCenter() {
   const getPriorityColor = (priority: Notification['priority']) => {
     switch (priority) {
       case 'urgent':
-        return 'bg-red-100 border-red-200 text-red-800';
+        return 'bg-red-100 dark:bg-red-900/40 border-red-200 dark:border-red-700 text-red-800 dark:text-red-200';
       case 'high':
-        return 'bg-orange-100 border-orange-200 text-orange-800';
+        return 'bg-orange-100 dark:bg-orange-900/40 border-orange-200 dark:border-orange-700 text-orange-800 dark:text-orange-200';
       case 'normal':
-        return 'bg-blue-100 border-blue-200 text-blue-800';
+        return 'bg-blue-100 dark:bg-blue-900/40 border-blue-200 dark:border-blue-700 text-blue-800 dark:text-blue-200';
       case 'low':
         return 'bg-gray-100 dark:bg-gray-700 border-gray-200 dark:border-gray-600 text-gray-800 dark:text-gray-200';
       default:
-        return 'bg-blue-100 border-blue-200 text-blue-800';
+        return 'bg-blue-100 dark:bg-blue-900/40 border-blue-200 dark:border-blue-700 text-blue-800 dark:text-blue-200';
     }
   };
 
@@ -215,21 +215,21 @@ export default function NotificationCenter() {
             <div className='flex items-center space-x-2'>
               <button
                 onClick={refreshNotifications}
-                className='text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
+                className='text-sm text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-100'
               >
                 Refresh
               </button>
               {unreadCount > 0 && (
                 <button
                   onClick={handleMarkAllAsRead}
-                  className='text-sm text-primary-600 hover:text-primary-700'
+                  className='text-sm text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300'
                 >
                   Mark all read now
                 </button>
               )}
               <button
                 onClick={() => setIsOpen(false)}
-                className='text-gray-400 hover:text-gray-600'
+                className='text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
               >
                 <XMarkIcon className='h-5 w-5' />
               </button>
@@ -239,15 +239,15 @@ export default function NotificationCenter() {
           {/* Notifications List */}
           <div className='max-h-96 overflow-y-auto'>
             {isLoading ? (
-              <div className='px-4 py-8 text-center text-gray-500'>
+              <div className='px-4 py-8 text-center text-gray-700 dark:text-gray-300'>
                 Loading notifications...
               </div>
             ) : notifications.length === 0 ? (
-              <div className='px-4 py-8 text-center text-gray-500'>
+              <div className='px-4 py-8 text-center text-gray-700 dark:text-gray-300'>
                 No notifications yet
               </div>
             ) : (
-              <div className='divide-y divide-gray-200'>
+              <div className='divide-y divide-gray-200 dark:divide-gray-700'>
                 {notifications.map((notification) => {
                   const notificationLink = getNotificationLink(notification);
                   const isClickable = !!notificationLink;
@@ -257,11 +257,11 @@ export default function NotificationCenter() {
                       <div
                         className={`px-4 py-3 transition-colors ${
                           isClickable
-                            ? 'hover:bg-blue-50 cursor-pointer border-l-2 border-transparent hover:border-blue-400'
-                            : 'hover:bg-gray-50'
+                            ? 'hover:bg-blue-50 dark:hover:bg-blue-900/20 cursor-pointer border-l-2 border-transparent hover:border-blue-400 dark:hover:border-blue-500'
+                            : 'hover:bg-gray-50 dark:hover:bg-gray-700'
                         } ${
                           !notification.read_at
-                            ? 'bg-blue-50 border-l-4 border-blue-400'
+                            ? 'bg-blue-50 dark:bg-blue-900/20 border-l-4 border-blue-400 dark:border-blue-500'
                             : ''
                         }`}
                         onClick={
@@ -294,12 +294,12 @@ export default function NotificationCenter() {
                                 >
                                   {notification.title}
                                   {isClickable && (
-                                    <span className='ml-1 text-blue-500 opacity-75 group-hover:opacity-100'>
+                                    <span className='ml-1 text-blue-500 dark:text-blue-400 opacity-75 group-hover:opacity-100'>
                                       →
                                     </span>
                                   )}
                                 </p>
-                                <p className='text-sm text-gray-600 mt-1'>
+                                <p className='text-sm text-gray-800 dark:text-gray-200 mt-1'>
                                   {notification.message}
                                 </p>
                                 <div className='flex items-center space-x-2 mt-2'>
@@ -310,7 +310,7 @@ export default function NotificationCenter() {
                                   >
                                     {notification.priority}
                                   </span>
-                                  <span className='text-xs text-gray-500'>
+                                  <span className='text-xs text-gray-700 dark:text-gray-300'>
                                     {formatTimeAgo(notification.created_at)}
                                   </span>
                                 </div>
@@ -324,7 +324,7 @@ export default function NotificationCenter() {
                                       notification.notification_id,
                                     );
                                   }}
-                                  className='ml-2 p-1 text-gray-400 hover:text-gray-600'
+                                  className='ml-2 p-1 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
                                   title='Mark as read'
                                 >
                                   <CheckIcon className='h-4 w-4' />
