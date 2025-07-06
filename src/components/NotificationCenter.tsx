@@ -141,7 +141,7 @@ export default function NotificationCenter() {
       case 'normal':
         return 'bg-blue-100 border-blue-200 text-blue-800';
       case 'low':
-        return 'bg-gray-100 border-gray-200 text-gray-800';
+        return 'bg-gray-100 dark:bg-gray-700 border-gray-200 dark:border-gray-600 text-gray-800 dark:text-gray-200';
       default:
         return 'bg-blue-100 border-blue-200 text-blue-800';
     }
@@ -205,17 +205,17 @@ export default function NotificationCenter() {
       {isOpen && (
         <div
           ref={dropdownRef}
-          className='absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg border border-gray-200 z-50'
+          className='absolute right-0 mt-2 w-80 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-50'
         >
           {/* Header */}
-          <div className='px-4 py-3 border-b border-gray-200 flex items-center justify-between'>
-            <h3 className='text-lg font-semibold text-gray-900'>
+          <div className='px-4 py-3 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between'>
+            <h3 className='text-lg font-semibold text-gray-900 dark:text-white'>
               Notifications
             </h3>
             <div className='flex items-center space-x-2'>
               <button
                 onClick={refreshNotifications}
-                className='text-sm text-gray-500 hover:text-gray-700'
+                className='text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
               >
                 Refresh
               </button>
@@ -286,9 +286,9 @@ export default function NotificationCenter() {
                             <div className='flex items-start justify-between'>
                               <div className='flex-1'>
                                 <p
-                                  className={`text-sm font-medium text-gray-900 ${
+                                  className={`text-sm font-medium text-gray-900 dark:text-white ${
                                     isClickable
-                                      ? 'text-blue-600 group-hover:text-blue-700'
+                                      ? 'text-blue-600 dark:text-blue-400 group-hover:text-blue-700 dark:group-hover:text-blue-300'
                                       : ''
                                   }`}
                                 >
@@ -342,10 +342,10 @@ export default function NotificationCenter() {
           </div>
 
           {/* Footer */}
-          <div className='px-4 py-3 border-t border-gray-200 bg-gray-50 rounded-b-lg'>
+          <div className='px-4 py-3 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700 rounded-b-lg'>
             <a
               href='/notifications'
-              className='text-sm text-primary-600 hover:text-primary-700 font-medium'
+              className='text-sm text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium'
             >
               View all notifications
             </a>
