@@ -1,0 +1,73 @@
+'use client';
+
+import { MoonIcon, SunIcon } from '@heroicons/react/24/outline';
+import { useEffect, useState } from 'react';
+
+export default function SimpleThemeSwitch() {
+  const [theme, setTheme] = useState<'light' | 'dark'>('light');
+  const [mounted, setMounted] = useState(false);
+
+  // Check for saved theme preference or default to light mode
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('theme') as 'light' | 'dark';
+    const prefersDark = window.matchMedia(
+      '(prefers-color-scheme: dark)',
+    ).matches;
+
+    let initialTheme: 'light' | 'dark' = 'light';
+
+    if (savedTheme) {
+      initialTheme = savedTheme;
+    } else if (prefersDark) {
+      initialTheme = 'dark';
+    }
+
+    setTheme(initialTheme);
+    document.documentElement.classList.remove('light', 'dark');
+    document.documentElement.classList.add(initialTheme);
+    setMounted(true);
+  }, []);
+
+  const toggleTheme = () => {
+    const newTheme = theme === 'light' ? 'dark' : 'light';
+    setTheme(newTheme);
+    document.documentElement.classList.remove('light', 'dark');
+    document.documentElement.classList.add(newTheme);
+    localStorage.setItem('theme', newTheme);
+  };
+
+  // Prevent hydration mismatch by not rendering until mounted
+  if (!mounted) {
+    return (
+      <div className='relative p-2 rounded-lg border border-gray-300 bg-white w-9 h-9 animate-pulse'></div>
+    );
+  }
+
+  return (
+    <button
+      onClick={toggleTheme}
+      className='relative p-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900'
+      aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} theme`}
+    >
+      <div className='relative w-5 h-5'>
+        {/* Sun Icon */}
+        <SunIcon
+          className={`absolute inset-0 w-5 h-5 text-yellow-500 transition-all duration-300 ${
+            theme === 'light'
+              ? 'opacity-100 rotate-0 scale-100'
+              : 'opacity-0 rotate-90 scale-75'
+          }`}
+        />
+
+        {/* Moon Icon */}
+        <MoonIcon
+          className={`absolute inset-0 w-5 h-5 text-blue-400 transition-all duration-300 ${
+            theme === 'dark'
+              ? 'opacity-100 rotate-0 scale-100'
+              : 'opacity-0 -rotate-90 scale-75'
+          }`}
+        />
+      </div>
+    </button>
+  );
+}

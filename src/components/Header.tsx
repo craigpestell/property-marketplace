@@ -13,6 +13,7 @@ import { useEffect, useRef, useState } from 'react';
 import { showDebugFeatures } from '@/lib/debug';
 
 import NotificationCenter from '@/components/NotificationCenter';
+import SimpleThemeSwitch from '@/components/SimpleThemeSwitch';
 
 export default function Header() {
   const { data: session, status } = useSession();
@@ -41,31 +42,34 @@ export default function Header() {
   };
 
   return (
-    <header className='bg-primary-900 text-white shadow-lg'>
+    <header className='bg-primary-900 dark:bg-gray-800 text-white shadow-lg transition-colors duration-200'>
       <div className='layout'>
         <div className='flex items-center justify-between py-4'>
           {/* Logo */}
           <Link
             href='/'
-            className='text-xl font-bold hover:text-primary-200 transition-colors'
+            className='text-xl font-bold hover:text-primary-200 dark:hover:text-primary-300 transition-colors'
           >
             Real Estate Marketplace
           </Link>
 
           {/* Desktop Navigation */}
           <nav className='hidden md:flex items-center space-x-6'>
-            <Link href='/' className='hover:text-primary-200 transition-colors'>
+            <Link
+              href='/'
+              className='hover:text-primary-200 dark:hover:text-primary-300 transition-colors'
+            >
               Home
             </Link>
             <Link
               href='/listings'
-              className='hover:text-primary-200 transition-colors'
+              className='hover:text-primary-200 dark:hover:text-primary-300 transition-colors'
             >
               Listings
             </Link>
             <Link
               href='/about'
-              className='hover:text-primary-200 transition-colors'
+              className='hover:text-primary-200 dark:hover:text-primary-300 transition-colors'
             >
               About
             </Link>
@@ -74,25 +78,25 @@ export default function Header() {
             {showDebugFeatures(session?.user?.email) && (
               <>
                 <span className='text-primary-400'>|</span>
-                <div className='flex items-center space-x-3 text-xs bg-primary-800 px-3 py-1 rounded'>
-                  <span className='text-primary-300 uppercase tracking-wide'>
+                <div className='flex items-center space-x-3 text-xs bg-primary-800 dark:bg-gray-700 px-3 py-1 rounded'>
+                  <span className='text-primary-300 dark:text-gray-300 uppercase tracking-wide'>
                     Debug
                   </span>
                   <Link
                     href='/demo'
-                    className='hover:text-primary-200 transition-colors text-primary-300'
+                    className='hover:text-primary-200 dark:hover:text-primary-300 transition-colors text-primary-300 dark:text-gray-300'
                   >
                     Demo
                   </Link>
                   <Link
                     href='/test'
-                    className='hover:text-primary-200 transition-colors text-primary-300'
+                    className='hover:text-primary-200 dark:hover:text-primary-300 transition-colors text-primary-300 dark:text-gray-300'
                   >
                     Test
                   </Link>
                   <Link
                     href='/notifications'
-                    className='hover:text-primary-200 transition-colors text-primary-300'
+                    className='hover:text-primary-200 dark:hover:text-primary-300 transition-colors text-primary-300 dark:text-gray-300'
                   >
                     Notifications
                   </Link>
@@ -100,9 +104,12 @@ export default function Header() {
               </>
             )}
 
+            {/* Theme Switch */}
+            <SimpleThemeSwitch />
+
             {/* Auth Links */}
             {status === 'loading' ? (
-              <div className='w-16 h-4 bg-primary-800 animate-pulse rounded'></div>
+              <div className='w-16 h-4 bg-primary-800 dark:bg-gray-700 animate-pulse rounded'></div>
             ) : status === 'authenticated' ? (
               <div className='flex items-center space-x-4'>
                 {/* Notification Center */}
@@ -112,7 +119,7 @@ export default function Header() {
                 <div className='relative' ref={dropdownRef}>
                   <button
                     onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                    className='flex items-center space-x-2 hover:text-primary-200 transition-colors focus:outline-none'
+                    className='flex items-center space-x-2 hover:text-primary-200 dark:hover:text-primary-300 transition-colors focus:outline-none'
                   >
                     <UserCircleIcon className='h-5 w-5' />
                     <span className='text-sm'>
@@ -122,34 +129,34 @@ export default function Header() {
                   </button>
 
                   {isDropdownOpen && (
-                    <div className='absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 border'>
-                      <div className='px-4 py-2 text-sm text-gray-700 border-b'>
+                    <div className='absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg py-1 z-50 border dark:border-gray-700'>
+                      <div className='px-4 py-2 text-sm text-gray-700 dark:text-gray-300 border-b dark:border-gray-700'>
                         Welcome, {session.user?.name || session.user?.email}
                       </div>
                       <Link
                         href='/profile'
-                        className='block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100'
+                        className='block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
                         onClick={() => setIsDropdownOpen(false)}
                       >
                         Profile
                       </Link>
                       <Link
                         href='/offers'
-                        className='block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100'
+                        className='block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
                         onClick={() => setIsDropdownOpen(false)}
                       >
                         My Offers
                       </Link>
                       <Link
                         href='/saved-properties'
-                        className='block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100'
+                        className='block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
                         onClick={() => setIsDropdownOpen(false)}
                       >
                         Saved Properties
                       </Link>
                       <Link
                         href='/settings'
-                        className='block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100'
+                        className='block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
                         onClick={() => setIsDropdownOpen(false)}
                       >
                         Settings
@@ -159,7 +166,7 @@ export default function Header() {
                           handleSignOut();
                           setIsDropdownOpen(false);
                         }}
-                        className='block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100'
+                        className='block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
                       >
                         Logout
                       </button>
@@ -171,13 +178,13 @@ export default function Header() {
               <div className='flex items-center space-x-4'>
                 <Link
                   href='/login'
-                  className='hover:text-primary-200 transition-colors'
+                  className='hover:text-primary-200 dark:hover:text-primary-300 transition-colors'
                 >
                   Login
                 </Link>
                 <Link
                   href='/signup'
-                  className='bg-primary-600 hover:bg-primary-700 px-4 py-2 rounded transition-colors text-sm font-medium'
+                  className='bg-primary-600 hover:bg-primary-700 dark:bg-primary-700 dark:hover:bg-primary-600 px-4 py-2 rounded transition-colors text-sm font-medium'
                 >
                   Sign Up
                 </Link>
@@ -186,39 +193,44 @@ export default function Header() {
           </nav>
 
           {/* Mobile Menu Button */}
-          <button
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className='md:hidden p-2 hover:bg-primary-800 rounded transition-colors'
-          >
-            {isMenuOpen ? (
-              <XMarkIcon className='h-6 w-6' />
-            ) : (
-              <Bars3Icon className='h-6 w-6' />
-            )}
-          </button>
+          <div className='md:hidden flex items-center space-x-3'>
+            {/* Theme Switch for Mobile */}
+            <SimpleThemeSwitch />
+
+            <button
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className='p-2 hover:bg-primary-800 dark:hover:bg-gray-700 rounded transition-colors'
+            >
+              {isMenuOpen ? (
+                <XMarkIcon className='h-6 w-6' />
+              ) : (
+                <Bars3Icon className='h-6 w-6' />
+              )}
+            </button>
+          </div>
         </div>
 
         {/* Mobile Navigation */}
         {isMenuOpen && (
-          <div className='md:hidden border-t border-primary-800 py-4'>
+          <div className='md:hidden border-t border-primary-800 dark:border-gray-700 py-4'>
             <nav className='flex flex-col space-y-4'>
               <Link
                 href='/'
-                className='hover:text-primary-200 transition-colors'
+                className='hover:text-primary-200 dark:hover:text-primary-300 transition-colors'
                 onClick={() => setIsMenuOpen(false)}
               >
                 Home
               </Link>
               <Link
                 href='/listings'
-                className='hover:text-primary-200 transition-colors'
+                className='hover:text-primary-200 dark:hover:text-primary-300 transition-colors'
                 onClick={() => setIsMenuOpen(false)}
               >
                 Listings
               </Link>
               <Link
                 href='/about'
-                className='hover:text-primary-200 transition-colors'
+                className='hover:text-primary-200 dark:hover:text-primary-300 transition-colors'
                 onClick={() => setIsMenuOpen(false)}
               >
                 About
@@ -227,27 +239,27 @@ export default function Header() {
               {/* Debug Links - Only visible to test users (Mobile) */}
               {showDebugFeatures(session?.user?.email) && (
                 <>
-                  <div className='border-t border-primary-700 pt-3 mt-3'>
-                    <div className='text-xs text-primary-300 mb-2 uppercase tracking-wide'>
+                  <div className='border-t border-primary-700 dark:border-gray-600 pt-3 mt-3'>
+                    <div className='text-xs text-primary-300 dark:text-gray-400 mb-2 uppercase tracking-wide'>
                       Debug
                     </div>
                     <Link
                       href='/demo'
-                      className='hover:text-primary-200 transition-colors text-sm text-primary-300 block'
+                      className='hover:text-primary-200 dark:hover:text-primary-300 transition-colors text-sm text-primary-300 dark:text-gray-400 block'
                       onClick={() => setIsMenuOpen(false)}
                     >
                       Demo
                     </Link>
                     <Link
                       href='/test'
-                      className='hover:text-primary-200 transition-colors text-sm text-primary-300 block mt-2'
+                      className='hover:text-primary-200 dark:hover:text-primary-300 transition-colors text-sm text-primary-300 dark:text-gray-400 block mt-2'
                       onClick={() => setIsMenuOpen(false)}
                     >
                       Test
                     </Link>
                     <Link
                       href='/notifications'
-                      className='hover:text-primary-200 transition-colors text-sm text-primary-300 block mt-2'
+                      className='hover:text-primary-200 dark:hover:text-primary-300 transition-colors text-sm text-primary-300 dark:text-gray-400 block mt-2'
                       onClick={() => setIsMenuOpen(false)}
                     >
                       Debug Notifications
@@ -258,27 +270,27 @@ export default function Header() {
 
               {/* Mobile Auth Links */}
               {status === 'authenticated' ? (
-                <div className='flex flex-col space-y-3 pt-3 border-t border-primary-800'>
-                  <span className='text-sm text-primary-200'>
+                <div className='flex flex-col space-y-3 pt-3 border-t border-primary-800 dark:border-gray-700'>
+                  <span className='text-sm text-primary-200 dark:text-gray-300'>
                     Welcome, {session.user?.name || session.user?.email}
                   </span>
                   <Link
                     href='/profile'
-                    className='hover:text-primary-200 transition-colors'
+                    className='hover:text-primary-200 dark:hover:text-primary-300 transition-colors'
                     onClick={() => setIsMenuOpen(false)}
                   >
                     Profile
                   </Link>
                   <Link
                     href='/saved-properties'
-                    className='hover:text-primary-200 transition-colors'
+                    className='hover:text-primary-200 dark:hover:text-primary-300 transition-colors'
                     onClick={() => setIsMenuOpen(false)}
                   >
                     Saved Properties
                   </Link>
                   <Link
                     href='/settings'
-                    className='hover:text-primary-200 transition-colors'
+                    className='hover:text-primary-200 dark:hover:text-primary-300 transition-colors'
                     onClick={() => setIsMenuOpen(false)}
                   >
                     Settings
@@ -288,23 +300,23 @@ export default function Header() {
                       handleSignOut();
                       setIsMenuOpen(false);
                     }}
-                    className='bg-primary-800 hover:bg-primary-700 px-3 py-2 rounded transition-colors text-sm text-left'
+                    className='bg-primary-800 dark:bg-gray-700 hover:bg-primary-700 dark:hover:bg-gray-600 px-3 py-2 rounded transition-colors text-sm text-left'
                   >
                     Logout
                   </button>
                 </div>
               ) : (
-                <div className='flex flex-col space-y-3 pt-3 border-t border-primary-800'>
+                <div className='flex flex-col space-y-3 pt-3 border-t border-primary-800 dark:border-gray-700'>
                   <Link
                     href='/login'
-                    className='hover:text-primary-200 transition-colors'
+                    className='hover:text-primary-200 dark:hover:text-primary-300 transition-colors'
                     onClick={() => setIsMenuOpen(false)}
                   >
                     Login
                   </Link>
                   <Link
                     href='/signup'
-                    className='bg-primary-600 hover:bg-primary-700 px-4 py-2 rounded transition-colors text-sm font-medium inline-block text-center'
+                    className='bg-primary-600 hover:bg-primary-700 dark:bg-primary-700 dark:hover:bg-primary-600 px-4 py-2 rounded transition-colors text-sm font-medium inline-block text-center'
                     onClick={() => setIsMenuOpen(false)}
                   >
                     Sign Up

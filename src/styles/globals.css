@@ -28,6 +28,24 @@
   /* #endregion  /**======== Primary Color =========== */
 }
 
+/* Dark theme support */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --tw-color-background: 10 10 10;
+    --tw-color-foreground: 245 245 245;
+  }
+}
+
+.dark {
+  --tw-color-background: 10 10 10;
+  --tw-color-foreground: 245 245 245;
+}
+
+.light {
+  --tw-color-background: 255 255 255;
+  --tw-color-foreground: 10 10 10;
+}
+
 @layer base {
   /* inter var - latin */
   @font-face {

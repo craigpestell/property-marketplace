@@ -3,6 +3,7 @@ import defaultTheme from 'tailwindcss/defaultTheme';
 
 export default {
   content: ['./src/**/*.{js,jsx,ts,tsx}'],
+  darkMode: 'class', // Enable class-based dark mode
   theme: {
     extend: {
       fontFamily: {
@@ -24,6 +25,8 @@ export default {
           950: 'rgb(var(--tw-color-primary-950) / <alpha-value>)',
         },
         dark: '#222222',
+        background: 'rgb(var(--tw-color-background) / <alpha-value>)',
+        foreground: 'rgb(var(--tw-color-foreground) / <alpha-value>)',
       },
       keyframes: {
         flicker: {

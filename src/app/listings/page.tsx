@@ -137,11 +137,13 @@ export default function ListingsPage() {
 
   if (error) {
     return (
-      <section className='bg-white'>
+      <section className='bg-white dark:bg-gray-900 transition-colors duration-200'>
         <div className='layout min-h-screen py-12'>
           <div className='text-center'>
-            <h1 className='text-3xl font-bold mb-8'>Property Listings</h1>
-            <div className='text-red-600'>Error: {error}</div>
+            <h1 className='text-3xl font-bold mb-8 text-gray-900 dark:text-gray-100'>
+              Property Listings
+            </h1>
+            <div className='text-red-600 dark:text-red-400'>Error: {error}</div>
           </div>
         </div>
       </section>
@@ -149,19 +151,19 @@ export default function ListingsPage() {
   }
 
   return (
-    <section className='bg-white'>
+    <section className='bg-white dark:bg-gray-900 transition-colors duration-200'>
       <div className='layout min-h-screen py-12'>
         <div className='mb-12'>
           <div className='text-center mb-6'>
-            <h1 className='text-4xl font-bold text-gray-900 mb-4'>
+            <h1 className='text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4'>
               Property Listings
             </h1>
-            <p className='text-lg text-gray-600 mb-4'>
+            <p className='text-lg text-gray-600 dark:text-gray-400 mb-4'>
               Browse all available properties in our marketplace
             </p>
             <Link
               href='/listings/create'
-              className='inline-flex items-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors'
+              className='inline-flex items-center px-6 py-3 bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 text-white font-medium rounded-lg transition-colors'
             >
               <svg
                 className='w-5 h-5 mr-2'
@@ -181,7 +183,7 @@ export default function ListingsPage() {
           </div>
 
           {/* Simplified Incentive Tagline */}
-          <div className='bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg p-4 max-w-4xl mx-auto mb-6'>
+          <div className='bg-gradient-to-r from-blue-600 to-blue-700 dark:from-blue-700 dark:to-blue-800 text-white rounded-lg p-4 max-w-4xl mx-auto mb-6'>
             <div className='flex items-center justify-center gap-4 text-center'>
               <div className='flex items-center gap-2'>
                 <svg
@@ -201,8 +203,10 @@ export default function ListingsPage() {
                   Save $41K+ with Zero Buyer Commission
                 </span>
               </div>
-              <div className='hidden md:block text-blue-200'>•</div>
-              <div className='text-blue-100 text-sm'>
+              <div className='hidden md:block text-blue-200 dark:text-blue-300'>
+                •
+              </div>
+              <div className='text-blue-100 dark:text-blue-200 text-sm'>
                 Access FSBO properties others won't show
               </div>
             </div>
@@ -214,7 +218,7 @@ export default function ListingsPage() {
             <div className='relative mb-4'>
               <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'>
                 <svg
-                  className='h-5 w-5 text-gray-400'
+                  className='h-5 w-5 text-gray-400 dark:text-gray-500'
                   fill='none'
                   stroke='currentColor'
                   viewBox='0 0 24 24'
@@ -232,7 +236,7 @@ export default function ListingsPage() {
                 placeholder='Search properties...'
                 value={searchQuery}
                 onChange={handleSearchChange}
-                className='block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-blue-500 focus:border-blue-500'
+                className='block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md leading-5 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:placeholder-gray-400 dark:focus:placeholder-gray-500 focus:ring-1 focus:ring-blue-500 focus:border-blue-500'
               />
             </div>
 
@@ -240,7 +244,7 @@ export default function ListingsPage() {
             <div className='flex justify-center mb-4'>
               <button
                 onClick={() => setShowFilters(!showFilters)}
-                className='inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'
+                className='inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-900'
               >
                 <svg
                   className='w-4 h-4 mr-2'
@@ -261,11 +265,11 @@ export default function ListingsPage() {
 
             {/* Filter Panel */}
             {showFilters && (
-              <div className='bg-gray-50 border border-gray-200 rounded-lg p-6 mb-6'>
+              <div className='bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6 mb-6'>
                 <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4'>
                   {/* Price Range */}
                   <div className='col-span-1 md:col-span-2'>
-                    <label className='block text-sm font-medium text-gray-700 mb-2'>
+                    <label className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2'>
                       Price Range
                     </label>
                     <div className='flex items-center space-x-2'>
@@ -274,15 +278,17 @@ export default function ListingsPage() {
                         placeholder='Min Price'
                         value={minPrice}
                         onChange={(e) => setMinPrice(e.target.value)}
-                        className='flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500'
+                        className='flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500'
                       />
-                      <span className='text-gray-500'>to</span>
+                      <span className='text-gray-500 dark:text-gray-400'>
+                        to
+                      </span>
                       <input
                         type='number'
                         placeholder='Max Price'
                         value={maxPrice}
                         onChange={(e) => setMaxPrice(e.target.value)}
-                        className='flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500'
+                        className='flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500'
                       />
                     </div>
                   </div>
@@ -405,7 +411,7 @@ export default function ListingsPage() {
         </div>
 
         {loading ? (
-          <div className='text-center text-gray-500 py-8'>
+          <div className='text-center text-gray-500 dark:text-gray-400 py-8'>
             <div className='inline-flex items-center'>
               <svg
                 className='animate-spin -ml-1 mr-3 h-5 w-5 text-blue-500'
@@ -431,7 +437,7 @@ export default function ListingsPage() {
             </div>
           </div>
         ) : filteredProperties.length === 0 ? (
-          <div className='text-center text-gray-500'>
+          <div className='text-center text-gray-500 dark:text-gray-400'>
             {debouncedSearchQuery ||
             minPrice ||
             maxPrice ||
@@ -447,17 +453,17 @@ export default function ListingsPage() {
           <>
             {/* Top Pagination Controls - Simplified */}
             {totalPages > 1 && (
-              <div className='flex items-center justify-center gap-4 mb-6 p-4 bg-gray-50 rounded-lg'>
+              <div className='flex items-center justify-center gap-4 mb-6 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg'>
                 {/* Pagination Buttons */}
                 <div className='flex items-center gap-2'>
                   {/* Previous Button */}
                   <button
                     onClick={() => handlePageChange(currentPage - 1)}
                     disabled={!hasPrev}
-                    className={`px-3 py-2 text-sm font-medium rounded-md ${
+                    className={`px-3 py-2 text-sm font-medium rounded-md transition-colors ${
                       hasPrev
-                        ? 'text-gray-700 bg-white border border-gray-300 hover:bg-gray-50'
-                        : 'text-gray-400 bg-gray-100 border border-gray-200 cursor-not-allowed'
+                        ? 'text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600'
+                        : 'text-gray-400 dark:text-gray-500 bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 cursor-not-allowed'
                     }`}
                   >
                     Previous
@@ -470,12 +476,14 @@ export default function ListingsPage() {
                       <>
                         <button
                           onClick={() => handlePageChange(1)}
-                          className='px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50'
+                          className='px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors'
                         >
                           1
                         </button>
                         {currentPage > 4 && (
-                          <span className='px-2 text-gray-400'>...</span>
+                          <span className='px-2 text-gray-400 dark:text-gray-500'>
+                            ...
+                          </span>
                         )}
                       </>
                     )}
@@ -484,14 +492,14 @@ export default function ListingsPage() {
                     {currentPage > 1 && (
                       <button
                         onClick={() => handlePageChange(currentPage - 1)}
-                        className='px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50'
+                        className='px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors'
                       >
                         {currentPage - 1}
                       </button>
                     )}
 
                     {/* Current page */}
-                    <button className='px-3 py-2 text-sm font-medium text-white bg-blue-600 border border-blue-600 rounded-md'>
+                    <button className='px-3 py-2 text-sm font-medium text-white bg-blue-600 dark:bg-blue-700 border border-blue-600 dark:border-blue-700 rounded-md'>
                       {currentPage}
                     </button>
 
@@ -499,7 +507,7 @@ export default function ListingsPage() {
                     {currentPage < totalPages && (
                       <button
                         onClick={() => handlePageChange(currentPage + 1)}
-                        className='px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50'
+                        className='px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors'
                       >
                         {currentPage + 1}
                       </button>
@@ -509,11 +517,13 @@ export default function ListingsPage() {
                     {currentPage < totalPages - 2 && (
                       <>
                         {currentPage < totalPages - 3 && (
-                          <span className='px-2 text-gray-400'>...</span>
+                          <span className='px-2 text-gray-400 dark:text-gray-500'>
+                            ...
+                          </span>
                         )}
                         <button
                           onClick={() => handlePageChange(totalPages)}
-                          className='px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50'
+                          className='px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors'
                         >
                           {totalPages}
                         </button>
@@ -525,10 +535,10 @@ export default function ListingsPage() {
                   <button
                     onClick={() => handlePageChange(currentPage + 1)}
                     disabled={!hasNext}
-                    className={`px-3 py-2 text-sm font-medium rounded-md ${
+                    className={`px-3 py-2 text-sm font-medium rounded-md transition-colors ${
                       hasNext
-                        ? 'text-gray-700 bg-white border border-gray-300 hover:bg-gray-50'
-                        : 'text-gray-400 bg-gray-100 border border-gray-200 cursor-not-allowed'
+                        ? 'text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600'
+                        : 'text-gray-400 dark:text-gray-500 bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 cursor-not-allowed'
                     }`}
                   >
                     Next
@@ -549,7 +559,7 @@ export default function ListingsPage() {
               <div className='flex flex-col gap-4'>
                 {/* Results Info and Items Per Page Selector */}
                 <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4'>
-                  <div className='text-center sm:text-left text-gray-600'>
+                  <div className='text-center sm:text-left text-gray-600 dark:text-gray-400'>
                     {debouncedSearchQuery ||
                     minPrice ||
                     maxPrice ||
@@ -574,20 +584,24 @@ export default function ListingsPage() {
 
                   {/* Items Per Page Selector */}
                   <div className='flex items-center gap-2 text-sm'>
-                    <label className='text-gray-600'>Show:</label>
+                    <label className='text-gray-600 dark:text-gray-400'>
+                      Show:
+                    </label>
                     <select
                       value={itemsPerPage}
                       onChange={(e) =>
                         handleItemsPerPageChange(parseInt(e.target.value))
                       }
-                      className='px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500'
+                      className='px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500'
                     >
                       <option value={10}>10</option>
                       <option value={20}>20</option>
                       <option value={50}>50</option>
                       <option value={100}>100</option>
                     </select>
-                    <span className='text-gray-600'>per page</span>
+                    <span className='text-gray-600 dark:text-gray-400'>
+                      per page
+                    </span>
                   </div>
                 </div>
 
