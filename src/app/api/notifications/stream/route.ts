@@ -28,16 +28,27 @@ export async function GET(_request: NextRequest) {
     // Set up Server-Sent Events
     const stream = new ReadableStream({
       start(controller) {
+        let isControllerActive = true;
+
         // Send initial connection message
         const sendEvent = (
           data: Record<string, unknown>,
           event = 'message',
         ) => {
-          controller.enqueue(
-            new TextEncoder().encode(
-              `event: ${event}\ndata: ${JSON.stringify(data)}\n\n`,
-            ),
-          );
+          try {
+            if (!isControllerActive) {
+              return;
+            }
+            controller.enqueue(
+              new TextEncoder().encode(
+                `event: ${event}\ndata: ${JSON.stringify(data)}\n\n`,
+              ),
+            );
+          } catch (error) {
+            // eslint-disable-next-line no-console
+            console.error('Error sending SSE event:', error);
+            isControllerActive = false;
+          }
         };
 
         sendEvent(
@@ -47,6 +58,10 @@ export async function GET(_request: NextRequest) {
 
         // Function to check for new notifications
         const checkNotifications = async () => {
+          if (!isControllerActive) {
+            return;
+          }
+
           try {
             const result = await pool.query(
               `SELECT notification_id, title, message, type, 
@@ -103,8 +118,13 @@ export async function GET(_request: NextRequest) {
 
         // Clean up function
         return () => {
+          isControllerActive = false;
           clearInterval(interval);
         };
+      },
+      cancel() {
+        // This is called when the client disconnects
+        // The cleanup function returned by start() will also be called
       },
     });
 
