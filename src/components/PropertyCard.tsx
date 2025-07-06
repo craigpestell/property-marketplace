@@ -1,8 +1,8 @@
 import Link from 'next/link';
 
-import { Property } from '@/types';
-
 import SavePropertyButton from '@/components/SavePropertyButton';
+
+import { Property } from '@/types';
 
 interface PropertyCardProps {
   property: Property;

@@ -12,6 +12,7 @@ import { useSession } from 'next-auth/react';
 import { useState } from 'react';
 
 import OfferForm from './OfferForm';
+import SavePropertyButton from './SavePropertyButton';
 
 import { Property, PropertyDetails } from '@/types';
 
@@ -96,6 +97,11 @@ export default function PropertyDetailClient({
                       <h1 className='text-3xl lg:text-4xl font-bold text-gray-900'>
                         {property.title}
                       </h1>
+                      {session?.user?.email && (
+                        <SavePropertyButton
+                          propertyUid={property.property_uid}
+                        />
+                      )}
                       <button
                         onClick={copyPropertyUID}
                         className='flex items-center gap-1 text-xs bg-gray-100 hover:bg-gray-200 px-2 py-1 rounded font-mono transition-colors'
