@@ -172,11 +172,11 @@ export default function NotificationCenter() {
       {/* Notification Bell Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className='relative p-2 text-gray-600 hover:text-gray-800 transition-colors'
+        className='relative p-2 text-gray-200 dark:text-gray-300 hover:text-white dark:hover:text-white transition-colors'
         aria-label='Notifications'
       >
         {unreadCount > 0 ? (
-          <BellSolidIcon className='h-6 w-6 text-primary-600' />
+          <BellSolidIcon className='h-6 w-6 text-yellow-400 dark:text-yellow-300' />
         ) : (
           <BellIcon className='h-6 w-6' />
         )}

@@ -104,9 +104,6 @@ export default function Header() {
               </>
             )}
 
-            {/* Theme Switch */}
-            <SimpleThemeSwitch />
-
             {/* Auth Links */}
             {status === 'loading' ? (
               <div className='w-16 h-4 bg-primary-800 dark:bg-gray-700 animate-pulse rounded'></div>
@@ -190,6 +187,9 @@ export default function Header() {
                 </Link>
               </div>
             )}
+
+            {/* Theme Switch */}
+            <SimpleThemeSwitch />
           </nav>
 
           {/* Mobile Menu Button */}
