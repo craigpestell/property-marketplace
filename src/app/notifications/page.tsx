@@ -46,6 +46,40 @@ export default function NotificationsPage() {
     fetchNotifications();
   }, [session]);
 
+  // Mark all notifications as read when page is viewed
+  useEffect(() => {
+    if (!session?.user?.email || loading || notifications.length === 0) {
+      return;
+    }
+
+    const unreadNotifications = notifications.filter((n) => !n.read_at);
+    if (unreadNotifications.length > 0) {
+      // Small delay to ensure user actually views the page
+      const timer = setTimeout(async () => {
+        try {
+          await fetch('/api/notifications', {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ mark_all_read: true }),
+          });
+
+          // Update local state to mark all as read
+          setNotifications((prev) =>
+            prev.map((notification) => ({
+              ...notification,
+              read_at: notification.read_at || new Date().toISOString(),
+            })),
+          );
+        } catch (error) {
+          // eslint-disable-next-line no-console
+          console.error('Failed to mark notifications as read:', error);
+        }
+      }, 1500); // 1.5 second delay to ensure user actually sees the notifications
+
+      return () => clearTimeout(timer);
+    }
+  }, [session, loading, notifications]);
+
   // Generate link for notification
   const getNotificationLink = (notification: Notification) => {
     if (notification.related_offer_uid) {
