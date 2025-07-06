@@ -151,6 +151,11 @@ export default function PropertyForm({ property, mode }: PropertyFormProps) {
       const formDataPayload = new FormData();
       formDataPayload.append('image', imageFile);
 
+      // Include address if provided to help with location-based suggestions
+      if (formData.address.trim()) {
+        formDataPayload.append('address', formData.address.trim());
+      }
+
       const response = await fetch('/api/generate-suggestions', {
         method: 'POST',
         body: formDataPayload,

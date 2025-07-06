@@ -40,6 +40,7 @@ export async function POST(request: NextRequest) {
     }
 
     const imageFile = formData.get('image') as File;
+    const address = formData.get('address') as string;
 
     if (!imageFile) {
       return NextResponse.json(
@@ -107,7 +108,8 @@ export async function POST(request: NextRequest) {
 
     // Convert image to buffer and process with sharp
     const bytes = await imageFile.arrayBuffer();
-    let processedBuffer = Buffer.from(bytes);
+    const imageBuffer = new Uint8Array(bytes);
+    let processedBuffer = Buffer.from(imageBuffer);
 
     // Convert problematic formats (WebP, GIF, BMP) to JPEG for better compatibility
     if (['image/webp', 'image/gif', 'image/bmp'].includes(actualMimeType)) {
@@ -117,7 +119,7 @@ export async function POST(request: NextRequest) {
       );
 
       try {
-        processedBuffer = await sharp(Buffer.from(bytes))
+        processedBuffer = await sharp(processedBuffer)
           .jpeg({ quality: 90 })
           .toBuffer();
       } catch (conversionError) {
@@ -143,6 +145,8 @@ export async function POST(request: NextRequest) {
       detectedMimeType: actualMimeType,
       originalMimeType: imageFile.type,
       base64Length: base64Image.length,
+      hasAddress: !!address,
+      address: address || 'not provided',
     });
 
     // Generate property suggestions using Ollama Vision model
@@ -160,22 +164,30 @@ export async function POST(request: NextRequest) {
             model: OLLAMA_MODEL,
             prompt: `You are viewing a photograph of a real estate property. Analyze this property and provide specific suggestions for a real estate listing form based on THE PROPERTY you can see in the photograph.
 
-Look at the actual property in the photo and respond with a JSON object containing these fields:
+${
+  address
+    ? `Property Address/Location: ${address}
+
+Consider this location information when making your suggestions, especially for pricing, property type expectations, and market context for this area.
+
+`
+    : ''
+}Look at the actual property in the photo and respond with a JSON object containing these fields:
 
 {
-  "title": "Suggested property title for this specific property (be specific and appealing based on what you see, e.g., 'Modern 3-Bedroom Colonial with Garden Views')",
+  "title": "Suggested property title for this specific property (be specific and appealing based on what you see${address ? ` and the location: ${address}` : ''}, e.g., 'Modern 3-Bedroom Colonial with Garden Views')",
   "propertyType": "Choose one based on this property: house, apartment, condo, townhouse, or commercial",
   "bedrooms": "Number of bedrooms you can estimate for this property (as integer, or null if unclear)",
   "bathrooms": "Number of bathrooms you can estimate for this property (as number with decimals allowed, or null if unclear)",
   "squareFootage": "Estimated square footage of this property (as integer, or null if unclear)",
   "yearBuilt": "Estimated year this property was built based on its architectural style (as integer, or null if unclear)",
-  "price": "Suggested price range for this property based on its type and visible features (as integer, or null if unclear)",
-  "description": "Detailed description of this property focusing on what you can see",
-  "features": ["Array of notable features visible in this property"],
+  "price": "Suggested price range for this property based on its type, visible features${address ? `, and the location (${address})` : ''} (as integer, or null if unclear)",
+  "description": "Detailed description of this property focusing on what you can see${address ? ` and mentioning the location context` : ''}",
+  "features": ["Array of notable features visible in this property${address ? ' and location-relevant amenities' : ''}"],
   "confidence": "Your confidence level in these suggestions about this property (low/medium/high)"
 }
 
-Focus on what you can actually see about this specific property. Be conservative with estimates when unclear. Provide realistic values based on this property's type and visible characteristics.
+Focus on what you can actually see about this specific property${address ? ` and consider the location context for pricing and market expectations` : ''}. Be conservative with estimates when unclear. Provide realistic values based on this property's type and visible characteristics${address ? ` and the specified location` : ''}.
 
 IMPORTANT: Respond ONLY with valid JSON. Do not include any other text before or after the JSON.`,
             images: [base64Image],
