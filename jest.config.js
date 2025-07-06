@@ -16,6 +16,12 @@ const customJestConfig = {
 
   testEnvironment: 'jest-environment-jsdom',
 
+  // Test directory configuration
+  testMatch: [
+    '<rootDir>/tests/**/*.{js,jsx,ts,tsx}',
+    '<rootDir>/src/**/*.{test,spec}.{js,jsx,ts,tsx}',
+  ],
+
   /**
    * Absolute imports and Module Path Aliases
    */
