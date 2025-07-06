@@ -38,6 +38,18 @@ export default function NotificationCenter() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  // Mark notifications as read when dropdown is opened and has unread notifications
+  useEffect(() => {
+    if (isOpen && unreadCount > 0) {
+      // Small delay to allow the dropdown to render before marking as read
+      const timer = setTimeout(() => {
+        markAsRead();
+      }, 1000); // 1 second delay to ensure user actually sees the notifications
+
+      return () => clearTimeout(timer);
+    }
+  }, [isOpen, unreadCount, markAsRead]);
+
   // Determine if notification is clickable and get link
   const getNotificationLink = (notification: Notification) => {
     if (notification.related_offer_uid) {
@@ -212,7 +224,7 @@ export default function NotificationCenter() {
                   onClick={handleMarkAllAsRead}
                   className='text-sm text-primary-600 hover:text-primary-700'
                 >
-                  Mark all read
+                  Mark all read now
                 </button>
               )}
               <button
