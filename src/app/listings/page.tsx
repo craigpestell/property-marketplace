@@ -16,6 +16,14 @@ export default function ListingsPage() {
   const [error, setError] = React.useState<string | null>(null);
   const [searchQuery, setSearchQuery] = React.useState('');
 
+  // Pagination states
+  const [currentPage, setCurrentPage] = React.useState(1);
+  const [itemsPerPage, setItemsPerPage] = React.useState(20);
+  const [totalPages, setTotalPages] = React.useState(0);
+  const [totalItems, setTotalItems] = React.useState(0);
+  const [hasNext, setHasNext] = React.useState(false);
+  const [hasPrev, setHasPrev] = React.useState(false);
+
   // Filter states
   const [minPrice, setMinPrice] = React.useState('');
   const [maxPrice, setMaxPrice] = React.useState('');
@@ -44,6 +52,10 @@ export default function ListingsPage() {
         // Build query parameters
         const params = new URLSearchParams();
 
+        // Add pagination parameters
+        params.append('page', currentPage.toString());
+        params.append('limit', itemsPerPage.toString());
+
         if (debouncedSearchQuery.trim())
           params.append('search', debouncedSearchQuery.trim());
         if (minPrice) params.append('minPrice', minPrice);
@@ -63,6 +75,14 @@ export default function ListingsPage() {
         }
         const data = await response.json();
         setFilteredProperties(data.properties);
+
+        // Update pagination state
+        if (data.pagination) {
+          setTotalPages(data.pagination.totalPages);
+          setTotalItems(data.pagination.total);
+          setHasNext(data.pagination.hasNext);
+          setHasPrev(data.pagination.hasPrev);
+        }
       } catch (err) {
         setError(err instanceof Error ? err.message : 'An error occurred');
       } finally {
@@ -71,6 +91,22 @@ export default function ListingsPage() {
     };
 
     fetchProperties();
+  }, [
+    currentPage,
+    itemsPerPage,
+    debouncedSearchQuery,
+    minPrice,
+    maxPrice,
+    propertyType,
+    bedrooms,
+    bathrooms,
+    sortBy,
+    sortOrder,
+  ]);
+
+  // Reset to page 1 when filters change
+  React.useEffect(() => {
+    setCurrentPage(1);
   }, [
     debouncedSearchQuery,
     minPrice,
@@ -86,6 +122,17 @@ export default function ListingsPage() {
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
+  };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    // Scroll to top when page changes
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleItemsPerPageChange = (newLimit: number) => {
+    setItemsPerPage(newLimit);
+    setCurrentPage(1); // Reset to first page when changing items per page
   };
 
   if (error) {
@@ -345,6 +392,7 @@ export default function ListingsPage() {
                       setSortBy('created_at');
                       setSortOrder('DESC');
                       setSearchQuery('');
+                      setCurrentPage(1); // Reset pagination
                     }}
                     className='px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'
                   >
@@ -397,30 +445,243 @@ export default function ListingsPage() {
           </div>
         ) : (
           <>
-            <div className='mb-6 text-center text-gray-600'>
-              {debouncedSearchQuery ||
-              minPrice ||
-              maxPrice ||
-              propertyType ||
-              bedrooms ||
-              bathrooms ? (
-                <p>
-                  Found {filteredProperties.length} propert
-                  {filteredProperties.length === 1 ? 'y' : 'ies'} matching your
-                  criteria
-                </p>
-              ) : (
-                <p>
-                  Showing all {filteredProperties.length} propert
-                  {filteredProperties.length === 1 ? 'y' : 'ies'}
-                </p>
-              )}
-            </div>
-            <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6'>
+            {/* Top Pagination Controls - Simplified */}
+            {totalPages > 1 && (
+              <div className='flex items-center justify-center gap-4 mb-6 p-4 bg-gray-50 rounded-lg'>
+                {/* Pagination Buttons */}
+                <div className='flex items-center gap-2'>
+                  {/* Previous Button */}
+                  <button
+                    onClick={() => handlePageChange(currentPage - 1)}
+                    disabled={!hasPrev}
+                    className={`px-3 py-2 text-sm font-medium rounded-md ${
+                      hasPrev
+                        ? 'text-gray-700 bg-white border border-gray-300 hover:bg-gray-50'
+                        : 'text-gray-400 bg-gray-100 border border-gray-200 cursor-not-allowed'
+                    }`}
+                  >
+                    Previous
+                  </button>
+
+                  {/* Page Numbers */}
+                  <div className='flex items-center gap-1'>
+                    {/* First page */}
+                    {currentPage > 3 && (
+                      <>
+                        <button
+                          onClick={() => handlePageChange(1)}
+                          className='px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50'
+                        >
+                          1
+                        </button>
+                        {currentPage > 4 && (
+                          <span className='px-2 text-gray-400'>...</span>
+                        )}
+                      </>
+                    )}
+
+                    {/* Previous page */}
+                    {currentPage > 1 && (
+                      <button
+                        onClick={() => handlePageChange(currentPage - 1)}
+                        className='px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50'
+                      >
+                        {currentPage - 1}
+                      </button>
+                    )}
+
+                    {/* Current page */}
+                    <button className='px-3 py-2 text-sm font-medium text-white bg-blue-600 border border-blue-600 rounded-md'>
+                      {currentPage}
+                    </button>
+
+                    {/* Next page */}
+                    {currentPage < totalPages && (
+                      <button
+                        onClick={() => handlePageChange(currentPage + 1)}
+                        className='px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50'
+                      >
+                        {currentPage + 1}
+                      </button>
+                    )}
+
+                    {/* Last page */}
+                    {currentPage < totalPages - 2 && (
+                      <>
+                        {currentPage < totalPages - 3 && (
+                          <span className='px-2 text-gray-400'>...</span>
+                        )}
+                        <button
+                          onClick={() => handlePageChange(totalPages)}
+                          className='px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50'
+                        >
+                          {totalPages}
+                        </button>
+                      </>
+                    )}
+                  </div>
+
+                  {/* Next Button */}
+                  <button
+                    onClick={() => handlePageChange(currentPage + 1)}
+                    disabled={!hasNext}
+                    className={`px-3 py-2 text-sm font-medium rounded-md ${
+                      hasNext
+                        ? 'text-gray-700 bg-white border border-gray-300 hover:bg-gray-50'
+                        : 'text-gray-400 bg-gray-100 border border-gray-200 cursor-not-allowed'
+                    }`}
+                  >
+                    Next
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Property Grid */}
+            <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8'>
               {filteredProperties.map((property) => (
                 <PropertyCard key={property.id} property={property} />
               ))}
             </div>
+
+            {/* Bottom Pagination Controls - Complete */}
+            {totalPages > 1 && (
+              <div className='flex flex-col gap-4'>
+                {/* Results Info and Items Per Page Selector */}
+                <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4'>
+                  <div className='text-center sm:text-left text-gray-600'>
+                    {debouncedSearchQuery ||
+                    minPrice ||
+                    maxPrice ||
+                    propertyType ||
+                    bedrooms ||
+                    bathrooms ? (
+                      <p>
+                        Found {totalItems} propert
+                        {totalItems === 1 ? 'y' : 'ies'} matching your criteria{' '}
+                        {totalPages > 1 &&
+                          `(Page ${currentPage} of ${totalPages})`}
+                      </p>
+                    ) : (
+                      <p>
+                        Showing {totalItems} propert
+                        {totalItems === 1 ? 'y' : 'ies'}
+                        {totalPages > 1 &&
+                          ` (Page ${currentPage} of ${totalPages})`}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Items Per Page Selector */}
+                  <div className='flex items-center gap-2 text-sm'>
+                    <label className='text-gray-600'>Show:</label>
+                    <select
+                      value={itemsPerPage}
+                      onChange={(e) =>
+                        handleItemsPerPageChange(parseInt(e.target.value))
+                      }
+                      className='px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500'
+                    >
+                      <option value={10}>10</option>
+                      <option value={20}>20</option>
+                      <option value={50}>50</option>
+                      <option value={100}>100</option>
+                    </select>
+                    <span className='text-gray-600'>per page</span>
+                  </div>
+                </div>
+
+                {/* Pagination Navigation */}
+                <div className='flex items-center justify-center gap-4'>
+                  {/* Pagination Buttons */}
+                  <div className='flex items-center gap-2'>
+                    {/* Previous Button */}
+                    <button
+                      onClick={() => handlePageChange(currentPage - 1)}
+                      disabled={!hasPrev}
+                      className={`px-3 py-2 text-sm font-medium rounded-md ${
+                        hasPrev
+                          ? 'text-gray-700 bg-white border border-gray-300 hover:bg-gray-50'
+                          : 'text-gray-400 bg-gray-100 border border-gray-200 cursor-not-allowed'
+                      }`}
+                    >
+                      Previous
+                    </button>
+
+                    {/* Page Numbers */}
+                    <div className='flex items-center gap-1'>
+                      {/* First page */}
+                      {currentPage > 3 && (
+                        <>
+                          <button
+                            onClick={() => handlePageChange(1)}
+                            className='px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50'
+                          >
+                            1
+                          </button>
+                          {currentPage > 4 && (
+                            <span className='px-2 text-gray-400'>...</span>
+                          )}
+                        </>
+                      )}
+
+                      {/* Previous page */}
+                      {currentPage > 1 && (
+                        <button
+                          onClick={() => handlePageChange(currentPage - 1)}
+                          className='px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50'
+                        >
+                          {currentPage - 1}
+                        </button>
+                      )}
+
+                      {/* Current page */}
+                      <button className='px-3 py-2 text-sm font-medium text-white bg-blue-600 border border-blue-600 rounded-md'>
+                        {currentPage}
+                      </button>
+
+                      {/* Next page */}
+                      {currentPage < totalPages && (
+                        <button
+                          onClick={() => handlePageChange(currentPage + 1)}
+                          className='px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50'
+                        >
+                          {currentPage + 1}
+                        </button>
+                      )}
+
+                      {/* Last page */}
+                      {currentPage < totalPages - 2 && (
+                        <>
+                          {currentPage < totalPages - 3 && (
+                            <span className='px-2 text-gray-400'>...</span>
+                          )}
+                          <button
+                            onClick={() => handlePageChange(totalPages)}
+                            className='px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50'
+                          >
+                            {totalPages}
+                          </button>
+                        </>
+                      )}
+                    </div>
+
+                    {/* Next Button */}
+                    <button
+                      onClick={() => handlePageChange(currentPage + 1)}
+                      disabled={!hasNext}
+                      className={`px-3 py-2 text-sm font-medium rounded-md ${
+                        hasNext
+                          ? 'text-gray-700 bg-white border border-gray-300 hover:bg-gray-50'
+                          : 'text-gray-400 bg-gray-100 border border-gray-200 cursor-not-allowed'
+                      }`}
+                    >
+                      Next
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
           </>
         )}
       </div>
