@@ -168,6 +168,8 @@ Focus on describing THE PROPERTY ITSELF, not the image:
 4. Overall condition and curb appeal of this property
 5. Notable features of this property that would attract buyers
 
+IMPORTANT: Do NOT describe furniture, appliances, decorations, personal belongings, or other movable items. Focus only on permanent structural features and built-in elements of the property.
+
 Write as if you are describing the actual property for potential buyers. Use present tense and speak about the property directly (e.g., "This charming home features..." not "The image shows...").
 
 Keep the description between 100-200 words. Write in a compelling, professional tone suitable for a real estate listing. Do not make assumptions about interior features you cannot see from the exterior.`,

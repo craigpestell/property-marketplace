@@ -189,6 +189,8 @@ Consider this location information when making your suggestions, especially for 
 
 Focus on what you can actually see about this specific property${address ? ` and consider the location context for pricing and market expectations` : ''}. Be conservative with estimates when unclear. Provide realistic values based on this property's type and visible characteristics${address ? ` and the specified location` : ''}.
 
+IMPORTANT: Do NOT describe furniture, appliances, decorations, personal belongings, or other movable items. Focus only on permanent structural features, built-in elements, and architectural details of the property itself.
+
 IMPORTANT: Respond ONLY with valid JSON. Do not include any other text before or after the JSON.`,
             images: [base64Image],
             stream: false,
