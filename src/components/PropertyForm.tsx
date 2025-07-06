@@ -272,7 +272,7 @@ export default function PropertyForm({ property, mode }: PropertyFormProps) {
     <div className='max-w-2xl mx-auto'>
       <div className='bg-white dark:bg-gray-800 rounded-lg shadow-md p-6'>
         <h1 className='text-2xl font-bold mb-6 text-gray-900 dark:text-white'>
-          {mode === 'create' ? 'Add New Property' : 'Edit Property'}
+          {mode === 'create' ? 'Add New Listing' : 'Edit Property'}
         </h1>
 
         {error && (
