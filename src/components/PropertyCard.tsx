@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import Link from 'next/link';
 
 import SavePropertyButton from '@/components/SavePropertyButton';
@@ -34,15 +35,18 @@ export default function PropertyCard({
       </div>
 
       <Link href={`/property/${property.property_uid}`} className='block'>
-        <div className='relative'>
-          <img
+        <div className='relative overflow-hidden'>
+          <Image
             src={property.image_url || '/placeholder-property.jpg'}
             alt={property.title}
-            className='w-full h-48 object-cover'
+            className='w-full h-48 object-cover transition-transform duration-300 ease-in-out group-hover:scale-110'
+            width={600}
+            height={192}
+            priority={true}
           />
           {/* Save count badge - only show if showSaveCount is true and saves > 0 */}
           {showSaveCount && property.saves && property.saves > 0 && (
-            <div className='absolute bottom-3 left-3 bg-red-500 text-white text-xs font-semibold px-2 py-1 rounded-full flex items-center shadow-lg'>
+            <div className='absolute bottom-3 left-3 bg-red-500 text-white text-xs font-semibold px-2 py-1 rounded-full flex items-center shadow-lg z-10'>
               <svg
                 className='w-3 h-3 mr-1'
                 fill='currentColor'
