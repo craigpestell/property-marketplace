@@ -80,10 +80,10 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
                 'hover:bg-gray-900 active:bg-gray-800 disabled:bg-gray-800',
             ],
             variant === 'light' && [
-              'bg-white text-gray-700',
-              'border border-gray-300',
-              'hover:text-dark hover:bg-gray-100',
-              'active:bg-white/80 disabled:bg-gray-200',
+              'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300',
+              'border border-gray-300 dark:border-gray-600',
+              'hover:text-dark dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700',
+              'active:bg-white/80 dark:active:bg-gray-800/80 disabled:bg-gray-200 dark:disabled:bg-gray-700',
             ],
             variant === 'dark' && [
               'bg-gray-900 text-white',

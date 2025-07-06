@@ -114,29 +114,31 @@ export default function OfferForm({
   ];
 
   return (
-    <div className='bg-white p-6 rounded-lg shadow-lg max-w-2xl mx-auto'>
-      <h2 className='text-2xl font-bold text-gray-900 mb-6'>Make an Offer</h2>
+    <div className='bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg max-w-2xl mx-auto'>
+      <h2 className='text-2xl font-bold text-gray-900 dark:text-white mb-6'>
+        Make an Offer
+      </h2>
 
       <form onSubmit={handleSubmit} className='space-y-6'>
         {error && (
-          <div className='bg-red-50 border border-red-200 rounded-md p-4'>
-            <p className='text-sm text-red-600'>{error}</p>
+          <div className='bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md p-4'>
+            <p className='text-sm text-red-600 dark:text-red-400'>{error}</p>
           </div>
         )}
 
         {/* Offer Amount */}
         <div>
-          <label className='block text-sm font-medium text-gray-700 mb-2'>
+          <label className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2'>
             Offer Amount *
           </label>
           <div className='relative'>
-            <span className='absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500'>
+            <span className='absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400'>
               $
             </span>
             <input
               type='number'
               required
-              className='w-full pl-8 pr-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500'
+              className='w-full pl-8 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white'
               placeholder={listingPrice.toLocaleString()}
               value={formData.offer_amount}
               onChange={(e) =>
@@ -144,18 +146,18 @@ export default function OfferForm({
               }
             />
           </div>
-          <p className='text-sm text-gray-500 mt-1'>
+          <p className='text-sm text-gray-500 dark:text-gray-400 mt-1'>
             Listing price: ${listingPrice.toLocaleString()}
           </p>
         </div>
 
         {/* Financing Type */}
         <div>
-          <label className='block text-sm font-medium text-gray-700 mb-2'>
+          <label className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2'>
             Financing Type
           </label>
           <select
-            className='w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500'
+            className='w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white'
             value={formData.financing_type}
             onChange={(e) =>
               setFormData({ ...formData, financing_type: e.target.value })
@@ -171,16 +173,16 @@ export default function OfferForm({
 
         {/* Earnest Money */}
         <div>
-          <label className='block text-sm font-medium text-gray-700 mb-2'>
+          <label className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2'>
             Earnest Money
           </label>
           <div className='relative'>
-            <span className='absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500'>
+            <span className='absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400'>
               $
             </span>
             <input
               type='number'
-              className='w-full pl-8 pr-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500'
+              className='w-full pl-8 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white'
               placeholder='5,000'
               value={formData.earnest_money}
               onChange={(e) =>
@@ -192,12 +194,12 @@ export default function OfferForm({
 
         {/* Proposed Closing Date */}
         <div>
-          <label className='block text-sm font-medium text-gray-700 mb-2'>
+          <label className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2'>
             Proposed Closing Date
           </label>
           <input
             type='date'
-            className='w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500'
+            className='w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white'
             value={formData.closing_date}
             onChange={(e) =>
               setFormData({ ...formData, closing_date: e.target.value })
@@ -207,12 +209,12 @@ export default function OfferForm({
 
         {/* Inspection Period */}
         <div>
-          <label className='block text-sm font-medium text-gray-700 mb-2'>
+          <label className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2'>
             Inspection Period (days)
           </label>
           <input
             type='number'
-            className='w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500'
+            className='w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white'
             value={formData.inspection_period_days}
             onChange={(e) =>
               setFormData({
@@ -225,7 +227,7 @@ export default function OfferForm({
 
         {/* Contingencies */}
         <div>
-          <label className='block text-sm font-medium text-gray-700 mb-2'>
+          <label className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2'>
             Contingencies
           </label>
           <div className='space-y-2'>
@@ -233,13 +235,13 @@ export default function OfferForm({
               <label key={contingency} className='flex items-center'>
                 <input
                   type='checkbox'
-                  className='h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded'
+                  className='h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700'
                   checked={formData.contingencies.includes(contingency)}
                   onChange={(e) =>
                     handleContingencyChange(contingency, e.target.checked)
                   }
                 />
-                <span className='ml-2 text-sm text-gray-700'>
+                <span className='ml-2 text-sm text-gray-700 dark:text-gray-300'>
                   {contingency}
                 </span>
               </label>
@@ -249,12 +251,12 @@ export default function OfferForm({
 
         {/* Message */}
         <div>
-          <label className='block text-sm font-medium text-gray-700 mb-2'>
+          <label className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2'>
             Message to Seller
           </label>
           <textarea
             rows={4}
-            className='w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500'
+            className='w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white'
             placeholder='Tell the seller why they should accept your offer...'
             value={formData.message}
             onChange={(e) =>

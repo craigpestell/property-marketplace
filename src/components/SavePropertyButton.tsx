@@ -80,7 +80,7 @@ export default function SavePropertyButton({
         <HeartIcon
           className={`
             ${sizeClasses[size]} 
-            text-gray-400 hover:text-red-400 
+            text-gray-400 dark:text-gray-500 hover:text-red-400 dark:hover:text-red-400 
             transition-colors duration-200
           `}
         />
@@ -91,12 +91,12 @@ export default function SavePropertyButton({
         <div
           className={`
             absolute inset-0 flex items-center justify-center
-            bg-white bg-opacity-80 rounded-full
+            bg-white dark:bg-gray-800 bg-opacity-80 dark:bg-opacity-80 rounded-full
           `}
         >
           <div
             className={`
-              animate-spin rounded-full border-2 border-gray-300 border-t-red-500
+              animate-spin rounded-full border-2 border-gray-300 dark:border-gray-600 border-t-red-500
               ${size === 'sm' ? 'h-3 w-3' : size === 'md' ? 'h-4 w-4' : 'h-5 w-5'}
             `}
           />
