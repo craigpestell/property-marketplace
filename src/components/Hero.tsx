@@ -8,30 +8,45 @@ export default function Hero() {
 
       {/* Content */}
       <div className='relative layout py-24 lg:py-32'>
-        <div className='max-w-4xl mx-auto text-center'>
-          <h1 className='text-4xl md:text-6xl font-bold mb-6'>
+        <div className='max-w-5xl mx-auto text-center'>
+          <h1 className='text-4xl md:text-6xl lg:text-7xl font-extrabold mb-6 leading-tight'>
             Save $41K+ on Your
-            <span className='block text-blue-200'>Dream Home</span>
+            <span className='block text-blue-200 bg-gradient-to-r from-blue-200 to-blue-100 bg-clip-text text-transparent'>
+              Dream Home
+            </span>
           </h1>
 
-          <p className='text-lg md:text-xl text-blue-100 mb-8 max-w-2xl mx-auto'>
-            Pay only 0.9% commission (sellers only) instead of the traditional
-            5% total commission (2.5% buyer + 2.5% seller). Buyers pay zero
-            commission, creating a larger pool of motivated buyers that helps
-            properties sell faster. Full-service support from search to closing,
-            plus access to "for sale by owner" properties others won't show you.
+          <p className='text-xl md:text-2xl text-blue-100 mb-10 max-w-3xl mx-auto leading-relaxed font-light'>
+            Revolutionary 0.9% seller commission. Zero buyer fees.
+            <span className='block mt-2 text-lg md:text-xl opacity-90'>
+              Full-service support + exclusive FSBO access others won't show
+              you.
+            </span>
           </p>
 
-          <div className='flex flex-col sm:flex-row gap-4 justify-center items-center'>
+          <div className='flex flex-col sm:flex-row gap-6 justify-center items-center'>
             <Link
               href='/listings'
-              className='bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-semibold transition-colors text-lg'
+              className='group bg-blue-600 hover:bg-blue-700 text-white px-10 py-4 rounded-xl font-semibold transition-all duration-300 text-lg shadow-lg hover:shadow-xl transform hover:-translate-y-1'
             >
-              Browse Properties
+              <span className='flex items-center'>
+                Browse Properties
+                <svg
+                  className='ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform'
+                  fill='currentColor'
+                  viewBox='0 0 20 20'
+                >
+                  <path
+                    fillRule='evenodd'
+                    d='M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z'
+                    clipRule='evenodd'
+                  />
+                </svg>
+              </span>
             </Link>
             <Link
               href='/signup'
-              className='bg-white text-blue-900 hover:bg-gray-100 px-8 py-3 rounded-lg font-semibold transition-colors text-lg'
+              className='group bg-white text-blue-900 hover:bg-blue-50 px-10 py-4 rounded-xl font-semibold transition-all duration-300 text-lg shadow-lg hover:shadow-xl transform hover:-translate-y-1 border-2 border-transparent hover:border-blue-100'
             >
               Start Saving Today
             </Link>
@@ -39,18 +54,35 @@ export default function Hero() {
         </div>
 
         {/* Stats */}
-        <div className='mt-16 grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto'>
-          <div className='text-center'>
-            <div className='text-3xl font-bold text-blue-200'>0.9%</div>
-            <div className='text-blue-100'>Seller Commission</div>
+        <div className='mt-20 grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto'>
+          <div className='text-center group'>
+            <div className='text-4xl md:text-5xl font-bold text-blue-200 mb-2 group-hover:scale-110 transition-transform duration-300'>
+              0.9%
+            </div>
+            <div className='text-blue-100 text-lg font-medium'>
+              Seller Commission
+            </div>
+            <div className='text-blue-300 text-sm mt-1'>
+              vs. traditional 2.5%
+            </div>
           </div>
-          <div className='text-center'>
-            <div className='text-3xl font-bold text-blue-200'>$41K+</div>
-            <div className='text-blue-100'>Combined Savings</div>
+          <div className='text-center group'>
+            <div className='text-4xl md:text-5xl font-bold text-blue-200 mb-2 group-hover:scale-110 transition-transform duration-300'>
+              $41K+
+            </div>
+            <div className='text-blue-100 text-lg font-medium'>
+              Combined Savings
+            </div>
+            <div className='text-blue-300 text-sm mt-1'>on $1M property</div>
           </div>
-          <div className='text-center'>
-            <div className='text-3xl font-bold text-blue-200'>5K+</div>
-            <div className='text-blue-100'>Happy Customers</div>
+          <div className='text-center group'>
+            <div className='text-4xl md:text-5xl font-bold text-blue-200 mb-2 group-hover:scale-110 transition-transform duration-300'>
+              5K+
+            </div>
+            <div className='text-blue-100 text-lg font-medium'>
+              Happy Customers
+            </div>
+            <div className='text-blue-300 text-sm mt-1'>and growing</div>
           </div>
         </div>
       </div>

@@ -11,22 +11,32 @@ interface FeaturedPropertiesProps {
   limit?: number;
 }
 
+interface MostLovedResponse {
+  properties: Property[];
+  timeFrame: 'day' | 'week' | 'month' | 'all-time';
+  limit: number;
+  count: number;
+}
+
 export default function FeaturedProperties({
   limit = 6,
 }: FeaturedPropertiesProps) {
   const [properties, setProperties] = React.useState<Property[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
+  const [timeFrame, setTimeFrame] = React.useState<string>('');
 
   React.useEffect(() => {
     const fetchProperties = async () => {
       try {
-        const response = await fetch(`/api/listings?limit=${limit}`);
+        // Fetch most loved properties using the new cascading API
+        const response = await fetch(`/api/listings/most-loved`);
         if (!response.ok) {
           throw new Error('Failed to fetch properties');
         }
-        const data = await response.json();
+        const data: MostLovedResponse = await response.json();
         setProperties(data.properties);
+        setTimeFrame(data.timeFrame);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'An error occurred');
       } finally {
@@ -39,11 +49,11 @@ export default function FeaturedProperties({
 
   if (loading) {
     return (
-      <section className='bg-gray-50 dark:bg-gray-800 py-16'>
+      <section className='bg-gray-50 dark:bg-gray-800 py-20'>
         <div className='layout'>
           <div className='text-center'>
-            <h2 className='text-3xl font-bold text-gray-900 dark:text-white mb-8'>
-              Featured Properties
+            <h2 className='text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-16'>
+              Most Loved Properties
             </h2>
             <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6'>
               {Array.from({ length: limit }).map((_, index) => (
@@ -68,14 +78,14 @@ export default function FeaturedProperties({
 
   if (error) {
     return (
-      <section className='bg-gray-50 dark:bg-gray-800 py-16'>
+      <section className='bg-gray-50 dark:bg-gray-800 py-20'>
         <div className='layout'>
           <div className='text-center'>
-            <h2 className='text-3xl font-bold text-gray-900 dark:text-white mb-8'>
-              Featured Properties
+            <h2 className='text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-16'>
+              Most Loved Properties
             </h2>
-            <div className='text-red-600 dark:text-red-400'>
-              Error loading properties
+            <div className='text-red-600 dark:text-red-400 text-lg'>
+              Error loading properties. Please try again later.
             </div>
           </div>
         </div>
@@ -84,38 +94,50 @@ export default function FeaturedProperties({
   }
 
   return (
-    <section className='bg-gray-50 dark:bg-gray-800 py-16'>
+    <section className='bg-gray-50 dark:bg-gray-800 py-20'>
       <div className='layout'>
-        <div className='text-center mb-12'>
-          <h2 className='text-3xl font-bold text-gray-900 dark:text-white mb-4'>
-            Featured Properties
+        <div className='text-center mb-16'>
+          <h2 className='text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6'>
+            Most Loved Properties
           </h2>
-          <p className='text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto'>
-            Discover our handpicked selection of the finest properties currently
-            available in the market.
+          <p className='text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto leading-relaxed'>
+            These properties have captured the hearts of our users{' '}
+            {timeFrame === 'day' && 'in the last 24 hours'}
+            {timeFrame === 'week' && 'in the last week'}
+            {timeFrame === 'month' && 'in the last month'}
+            {timeFrame === 'all-time' && 'of all time'}. Discover what makes
+            them so special and see the significant savings available with our
+            0.9% commission structure.
           </p>
         </div>
 
         {properties.length === 0 ? (
           <div className='text-center text-gray-500 dark:text-gray-400'>
-            <p>No properties available at the moment.</p>
+            <p>
+              No saved properties to display yet in the recent timeframe. Be the
+              first to discover and save your favorites!
+            </p>
           </div>
         ) : (
           <>
             <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12'>
               {properties.map((property) => (
-                <PropertyCard key={property.id} property={property} />
+                <PropertyCard
+                  key={property.id}
+                  property={property}
+                  showSaveCount={true}
+                />
               ))}
             </div>
 
             <div className='text-center'>
               <Link
                 href='/listings'
-                className='inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 dark:bg-blue-700 hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors'
+                className='group inline-flex items-center px-8 py-4 text-lg font-semibold rounded-xl text-white bg-blue-600 dark:bg-blue-700 hover:bg-blue-700 dark:hover:bg-blue-600 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1'
               >
                 View All Properties
                 <svg
-                  className='ml-2 -mr-1 w-4 h-4'
+                  className='ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform'
                   fill='currentColor'
                   viewBox='0 0 20 20'
                 >

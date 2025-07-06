@@ -11,6 +11,7 @@ export interface Property {
   client_id: string;
   client_email?: string;
   user_email?: string;
+  saves?: number; // Number of times this property has been saved by users
 }
 
 export interface PropertyDetails {

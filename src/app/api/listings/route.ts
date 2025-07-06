@@ -43,16 +43,16 @@ export async function GET(request: Request) {
 
     const offset = (page - 1) * limit;
 
-    const whereConditions = ['(deleted IS NULL OR deleted = FALSE)'];
+    const whereConditions = ['(p.deleted IS NULL OR p.deleted = FALSE)'];
     const queryParams: any[] = [];
     let paramIndex = 1;
 
     // Search in title, address, and details (instead of description)
     if (search) {
       whereConditions.push(`(
-        title ILIKE $${paramIndex} OR 
-        address ILIKE $${paramIndex} OR 
-        details ILIKE $${paramIndex}
+        p.title ILIKE $${paramIndex} OR 
+        p.address ILIKE $${paramIndex} OR 
+        p.details ILIKE $${paramIndex}
       )`);
       queryParams.push(`%${search}%`);
       paramIndex++;
@@ -60,34 +60,34 @@ export async function GET(request: Request) {
 
     // Price range filtering
     if (minPrice) {
-      whereConditions.push(`price >= $${paramIndex}`);
+      whereConditions.push(`p.price >= $${paramIndex}`);
       queryParams.push(parseFloat(minPrice));
       paramIndex++;
     }
 
     if (maxPrice) {
-      whereConditions.push(`price <= $${paramIndex}`);
+      whereConditions.push(`p.price <= $${paramIndex}`);
       queryParams.push(parseFloat(maxPrice));
       paramIndex++;
     }
 
     // City filtering
     if (city) {
-      whereConditions.push(`address ILIKE $${paramIndex}`);
+      whereConditions.push(`p.address ILIKE $${paramIndex}`);
       queryParams.push(`%${city}%`);
       paramIndex++;
     }
 
     // Client filtering
     if (clientId) {
-      whereConditions.push(`client_id = $${paramIndex}`);
+      whereConditions.push(`p.client_id = $${paramIndex}`);
       queryParams.push(parseInt(clientId));
       paramIndex++;
     }
 
     // User email filtering (for user's own listings)
     if (userEmail) {
-      whereConditions.push(`user_email = $${paramIndex}`);
+      whereConditions.push(`p.user_email = $${paramIndex}`);
       queryParams.push(userEmail);
       paramIndex++;
     }
@@ -95,7 +95,7 @@ export async function GET(request: Request) {
     // Property type filtering
     if (propertyType) {
       whereConditions.push(
-        `details::jsonb ->> 'propertyType' = $${paramIndex}`,
+        `p.details::jsonb ->> 'propertyType' = $${paramIndex}`,
       );
       queryParams.push(propertyType);
       paramIndex++;
@@ -104,7 +104,7 @@ export async function GET(request: Request) {
     // Bedrooms filtering
     if (bedrooms) {
       whereConditions.push(
-        `(details::jsonb ->> 'bedrooms')::int = $${paramIndex}`,
+        `(p.details::jsonb ->> 'bedrooms')::int = $${paramIndex}`,
       );
       queryParams.push(parseInt(bedrooms));
       paramIndex++;
@@ -113,13 +113,19 @@ export async function GET(request: Request) {
     // Bathrooms filtering
     if (bathrooms) {
       whereConditions.push(
-        `(details::jsonb ->> 'bathrooms')::int = $${paramIndex}`,
+        `(p.details::jsonb ->> 'bathrooms')::int = $${paramIndex}`,
       );
       queryParams.push(parseInt(bathrooms));
       paramIndex++;
     }
 
-    const allowedSortColumns = ['created_at', 'price', 'title', 'address'];
+    const allowedSortColumns = [
+      'created_at',
+      'price',
+      'title',
+      'address',
+      'saves',
+    ];
     const validSortBy = allowedSortColumns.includes(sortBy)
       ? sortBy
       : 'created_at';
@@ -133,29 +139,33 @@ export async function GET(request: Request) {
     // Remove description from SELECT query
     const mainQuery = `
       SELECT 
-        id, 
-        uuid, 
-        COALESCE(property_uid, CONCAT('PROP-', EXTRACT(EPOCH FROM created_at)::text, '-', SUBSTRING(id::text, 1, 6))) as property_uid,
-        title, 
-        price, 
-        details,
-        image_url, 
-        created_at, 
-        address,
-        client_id,
-        user_email,
-        (SELECT email FROM clients WHERE clients.id = properties.client_id) as client_email
-      FROM properties 
+        p.id, 
+        p.uuid, 
+        COALESCE(p.property_uid, CONCAT('PROP-', EXTRACT(EPOCH FROM p.created_at)::text, '-', SUBSTRING(p.id::text, 1, 6))) as property_uid,
+        p.title, 
+        p.price, 
+        p.details,
+        p.image_url, 
+        p.created_at, 
+        p.address,
+        p.client_id,
+        p.user_email,
+        (SELECT email FROM clients WHERE clients.id = p.client_id) as client_email,
+        COALESCE(COUNT(sp.property_uid), 0) as saves
+      FROM properties p
+      LEFT JOIN saved_properties sp ON COALESCE(p.property_uid, CONCAT('PROP-', EXTRACT(EPOCH FROM p.created_at)::text, '-', SUBSTRING(p.id::text, 1, 6))) = sp.property_uid
       ${whereClause}
-      ORDER BY ${validSortBy} ${validSortOrder}
+      GROUP BY p.id, p.uuid, p.property_uid, p.title, p.price, p.details, p.image_url, p.created_at, p.address, p.client_id, p.user_email
+      ORDER BY ${validSortBy === 'saves' ? 'saves' : 'p.' + validSortBy} ${validSortOrder}
       LIMIT $${paramIndex} OFFSET $${paramIndex + 1}
     `;
 
     queryParams.push(limit, offset);
 
     const countQuery = `
-      SELECT COUNT(*) as total
-      FROM properties 
+      SELECT COUNT(DISTINCT p.id) as total
+      FROM properties p
+      LEFT JOIN saved_properties sp ON COALESCE(p.property_uid, CONCAT('PROP-', EXTRACT(EPOCH FROM p.created_at)::text, '-', SUBSTRING(p.id::text, 1, 6))) = sp.property_uid
       ${whereClause}
     `;
 

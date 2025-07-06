@@ -360,6 +360,7 @@ export default function ListingsPage() {
                       className='w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500'
                     >
                       <option value='created_at'>Newest First</option>
+                      <option value='saves'>Most Popular</option>
                       <option value='price'>Price</option>
                       <option value='title'>Title</option>
                       <option value='address'>Location</option>
@@ -377,10 +378,18 @@ export default function ListingsPage() {
                       className='w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500'
                     >
                       <option value='DESC'>
-                        {sortBy === 'price' ? 'High to Low' : 'Descending'}
+                        {sortBy === 'price'
+                          ? 'High to Low'
+                          : sortBy === 'saves'
+                            ? 'Most to Least'
+                            : 'Descending'}
                       </option>
                       <option value='ASC'>
-                        {sortBy === 'price' ? 'Low to High' : 'Ascending'}
+                        {sortBy === 'price'
+                          ? 'Low to High'
+                          : sortBy === 'saves'
+                            ? 'Least to Most'
+                            : 'Ascending'}
                       </option>
                     </select>
                   </div>
@@ -550,7 +559,11 @@ export default function ListingsPage() {
             {/* Property Grid */}
             <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8'>
               {filteredProperties.map((property) => (
-                <PropertyCard key={property.id} property={property} />
+                <PropertyCard
+                  key={property.id}
+                  property={property}
+                  showSaveCount={true}
+                />
               ))}
             </div>
 

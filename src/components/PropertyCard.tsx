@@ -8,9 +8,13 @@ import { Property } from '@/types';
 
 interface PropertyCardProps {
   property: Property;
+  showSaveCount?: boolean; // New prop to conditionally show save count
 }
 
-export default function PropertyCard({ property }: PropertyCardProps) {
+export default function PropertyCard({
+  property,
+  showSaveCount = false,
+}: PropertyCardProps) {
   const { isPropertySaved } = useSavedProperties();
   const isSaved = isPropertySaved(property.property_uid);
 
@@ -30,11 +34,30 @@ export default function PropertyCard({ property }: PropertyCardProps) {
       </div>
 
       <Link href={`/property/${property.property_uid}`} className='block'>
-        <img
-          src={property.image_url || '/placeholder-property.jpg'}
-          alt={property.title}
-          className='w-full h-48 object-cover'
-        />
+        <div className='relative'>
+          <img
+            src={property.image_url || '/placeholder-property.jpg'}
+            alt={property.title}
+            className='w-full h-48 object-cover'
+          />
+          {/* Save count badge - only show if showSaveCount is true and saves > 0 */}
+          {showSaveCount && property.saves && property.saves > 0 && (
+            <div className='absolute bottom-3 left-3 bg-red-500 text-white text-xs font-semibold px-2 py-1 rounded-full flex items-center shadow-lg'>
+              <svg
+                className='w-3 h-3 mr-1'
+                fill='currentColor'
+                viewBox='0 0 20 20'
+              >
+                <path
+                  fillRule='evenodd'
+                  d='M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z'
+                  clipRule='evenodd'
+                />
+              </svg>
+              {property.saves}
+            </div>
+          )}
+        </div>
         <div className='p-4'>
           <div className='flex justify-between items-start mb-2'>
             <h3 className='text-lg font-semibold text-gray-900 dark:text-gray-100'>
