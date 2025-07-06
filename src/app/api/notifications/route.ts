@@ -28,8 +28,8 @@ export async function GET(request: NextRequest) {
     const unreadOnly = searchParams.get('unread') === 'true';
 
     let query = `
-      SELECT notification_id, title, message, type, related_offer_id, 
-             related_property_uid, priority, created_at, read_at
+      SELECT notification_id, title, message, type, 
+             related_offer_uid, related_property_uid, priority, created_at, read_at
       FROM user_notifications 
       WHERE user_email = $1
     `;
@@ -82,7 +82,7 @@ export async function POST(request: NextRequest) {
       title,
       message,
       type,
-      related_offer_id,
+      related_offer_uid,
       related_property_uid,
       priority = 'normal',
       target_user_email, // Allow creating notifications for other users (e.g., when making offers)
@@ -100,7 +100,7 @@ export async function POST(request: NextRequest) {
 
     const result = await pool.query(
       `INSERT INTO user_notifications 
-       (user_email, title, message, type, related_offer_id, related_property_uid, priority)
+       (user_email, title, message, type, related_offer_uid, related_property_uid, priority)
        VALUES ($1, $2, $3, $4, $5, $6, $7)
        RETURNING *`,
       [
@@ -108,7 +108,7 @@ export async function POST(request: NextRequest) {
         title,
         message,
         type,
-        related_offer_id,
+        related_offer_uid,
         related_property_uid,
         priority,
       ],

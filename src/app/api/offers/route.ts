@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth/next';
 import { Pool } from 'pg';
 
 import { authOptions } from '@/lib/auth';
+import { generateOfferUID } from '@/lib/uid';
 
 const pool = new Pool({
   user: process.env.PGUSER,
@@ -128,16 +129,20 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Generate offer UID
+    const offer_uid = generateOfferUID();
+
     // Insert the new offer
     const insertQuery = `
       INSERT INTO offers (
-        property_uid, buyer_email, seller_email, offer_amount, message,
+        offer_uid, property_uid, buyer_email, seller_email, offer_amount, message,
         financing_type, contingencies, closing_date, earnest_money, inspection_period_days
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
       RETURNING *
     `;
 
     const insertParams = [
+      offer_uid,
       property_uid,
       session.user.email,
       seller_email,
@@ -153,27 +158,20 @@ export async function POST(request: NextRequest) {
     const result = await pool.query(insertQuery, insertParams);
     const newOffer = result.rows[0];
 
-    // Create notification for seller in both tables
+    // Create notification for seller
     const notificationMessage = `New offer of $${offer_amount.toLocaleString()} received for "${property.title}"`;
 
-    // Legacy notification (for existing system)
-    await pool.query(
-      `INSERT INTO offer_notifications (offer_id, recipient_email, type, message)
-       VALUES ($1, $2, $3, $4)`,
-      [newOffer.offer_id, seller_email, 'offer_received', notificationMessage],
-    );
-
-    // New notification system
+    // New notification system (only using offer_uid now)
     await pool.query(
       `INSERT INTO user_notifications 
-       (user_email, title, message, type, related_offer_id, related_property_uid, priority)
+       (user_email, title, message, type, related_offer_uid, related_property_uid, priority)
        VALUES ($1, $2, $3, $4, $5, $6, $7)`,
       [
         seller_email,
         'New Offer Received!',
         notificationMessage,
         'offer_received',
-        newOffer.offer_id,
+        newOffer.offer_uid,
         property_uid,
         'high',
       ],

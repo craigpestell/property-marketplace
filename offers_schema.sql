@@ -3,6 +3,7 @@
 
 CREATE TABLE IF NOT EXISTS offers (
     offer_id SERIAL PRIMARY KEY,
+    offer_uid VARCHAR(50) UNIQUE NOT NULL,
     property_uid VARCHAR(255) NOT NULL,
     buyer_email VARCHAR(255) NOT NULL,
     seller_email VARCHAR(255) NOT NULL,
@@ -23,6 +24,7 @@ CREATE TABLE IF NOT EXISTS offers (
 -- ALTER TABLE offers ADD CONSTRAINT fk_offers_property_uid FOREIGN KEY (property_uid) REFERENCES properties(property_uid) ON DELETE CASCADE;
 
 -- Indexes for better performance
+CREATE INDEX IF NOT EXISTS idx_offers_offer_uid ON offers(offer_uid);
 CREATE INDEX IF NOT EXISTS idx_offers_property_uid ON offers(property_uid);
 CREATE INDEX IF NOT EXISTS idx_offers_buyer_email ON offers(buyer_email);
 CREATE INDEX IF NOT EXISTS idx_offers_seller_email ON offers(seller_email);
@@ -33,16 +35,19 @@ CREATE INDEX IF NOT EXISTS idx_offers_created_at ON offers(created_at);
 CREATE TABLE IF NOT EXISTS counter_offers (
     counter_offer_id SERIAL PRIMARY KEY,
     original_offer_id INTEGER NOT NULL,
+    original_offer_uid VARCHAR(50),
     counter_amount DECIMAL(12, 2) NOT NULL,
     counter_terms TEXT,
     closing_date DATE,
     created_by VARCHAR(255) NOT NULL, -- email of person making counter
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     
-    FOREIGN KEY (original_offer_id) REFERENCES offers(offer_id) ON DELETE CASCADE
+    FOREIGN KEY (original_offer_id) REFERENCES offers(offer_id) ON DELETE CASCADE,
+    FOREIGN KEY (original_offer_uid) REFERENCES offers(offer_uid) ON DELETE CASCADE
 );
 
 CREATE INDEX IF NOT EXISTS idx_counter_offers_original_offer ON counter_offers(original_offer_id);
+CREATE INDEX IF NOT EXISTS idx_counter_offers_original_offer_uid ON counter_offers(original_offer_uid);
 
 -- Offer notifications table
 CREATE TABLE IF NOT EXISTS offer_notifications (

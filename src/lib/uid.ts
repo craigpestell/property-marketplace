@@ -20,6 +20,13 @@ export function generateShortUID(length = 8): string {
   return result;
 }
 
+export function generateOfferUID(): string {
+  const prefix = 'OFFER';
+  const timestamp = Date.now().toString(36).toUpperCase();
+  const random = Math.random().toString(36).substring(2, 8).toUpperCase();
+  return `${prefix}-${timestamp}-${random}`;
+}
+
 // Format: PROP-2024-001234
 export function generateSequentialUID(sequenceNumber: number): string {
   const year = new Date().getFullYear();

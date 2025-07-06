@@ -49,8 +49,8 @@ export async function GET(_request: NextRequest) {
         const checkNotifications = async () => {
           try {
             const result = await pool.query(
-              `SELECT notification_id, title, message, type, related_offer_id, 
-                      related_property_uid, priority, created_at, read_at
+              `SELECT notification_id, title, message, type, 
+                      related_offer_uid, related_property_uid, priority, created_at, read_at
                FROM user_notifications 
                WHERE user_email = $1 AND read_at IS NULL 
                ORDER BY created_at DESC 
@@ -71,7 +71,7 @@ export async function GET(_request: NextRequest) {
 
             // Also check for unread offer updates
             const offerUpdates = await pool.query(
-              `SELECT o.offer_id, o.status, o.updated_at, p.title as property_title
+              `SELECT o.offer_uid, o.status, o.updated_at, p.title as property_title
                FROM offers o
                JOIN properties p ON o.property_uid = p.property_uid
                WHERE (o.buyer_email = $1 OR o.seller_email = $1)

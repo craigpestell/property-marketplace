@@ -6,8 +6,8 @@ import {
   UserCircleIcon,
   XMarkIcon,
 } from '@heroicons/react/24/outline';
-import { signOut, useSession } from 'next-auth/react';
 import Link from 'next/link';
+import { signOut, useSession } from 'next-auth/react';
 import { useEffect, useRef, useState } from 'react';
 
 import { showDebugFeatures } from '@/lib/debug';

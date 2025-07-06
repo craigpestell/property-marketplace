@@ -15,9 +15,10 @@ const pool = new Pool({
 // GET /api/offers/[id] - Get specific offer details
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    const resolvedParams = await params;
     const session = (await getServerSession(authOptions)) as {
       user: { email: string; role?: string };
     } | null;
@@ -25,7 +26,15 @@ export async function GET(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const offerId = params.id;
+    const offerUid = resolvedParams.id;
+
+    // Validate that this is a proper offer UID
+    if (!offerUid.startsWith('OFFER-')) {
+      return NextResponse.json(
+        { error: 'Invalid offer UID format' },
+        { status: 400 },
+      );
+    }
 
     const query = `
       SELECT 
@@ -36,12 +45,12 @@ export async function GET(
         p.images as property_images
       FROM offers o
       JOIN properties p ON o.property_uid = p.property_uid
-      WHERE o.offer_id = $1 
+      WHERE o.offer_uid = $1
         AND p.deleted = false 
         AND (o.buyer_email = $2 OR o.seller_email = $2)
     `;
 
-    const result = await pool.query(query, [offerId, session.user.email]);
+    const result = await pool.query(query, [offerUid, session.user.email]);
 
     if (result.rows.length === 0) {
       return NextResponse.json({ error: 'Offer not found' }, { status: 404 });
@@ -59,9 +68,10 @@ export async function GET(
 // PUT /api/offers/[id] - Update offer status (accept, reject, counter)
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    const resolvedParams = await params;
     const session = (await getServerSession(authOptions)) as {
       user: { email: string; role?: string };
     } | null;
@@ -69,9 +79,17 @@ export async function PUT(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const offerId = params.id;
+    const offerUid = resolvedParams.id;
     const body = await request.json();
     const { status, counter_amount, counter_terms, message } = body;
+
+    // Validate that this is a proper offer UID
+    if (!offerUid.startsWith('OFFER-')) {
+      return NextResponse.json(
+        { error: 'Invalid offer UID format' },
+        { status: 400 },
+      );
+    }
 
     // Validate status
     const validStatuses = ['accepted', 'rejected', 'countered', 'withdrawn'];
@@ -84,9 +102,9 @@ export async function PUT(
       SELECT o.*, p.title as property_title
       FROM offers o
       JOIN properties p ON o.property_uid = p.property_uid
-      WHERE o.offer_id = $1 AND p.deleted = false
+      WHERE o.offer_uid = $1 AND p.deleted = false
     `;
-    const offerResult = await pool.query(offerQuery, [offerId]);
+    const offerResult = await pool.query(offerQuery, [offerUid]);
 
     if (offerResult.rows.length === 0) {
       return NextResponse.json({ error: 'Offer not found' }, { status: 404 });
@@ -116,20 +134,20 @@ export async function PUT(
     const updateQuery = `
       UPDATE offers 
       SET status = $1, updated_at = CURRENT_TIMESTAMP
-      WHERE offer_id = $2
+      WHERE offer_uid = $2
       RETURNING *
     `;
-    const updateResult = await pool.query(updateQuery, [status, offerId]);
+    const updateResult = await pool.query(updateQuery, [status, offerUid]);
 
     // Handle counter offer
     if (status === 'countered' && counter_amount) {
       const counterQuery = `
-        INSERT INTO counter_offers (original_offer_id, counter_amount, counter_terms, created_by)
+        INSERT INTO counter_offers (original_offer_uid, counter_amount, counter_terms, created_by)
         VALUES ($1, $2, $3, $4)
         RETURNING *
       `;
       await pool.query(counterQuery, [
-        offerId,
+        offerUid,
         counter_amount,
         counter_terms || '',
         session.user.email,
@@ -154,16 +172,20 @@ export async function PUT(
     };
 
     const notificationQuery = `
-      INSERT INTO offer_notifications (offer_id, recipient_email, type, message)
-      VALUES ($1, $2, $3, $4)
+      INSERT INTO user_notifications 
+       (user_email, title, message, type, related_offer_uid, related_property_uid, priority)
+       VALUES ($1, $2, $3, $4, $5, $6, $7)
     `;
 
     await pool.query(notificationQuery, [
-      offerId,
       notificationRecipient,
-      `offer_${status}`,
+      `Offer ${status.charAt(0).toUpperCase() + status.slice(1)}`,
       message ||
         notificationMessages[status as keyof typeof notificationMessages],
+      `offer_${status}`,
+      offerUid,
+      offer.property_uid,
+      'high',
     ]);
 
     return NextResponse.json({

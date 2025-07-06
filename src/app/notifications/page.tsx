@@ -9,7 +9,7 @@ interface Notification {
   title: string;
   message: string;
   type: string;
-  related_offer_id?: number;
+  related_offer_uid?: string;
   related_property_uid?: string;
   priority: string;
   created_at: string;
@@ -48,7 +48,7 @@ export default function NotificationsPage() {
 
   // Generate link for notification
   const getNotificationLink = (notification: Notification) => {
-    if (notification.related_offer_id) {
+    if (notification.related_offer_uid) {
       return `/offers`;
     }
     if (notification.related_property_uid) {
@@ -220,51 +220,23 @@ export default function NotificationsPage() {
                         <div className='text-sm text-gray-500'>
                           {formatTimeAgo(notification.created_at)}
                         </div>
+                      </div>
 
-                        {/* Debug info */}
-                        <div className='text-xs text-gray-400'>
-                          Offer ID: {notification.related_offer_id || 'none'} |
-                          Property UID:{' '}
-                          {notification.related_property_uid || 'none'}
+                      {/* Action button */}
+                      {isClickable && (
+                        <div className='mt-4'>
+                          <Link
+                            href={link}
+                            className='inline-flex items-center px-4 py-2 bg-primary-600 text-white rounded hover:bg-primary-700 text-sm font-medium transition-colors'
+                          >
+                            View{' '}
+                            {notification.related_offer_uid
+                              ? 'Offer'
+                              : 'Property'}{' '}
+                            →
+                          </Link>
                         </div>
-                      </div>
-
-                      {/* Action buttons */}
-                      <div className='mt-4 flex space-x-2'>
-                        {isClickable ? (
-                          <>
-                            {/* Test different navigation methods */}
-                            <Link
-                              href={link}
-                              className='px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 text-sm'
-                            >
-                              Go with Link (
-                              {notification.related_offer_id
-                                ? 'Offer'
-                                : 'Property'}
-                              )
-                            </Link>
-                            <button
-                              onClick={() => (window.location.href = link)}
-                              className='px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 text-sm'
-                            >
-                              Go with window.location
-                            </button>
-                            <button
-                              onClick={() =>
-                                alert(`Would navigate to: ${link}`)
-                              }
-                              className='px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600 text-sm'
-                            >
-                              Test Alert
-                            </button>
-                          </>
-                        ) : (
-                          <span className='px-4 py-2 bg-gray-200 text-gray-600 rounded text-sm'>
-                            Not clickable (no related data)
-                          </span>
-                        )}
-                      </div>
+                      )}
                     </div>
                   </div>
                 </div>

@@ -64,7 +64,7 @@ export default function OfferFlowDemoPage() {
             message:
               'Great news! Your offer on the Modern Downtown Condo has been accepted. Click to view the offer details.',
             priority: 'high',
-            related_offer_id: 1,
+            related_offer_uid: 'OFFER-TEST-001',
             related_property_uid: 'SEED-PROP-001',
             metadata: {
               property_uid: 'SEED-PROP-001',
@@ -105,7 +105,7 @@ export default function OfferFlowDemoPage() {
         message:
           'You have received a new offer on your Luxury Villa property. Click to view the offer details.',
         priority: 'high',
-        related_offer_id: 2,
+        related_offer_uid: 'OFFER-TEST-002',
         related_property_uid: 'SEED-PROP-002',
         metadata: { property_uid: 'SEED-PROP-002', offer_amount: 850000 },
       },
@@ -115,7 +115,7 @@ export default function OfferFlowDemoPage() {
         message:
           'The seller has made a counter offer on your Cozy Suburban Home offer. Click to view the updated offer.',
         priority: 'normal',
-        related_offer_id: 3,
+        related_offer_uid: 'OFFER-TEST-003',
         related_property_uid: 'SEED-PROP-003',
         metadata: { property_uid: 'SEED-PROP-003', offer_amount: 425000 },
       },

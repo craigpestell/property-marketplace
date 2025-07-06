@@ -7,7 +7,7 @@ import { useCallback, useEffect, useState } from 'react';
 import OfferCard from '@/components/OfferCard';
 
 interface Offer {
-  offer_id: number;
+  offer_uid: string;
   property_uid: string;
   buyer_email: string;
   seller_email: string;
@@ -171,7 +171,7 @@ export default function OffersPage() {
           <div className='grid gap-6'>
             {offers.map((offer) => (
               <OfferCard
-                key={offer.offer_id}
+                key={offer.offer_uid}
                 offer={offer}
                 userRole={
                   offer.buyer_email === session?.user?.email

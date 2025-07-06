@@ -16,7 +16,7 @@ export interface Notification {
     | 'offer_expired'
     | 'system'
     | 'reminder';
-  related_offer_id?: number;
+  related_offer_uid?: string;
   related_property_uid?: string;
   priority: 'low' | 'normal' | 'high' | 'urgent';
   created_at: string;
@@ -108,7 +108,7 @@ export function useNotifications() {
       title: string;
       message: string;
       type: Notification['type'];
-      related_offer_id?: number;
+      related_offer_uid?: string;
       related_property_uid?: string;
       priority?: Notification['priority'];
       target_user_email?: string;

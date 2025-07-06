@@ -24,22 +24,11 @@ export default function NotificationCenter() {
 
   // Determine if notification is clickable and get link
   const getNotificationLink = (notification: Notification) => {
-    if (notification.related_offer_id) {
+    if (notification.related_offer_uid) {
       return `/offers`;
     }
     if (notification.related_property_uid) {
       return `/property/${notification.related_property_uid}`;
-    }
-    return null;
-  };
-
-  // Get hint text for clickable notifications
-  const getClickHintText = (notification: Notification) => {
-    if (notification.related_offer_id) {
-      return 'Click to view offers';
-    }
-    if (notification.related_property_uid) {
-      return 'Click to view property';
     }
     return null;
   };
@@ -288,11 +277,6 @@ export default function NotificationCenter() {
                                   <span className='text-xs text-gray-500'>
                                     {formatTimeAgo(notification.created_at)}
                                   </span>
-                                  {isClickable && (
-                                    <span className='text-xs text-blue-600 font-medium group-hover:text-blue-700'>
-                                      {getClickHintText(notification)}
-                                    </span>
-                                  )}
                                 </div>
                               </div>
 

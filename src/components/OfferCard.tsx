@@ -5,7 +5,7 @@ import { useState } from 'react';
 import Button from './buttons/Button';
 
 interface Offer {
-  offer_id: number;
+  offer_uid: string;
   property_uid: string;
   buyer_email: string;
   seller_email: string;
@@ -64,7 +64,7 @@ export default function OfferCard({
   const handleStatusUpdate = async (newStatus: string) => {
     setIsUpdating(true);
     try {
-      const response = await fetch(`/api/offers/${offer.offer_id}`, {
+      const response = await fetch(`/api/offers/${offer.offer_uid}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
