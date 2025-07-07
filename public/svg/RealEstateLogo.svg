@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
+  <!-- House outline -->
+  <path 
+    fill="#0284c7" 
+    d="M24,4L6,18v26h36V18L24,4z M38,40H10V20.5L24,10l14,10.5V40z" 
+  />
+  <!-- Windows -->
+  <path 
+    fill="#7dd3fc" 
+    d="M18,26h-4v-4h4V26z M26,22h-4v4h4V22z M34,22h-4v4h4V22z M18,28h-4v4h4V28z M26,28h-4v4h4V28z M34,28h-4v4h4V28z" 
+  />
+  <!-- Door -->
+  <path 
+    fill="#0284c7" 
+    d="M26,40h-4v-8h4V40z" 
+  />
+</svg>

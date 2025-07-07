@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Background -->
+  <rect width="512" height="512" rx="64" fill="#0284c7" />
+  
+  <!-- House outline -->
+  <path 
+    fill="#ffffff" 
+    d="M256,96L96,208v208h320V208L256,96z M368,368H144V224L256,144l112,80V368z" 
+  />
+  
+  <!-- Windows -->
+  <path 
+    fill="#bae6fd" 
+    d="M208,272h-32v-32h32V272z M272,240h-32v32h32V240z M336,240h-32v32h32V240z M208,288h-32v32h32V288z M272,288h-32v32h32V288z M336,288h-32v32h32V288z" 
+  />
+  
+  <!-- Door -->
+  <path 
+    fill="#ffffff" 
+    d="M272,368h-32v-64h32V368z" 
+  />
+</svg>

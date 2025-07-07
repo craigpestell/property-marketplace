@@ -6,6 +6,7 @@ import {
   UserCircleIcon,
   XMarkIcon,
 } from '@heroicons/react/24/outline';
+import Image from 'next/image';
 import Link from 'next/link';
 import { signOut, useSession } from 'next-auth/react';
 import { useEffect, useRef, useState } from 'react';
@@ -42,34 +43,44 @@ export default function Header() {
   };
 
   return (
-    <header className='bg-primary-900 dark:bg-gray-800 text-white shadow-lg transition-colors duration-200'>
+    <header className='bg-white dark:bg-gray-800 text-gray-800 dark:text-white shadow-lg transition-colors duration-200 border-b border-gray-200 dark:border-gray-700'>
       <div className='layout'>
         <div className='flex items-center justify-between py-4'>
           {/* Logo */}
           <Link
             href='/'
-            className='text-xl font-bold hover:text-primary-200 dark:hover:text-primary-300 transition-colors'
+            className='flex items-center space-x-2 text-xl font-bold text-primary-600 dark:text-primary-400 hover:text-primary-800 dark:hover:text-primary-300 transition-colors'
           >
-            Real Estate Marketplace
+            <Image
+              src='/svg/RealEstateLogo.svg'
+              alt='Real Estate Marketplace'
+              width={32}
+              height={32}
+              className='h-8 w-8'
+            />
+            <span className='font-heading hidden sm:inline'>
+              Real Estate Marketplace
+            </span>
+            <span className='font-heading sm:hidden'>RE Marketplace</span>
           </Link>
 
           {/* Desktop Navigation */}
           <nav className='hidden md:flex items-center space-x-6'>
             <Link
               href='/'
-              className='hover:text-primary-200 dark:hover:text-primary-300 transition-colors'
+              className='text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors font-medium'
             >
               Home
             </Link>
             <Link
               href='/listings'
-              className='hover:text-primary-200 dark:hover:text-primary-300 transition-colors'
+              className='text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors font-medium'
             >
               Listings
             </Link>
             <Link
               href='/about'
-              className='hover:text-primary-200 dark:hover:text-primary-300 transition-colors'
+              className='text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors font-medium'
             >
               About
             </Link>
@@ -77,20 +88,20 @@ export default function Header() {
             {/* Debug Links - Only visible to test users */}
             {showDebugFeatures(session?.user?.email) && (
               <>
-                <span className='text-primary-400'>|</span>
-                <div className='flex items-center space-x-3 text-xs bg-primary-800 dark:bg-gray-700 px-3 py-1 rounded'>
-                  <span className='text-primary-300 dark:text-gray-300 uppercase tracking-wide'>
+                <span className='text-gray-300 dark:text-gray-500'>|</span>
+                <div className='flex items-center space-x-3 text-xs bg-gray-100 dark:bg-gray-700 px-3 py-1 rounded border border-gray-200 dark:border-gray-600'>
+                  <span className='text-gray-500 dark:text-gray-400 uppercase tracking-wide font-semibold'>
                     Debug
                   </span>
                   <Link
                     href='/demo'
-                    className='hover:text-primary-200 dark:hover:text-primary-300 transition-colors text-primary-300 dark:text-gray-300'
+                    className='text-primary-600 dark:text-primary-400 hover:text-primary-800 dark:hover:text-primary-300 transition-colors'
                   >
                     Demo
                   </Link>
                   <Link
                     href='/test'
-                    className='hover:text-primary-200 dark:hover:text-primary-300 transition-colors text-primary-300 dark:text-gray-300'
+                    className='text-primary-600 dark:text-primary-400 hover:text-primary-800 dark:hover:text-primary-300 transition-colors'
                   >
                     Test
                   </Link>
@@ -100,7 +111,7 @@ export default function Header() {
 
             {/* Auth Links */}
             {status === 'loading' ? (
-              <div className='w-16 h-4 bg-primary-800 dark:bg-gray-700 animate-pulse rounded'></div>
+              <div className='w-16 h-4 bg-gray-200 dark:bg-gray-700 animate-pulse rounded'></div>
             ) : status === 'authenticated' ? (
               <div className='flex items-center space-x-4'>
                 {/* Notification Center */}
@@ -110,10 +121,10 @@ export default function Header() {
                 <div className='relative' ref={dropdownRef}>
                   <button
                     onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                    className='flex items-center space-x-2 hover:text-primary-200 dark:hover:text-primary-300 transition-colors focus:outline-none'
+                    className='flex items-center space-x-2 text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors focus:outline-none'
                   >
                     <UserCircleIcon className='h-5 w-5' />
-                    <span className='text-sm'>
+                    <span className='text-sm font-medium'>
                       {session.user?.name || session.user?.email}
                     </span>
                     <ChevronDownIcon className='h-4 w-4' />
@@ -190,7 +201,7 @@ export default function Header() {
 
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className='p-2 hover:bg-primary-800 dark:hover:bg-gray-700 rounded transition-colors'
+              className='p-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors border border-gray-200 dark:border-gray-700'
             >
               {isMenuOpen ? (
                 <XMarkIcon className='h-6 w-6' />
@@ -203,25 +214,25 @@ export default function Header() {
 
         {/* Mobile Navigation */}
         {isMenuOpen && (
-          <div className='md:hidden border-t border-primary-800 dark:border-gray-700 py-4'>
+          <div className='md:hidden border-t border-gray-200 dark:border-gray-700 py-4'>
             <nav className='flex flex-col space-y-4'>
               <Link
                 href='/'
-                className='hover:text-primary-200 dark:hover:text-primary-300 transition-colors'
+                className='text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors font-medium'
                 onClick={() => setIsMenuOpen(false)}
               >
                 Home
               </Link>
               <Link
                 href='/listings'
-                className='hover:text-primary-200 dark:hover:text-primary-300 transition-colors'
+                className='text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors font-medium'
                 onClick={() => setIsMenuOpen(false)}
               >
                 Listings
               </Link>
               <Link
                 href='/about'
-                className='hover:text-primary-200 dark:hover:text-primary-300 transition-colors'
+                className='text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors font-medium'
                 onClick={() => setIsMenuOpen(false)}
               >
                 About
@@ -230,20 +241,20 @@ export default function Header() {
               {/* Debug Links - Only visible to test users (Mobile) */}
               {showDebugFeatures(session?.user?.email) && (
                 <>
-                  <div className='border-t border-primary-700 dark:border-gray-600 pt-3 mt-3'>
-                    <div className='text-xs text-primary-300 dark:text-gray-400 mb-2 uppercase tracking-wide'>
+                  <div className='border-t border-gray-200 dark:border-gray-700 pt-3 mt-3'>
+                    <div className='text-xs text-gray-500 dark:text-gray-400 mb-2 uppercase tracking-wide font-semibold'>
                       Debug
                     </div>
                     <Link
                       href='/demo'
-                      className='hover:text-primary-200 dark:hover:text-primary-300 transition-colors text-sm text-primary-300 dark:text-gray-400 block'
+                      className='text-primary-600 dark:text-primary-400 hover:text-primary-800 dark:hover:text-primary-300 transition-colors text-sm block'
                       onClick={() => setIsMenuOpen(false)}
                     >
                       Demo
                     </Link>
                     <Link
                       href='/test'
-                      className='hover:text-primary-200 dark:hover:text-primary-300 transition-colors text-sm text-primary-300 dark:text-gray-400 block mt-2'
+                      className='text-primary-600 dark:text-primary-400 hover:text-primary-800 dark:hover:text-primary-300 transition-colors text-sm block mt-2'
                       onClick={() => setIsMenuOpen(false)}
                     >
                       Test
