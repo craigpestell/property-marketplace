@@ -23,6 +23,10 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    // Check if we're using the new schema
+    const { isUsingNewSchema } = await import('@/lib/db');
+    const usingNewSchema = await isUsingNewSchema();
+
     const { searchParams } = new URL(request.url);
     const limit = parseInt(searchParams.get('limit') || '20');
     const unreadOnly = searchParams.get('unread') === 'true';
@@ -30,6 +34,7 @@ export async function GET(request: NextRequest) {
     let query = `
       SELECT notification_id, title, message, type, 
              related_offer_uid, related_property_uid, priority, created_at, read_at
+             ${usingNewSchema ? ', client_uid' : ''}
       FROM user_notifications 
       WHERE user_email = $1
     `;
@@ -86,6 +91,7 @@ export async function POST(request: NextRequest) {
       related_property_uid,
       priority = 'normal',
       target_user_email, // Allow creating notifications for other users (e.g., when making offers)
+      client_uid, // New field for client relationship
     } = body;
 
     if (!title || !message || !type) {
@@ -95,28 +101,61 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Check if we're using the new schema
+    const { isUsingNewSchema } = await import('@/lib/db');
+    const usingNewSchema = await isUsingNewSchema();
+
     // Use target_user_email if provided (for system notifications), otherwise use current user
     const recipientEmail = target_user_email || session.user.email;
 
-    const result = await pool.query(
-      `INSERT INTO user_notifications 
-       (user_email, title, message, type, related_offer_uid, related_property_uid, priority)
-       VALUES ($1, $2, $3, $4, $5, $6, $7)
-       RETURNING *`,
-      [
-        recipientEmail,
+    // Include client_uid if it's provided and we're using the new schema
+    if (usingNewSchema && client_uid) {
+      await pool.query(
+        `INSERT INTO user_notifications 
+         (user_email, title, message, type, related_offer_uid, related_property_uid, priority, client_uid)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+         RETURNING *`,
+        [
+          recipientEmail,
+          title,
+          message,
+          type,
+          related_offer_uid,
+          related_property_uid,
+          priority,
+          client_uid,
+        ],
+      );
+    } else {
+      await pool.query(
+        `INSERT INTO user_notifications 
+         (user_email, title, message, type, related_offer_uid, related_property_uid, priority)
+         VALUES ($1, $2, $3, $4, $5, $6, $7)
+         RETURNING *`,
+        [
+          recipientEmail,
+          title,
+          message,
+          type,
+          related_offer_uid,
+          related_property_uid,
+          priority,
+        ],
+      );
+    }
+
+    return NextResponse.json({
+      message: 'Notification created successfully',
+      notification: {
+        user_email: recipientEmail,
         title,
         message,
         type,
         related_offer_uid,
         related_property_uid,
         priority,
-      ],
-    );
-
-    return NextResponse.json({
-      message: 'Notification created successfully',
-      notification: result.rows[0],
+        client_uid: usingNewSchema ? client_uid : undefined,
+      },
     });
   } catch (error) {
     // eslint-disable-next-line no-console

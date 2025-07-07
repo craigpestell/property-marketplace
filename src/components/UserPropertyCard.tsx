@@ -121,10 +121,13 @@ export default function UserPropertyCard({
         />
         <div className='p-4'>
           <div className='flex justify-between items-start mb-2'>
-            <h3 className='text-lg font-semibold text-gray-900 dark:text-gray-100'>
+            <h3
+              className='text-lg font-semibold text-gray-900 dark:text-gray-100 whitespace-nowrap overflow-hidden text-ellipsis max-w-[75%]'
+              title={property.title}
+            >
               {property.title}
             </h3>
-            <span className='text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded font-mono'>
+            <span className='text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded font-mono flex-shrink-0'>
               {property.property_uid}
             </span>
           </div>
@@ -132,7 +135,8 @@ export default function UserPropertyCard({
             ${property.price.toLocaleString()}
           </p>
           <p className='text-gray-600 dark:text-gray-400 text-sm mb-2'>
-            {property.address}
+            {property.formatted_address ||
+              `${property.street_number || ''} ${property.street_name || ''}, ${property.city}`.trim()}
           </p>
           <p className='text-gray-500 dark:text-gray-500 text-xs'>
             Listed: {new Date(property.created_at).toLocaleDateString()}

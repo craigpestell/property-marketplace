@@ -128,7 +128,7 @@ export default function ListingsPage() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const _handleItemsPerPageChange = (newLimit: number) => {
+  const handleItemsPerPageChange = (newLimit: number) => {
     setItemsPerPage(newLimit);
     setCurrentPage(1); // Reset to first page when changing items per page
   };
@@ -196,11 +196,11 @@ export default function ListingsPage() {
                   />
                 </svg>
                 <span className='font-semibold text-blue-700 dark:text-blue-300'>
-                  Buy paying zero commission, sell paying only 0.9% commission
+                  Save $41K+ with Zero Buyer Commission
                 </span>
               </div>
               <span className='text-blue-600 dark:text-blue-400 text-xs'>
-                Access FSBO properties agents try to hide
+                Access FSBO properties others won't show
               </span>
             </div>
           </div>
@@ -392,8 +392,8 @@ export default function ListingsPage() {
               )}
             </div>
 
-            {/* Property Grid - Limited to max 4 columns */}
-            <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3'>
+            {/* Property Grid - Optimized for more properties above fold */}
+            <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3'>
               {filteredProperties.map((property) => (
                 <div key={property.id}>
                   <PropertyCard property={property} showSaveCount={true} />

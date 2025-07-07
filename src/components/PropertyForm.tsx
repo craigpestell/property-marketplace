@@ -21,7 +21,18 @@ export default function PropertyForm({ property, mode }: PropertyFormProps) {
   const [formData, setFormData] = React.useState({
     title: property?.title || '',
     price: property?.price || '',
-    address: property?.address || '',
+    // Granular address fields
+    streetNumber: property?.street_number || '',
+    streetName: property?.street_name || '',
+    unit: property?.unit || '',
+    city: property?.city || 'Vancouver',
+    province: property?.province || 'British Columbia',
+    postalCode: property?.postal_code || '',
+    country: property?.country || 'Canada',
+    addressType: property?.address_type || 'residential',
+    latitude: property?.latitude?.toString() || '',
+    longitude: property?.longitude?.toString() || '',
+    // Property details
     details: property?.details || '',
     propertyType: '',
     bedrooms: '',
@@ -151,9 +162,22 @@ export default function PropertyForm({ property, mode }: PropertyFormProps) {
       const formDataPayload = new FormData();
       formDataPayload.append('image', imageFile);
 
-      // Include address if provided to help with location-based suggestions
-      if (formData.address.trim()) {
-        formDataPayload.append('address', formData.address.trim());
+      // Include formatted address if provided to help with location-based suggestions
+      const fullAddress = [
+        formData.streetNumber && formData.streetName
+          ? `${formData.streetNumber} ${formData.streetName}`
+          : '',
+        formData.unit,
+        formData.city,
+        formData.province,
+        formData.postalCode,
+        formData.country,
+      ]
+        .filter(Boolean)
+        .join(', ');
+
+      if (fullAddress.trim()) {
+        formDataPayload.append('address', fullAddress.trim());
       }
 
       const response = await fetch('/api/generate-suggestions', {
@@ -230,7 +254,19 @@ export default function PropertyForm({ property, mode }: PropertyFormProps) {
       form.append('userEmail', session.user.email);
       form.append('title', formData.title);
       form.append('price', formData.price.toString());
-      form.append('address', formData.address);
+
+      // Append granular address fields
+      form.append('streetNumber', formData.streetNumber);
+      form.append('streetName', formData.streetName);
+      form.append('unit', formData.unit);
+      form.append('city', formData.city);
+      form.append('province', formData.province);
+      form.append('postalCode', formData.postalCode);
+      form.append('country', formData.country);
+      form.append('addressType', formData.addressType);
+      if (formData.latitude) form.append('latitude', formData.latitude);
+      if (formData.longitude) form.append('longitude', formData.longitude);
+
       form.append('details', details);
 
       if (imageFile) {
@@ -447,21 +483,194 @@ export default function PropertyForm({ property, mode }: PropertyFormProps) {
             </div>
 
             <div className='mt-4'>
-              <label
-                htmlFor='address'
-                className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2'
-              >
-                Address *
-              </label>
-              <input
-                type='text'
-                id='address'
-                name='address'
-                value={formData.address}
-                onChange={handleInputChange}
-                required
-                className='w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-400 dark:focus:border-blue-400'
-              />
+              <h3 className='text-lg font-semibold text-gray-900 dark:text-white mb-4'>
+                Address Information
+              </h3>
+
+              {/* Street Number and Street Name Row */}
+              <div className='grid grid-cols-1 md:grid-cols-3 gap-4 mb-4'>
+                <div>
+                  <label
+                    htmlFor='streetNumber'
+                    className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2'
+                  >
+                    Street Number
+                  </label>
+                  <input
+                    type='text'
+                    id='streetNumber'
+                    name='streetNumber'
+                    value={formData.streetNumber}
+                    onChange={handleInputChange}
+                    placeholder='123'
+                    className='w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-400 dark:focus:border-blue-400'
+                  />
+                </div>
+                <div className='md:col-span-2'>
+                  <label
+                    htmlFor='streetName'
+                    className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2'
+                  >
+                    Street Name *
+                  </label>
+                  <input
+                    type='text'
+                    id='streetName'
+                    name='streetName'
+                    value={formData.streetName}
+                    onChange={handleInputChange}
+                    required
+                    placeholder='Main Street'
+                    className='w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-400 dark:focus:border-blue-400'
+                  />
+                </div>
+              </div>
+
+              {/* Unit and City Row */}
+              <div className='grid grid-cols-1 md:grid-cols-2 gap-4 mb-4'>
+                <div>
+                  <label
+                    htmlFor='unit'
+                    className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2'
+                  >
+                    Unit/Suite
+                  </label>
+                  <input
+                    type='text'
+                    id='unit'
+                    name='unit'
+                    value={formData.unit}
+                    onChange={handleInputChange}
+                    placeholder='Unit 401, Apt 12B'
+                    className='w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-400 dark:focus:border-blue-400'
+                  />
+                </div>
+                <div>
+                  <label
+                    htmlFor='city'
+                    className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2'
+                  >
+                    City *
+                  </label>
+                  <select
+                    id='city'
+                    name='city'
+                    value={formData.city}
+                    onChange={handleInputChange}
+                    required
+                    className='w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-400 dark:focus:border-blue-400'
+                  >
+                    <option value='Vancouver'>Vancouver</option>
+                    <option value='Burnaby'>Burnaby</option>
+                    <option value='Richmond'>Richmond</option>
+                    <option value='Surrey'>Surrey</option>
+                    <option value='North Vancouver'>North Vancouver</option>
+                    <option value='West Vancouver'>West Vancouver</option>
+                    <option value='Coquitlam'>Coquitlam</option>
+                    <option value='New Westminster'>New Westminster</option>
+                    <option value='Victoria'>Victoria</option>
+                    <option value='Other'>Other</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Province, Postal Code, Address Type Row */}
+              <div className='grid grid-cols-1 md:grid-cols-3 gap-4 mb-4'>
+                <div>
+                  <label
+                    htmlFor='province'
+                    className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2'
+                  >
+                    Province *
+                  </label>
+                  <input
+                    type='text'
+                    id='province'
+                    name='province'
+                    value={formData.province}
+                    onChange={handleInputChange}
+                    required
+                    className='w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-400 dark:focus:border-blue-400'
+                  />
+                </div>
+                <div>
+                  <label
+                    htmlFor='postalCode'
+                    className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2'
+                  >
+                    Postal Code
+                  </label>
+                  <input
+                    type='text'
+                    id='postalCode'
+                    name='postalCode'
+                    value={formData.postalCode}
+                    onChange={handleInputChange}
+                    placeholder='V6B 1A1'
+                    pattern='[A-Za-z][0-9][A-Za-z] [0-9][A-Za-z][0-9]'
+                    className='w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-400 dark:focus:border-blue-400'
+                  />
+                </div>
+                <div>
+                  <label
+                    htmlFor='addressType'
+                    className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2'
+                  >
+                    Property Type
+                  </label>
+                  <select
+                    id='addressType'
+                    name='addressType'
+                    value={formData.addressType}
+                    onChange={handleInputChange}
+                    className='w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-400 dark:focus:border-blue-400'
+                  >
+                    <option value='residential'>Residential</option>
+                    <option value='commercial'>Commercial</option>
+                    <option value='mixed'>Mixed Use</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Coordinates Row (Optional) */}
+              <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+                <div>
+                  <label
+                    htmlFor='latitude'
+                    className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2'
+                  >
+                    Latitude (Optional)
+                  </label>
+                  <input
+                    type='number'
+                    id='latitude'
+                    name='latitude'
+                    value={formData.latitude}
+                    onChange={handleInputChange}
+                    step='any'
+                    placeholder='49.2827'
+                    className='w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-400 dark:focus:border-blue-400'
+                  />
+                </div>
+                <div>
+                  <label
+                    htmlFor='longitude'
+                    className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2'
+                  >
+                    Longitude (Optional)
+                  </label>
+                  <input
+                    type='number'
+                    id='longitude'
+                    name='longitude'
+                    value={formData.longitude}
+                    onChange={handleInputChange}
+                    step='any'
+                    placeholder='-123.1207'
+                    className='w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-400 dark:focus:border-blue-400'
+                  />
+                </div>
+              </div>
             </div>
           </div>
 

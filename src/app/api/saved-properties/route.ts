@@ -1,47 +1,98 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
+import { NextResponse } from 'next/server';
 import { Pool } from 'pg';
-
+import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
+  user: process.env.PGUSER,
+  host: process.env.PGHOST,
+  database: process.env.PGDATABASE,
+  password: process.env.PGPASSWORD,
+  port: process.env.PGPORT ? parseInt(process.env.PGPORT) : 5432,
 });
 
-// GET /api/saved-properties - Get user's saved properties
-export async function GET(request: NextRequest) {
+// Check if the new schema has been migrated
+let isNewSchema: boolean | null = null;
+
+async function checkSchema(): Promise<boolean> {
+  if (isNewSchema !== null) return isNewSchema;
+
   try {
-    const session = (await getServerSession(authOptions)) as {
-      user: { email: string };
-    } | null;
+    await pool.query('SELECT client_uid FROM properties LIMIT 1');
+    isNewSchema = true;
+  } catch {
+    isNewSchema = false;
+  }
+
+  return isNewSchema;
+}
+
+// GET /api/saved-properties - Get user's saved properties
+export async function GET(request: Request) {
+  try {
+    const session = await getServerSession(authOptions);
 
     if (!session?.user?.email) {
-      return NextResponse.json(
-        { error: 'Authentication required' },
-        { status: 401 },
-      );
+      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     }
 
-    const userEmail = session.user.email;
+    const isNew = await checkSchema();
 
     // Get all saved properties for the user with property details
-    const query = `
+    const query = isNew
+      ? `
       SELECT 
-        sp.id as saved_id,
-        sp.created_at as saved_at,
-        p.*
+        sp.saved_at,
+        p.id,
+        p.property_uid,
+        p.title,
+        p.price,
+        p.details,
+        p.image_url,
+        p.created_at,
+        p.street_number,
+        p.street_name,
+        p.unit,
+        p.city,
+        p.province,
+        p.postal_code,
+        p.country,
+        p.latitude,
+        p.longitude,
+        p.formatted_address,
+        p.address_type,
+        p.client_uid,
+        c.email as client_email,
+        c.name as client_name
+      FROM saved_properties sp
+      JOIN properties p ON sp.property_uid = p.property_uid
+      LEFT JOIN clients c ON p.client_uid = c.client_uid
+      WHERE sp.user_email = $1
+      ORDER BY sp.saved_at DESC
+    `
+      : `
+      SELECT 
+        sp.saved_at,
+        p.id,
+        p.property_uid,
+        p.title,
+        p.price,
+        p.details,
+        p.image_url,
+        p.created_at,
+        p.address,
+        p.client_id,
+        p.user_email as client_email
       FROM saved_properties sp
       JOIN properties p ON sp.property_uid = p.property_uid
       WHERE sp.user_email = $1
-      ORDER BY sp.created_at DESC
+      ORDER BY sp.saved_at DESC
     `;
 
-    const result = await pool.query(query, [userEmail]);
+    const result = await pool.query(query, [session.user.email]);
 
     return NextResponse.json({
-      success: true,
       savedProperties: result.rows,
-      count: result.rowCount,
     });
   } catch (error) {
     console.error('Error fetching saved properties:', error);
@@ -53,66 +104,50 @@ export async function GET(request: NextRequest) {
 }
 
 // POST /api/saved-properties - Save a property
-export async function POST(request: NextRequest) {
+export async function POST(request: Request) {
   try {
-    const session = (await getServerSession(authOptions)) as {
-      user: { email: string };
-    } | null;
+    const session = await getServerSession(authOptions);
 
     if (!session?.user?.email) {
-      return NextResponse.json(
-        { error: 'Authentication required' },
-        { status: 401 },
-      );
+      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     }
 
-    const { propertyUid } = await request.json();
+    const body = await request.json();
+    const { propertyUid } = body;
 
     if (!propertyUid) {
       return NextResponse.json(
-        { error: 'Property UID is required' },
+        { error: 'Property ID is required' },
         { status: 400 },
       );
     }
 
-    const userEmail = session.user.email;
-
-    // Check if property exists
+    // Verify property exists
     const propertyCheck = await pool.query(
       'SELECT property_uid FROM properties WHERE property_uid = $1',
       [propertyUid],
     );
 
-    if (propertyCheck.rowCount === 0) {
+    if (propertyCheck.rows.length === 0) {
       return NextResponse.json(
         { error: 'Property not found' },
         { status: 404 },
       );
     }
 
-    // Save the property (ON CONFLICT DO NOTHING handles duplicates)
-    const insertQuery = `
+    // Save the property
+    await pool.query(
+      `
       INSERT INTO saved_properties (user_email, property_uid)
       VALUES ($1, $2)
       ON CONFLICT (user_email, property_uid) DO NOTHING
-      RETURNING id, created_at
-    `;
-
-    const result = await pool.query(insertQuery, [userEmail, propertyUid]);
-
-    if (result.rowCount === 0) {
-      // Property was already saved
-      return NextResponse.json({
-        success: true,
-        message: 'Property already saved',
-        alreadySaved: true,
-      });
-    }
+      `,
+      [session.user.email, propertyUid],
+    );
 
     return NextResponse.json({
       success: true,
       message: 'Property saved successfully',
-      savedProperty: result.rows[0],
     });
   } catch (error) {
     console.error('Error saving property:', error);
@@ -124,17 +159,12 @@ export async function POST(request: NextRequest) {
 }
 
 // DELETE /api/saved-properties - Remove a saved property
-export async function DELETE(request: NextRequest) {
+export async function DELETE(request: Request) {
   try {
-    const session = (await getServerSession(authOptions)) as {
-      user: { email: string };
-    } | null;
+    const session = await getServerSession(authOptions);
 
     if (!session?.user?.email) {
-      return NextResponse.json(
-        { error: 'Authentication required' },
-        { status: 401 },
-      );
+      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     }
 
     const { searchParams } = new URL(request.url);
@@ -142,25 +172,23 @@ export async function DELETE(request: NextRequest) {
 
     if (!propertyUid) {
       return NextResponse.json(
-        { error: 'Property UID is required' },
+        { error: 'Property ID is required' },
         { status: 400 },
       );
     }
 
-    const userEmail = session.user.email;
-
-    // Remove the saved property
-    const deleteQuery = `
+    // Delete the saved property
+    const result = await pool.query(
+      `
       DELETE FROM saved_properties 
       WHERE user_email = $1 AND property_uid = $2
-      RETURNING id
-    `;
-
-    const result = await pool.query(deleteQuery, [userEmail, propertyUid]);
+      `,
+      [session.user.email, propertyUid],
+    );
 
     if (result.rowCount === 0) {
       return NextResponse.json(
-        { error: 'Saved property not found' },
+        { error: 'Property not found or not saved' },
         { status: 404 },
       );
     }

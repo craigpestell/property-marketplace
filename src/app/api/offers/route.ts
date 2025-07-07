@@ -27,16 +27,27 @@ export async function GET(request: NextRequest) {
     const role = searchParams.get('role'); // 'buyer' or 'seller'
     const status = searchParams.get('status');
 
+    // Check if we're using the new schema
+    const { isUsingNewSchema, formatAddress } = await import('@/lib/db');
+    const usingNewSchema = await isUsingNewSchema();
+
     let query = `
       SELECT 
         o.*,
         p.title as property_title,
-        p.address as property_address,
+        ${
+          usingNewSchema
+            ? `COALESCE(p.formatted_address, 
+               ${formatAddress.name}(p.street_number, p.street_name, p.unit, p.city, p.province, p.postal_code, p.country)) as property_address,
+               p.street_number, p.street_name, p.unit, p.city, p.province, p.postal_code, p.country,
+               p.client_uid,`
+            : 'p.formatted_address as property_address,'
+        }
         p.price as listing_price,
         p.image_url as property_image_url
       FROM offers o
       JOIN properties p ON o.property_uid = p.property_uid
-      WHERE p.deleted = false AND (
+      WHERE (p.deleted IS NULL OR p.deleted = false) AND (
     `;
 
     const params: string[] = [session.user.email];
@@ -103,12 +114,23 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Check if we're using the new schema
+    const { isUsingNewSchema } = await import('@/lib/db');
+    const usingNewSchema = await isUsingNewSchema();
+
     // Get property details and seller email
-    const propertyQuery = `
-      SELECT user_email, price, title 
-      FROM properties 
-      WHERE property_uid = $1 AND deleted = false
-    `;
+    const propertyQuery = usingNewSchema
+      ? `
+        SELECT user_email, price, title, client_uid
+        FROM properties 
+        WHERE property_uid = $1 AND (deleted IS NULL OR deleted = false)
+      `
+      : `
+        SELECT user_email, price, title 
+        FROM properties 
+        WHERE property_uid = $1 AND deleted = false
+      `;
+
     const propertyResult = await pool.query(propertyQuery, [property_uid]);
 
     if (propertyResult.rows.length === 0) {
@@ -133,13 +155,25 @@ export async function POST(request: NextRequest) {
     const offer_uid = generateOfferUID();
 
     // Insert the new offer
-    const insertQuery = `
+    let insertQuery = `
       INSERT INTO offers (
         offer_uid, property_uid, buyer_email, seller_email, offer_amount, message,
         financing_type, contingencies, closing_date, earnest_money, inspection_period_days
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
-      RETURNING *
     `;
+
+    // Add client_uid field if using new schema
+    if (usingNewSchema && property.client_uid) {
+      insertQuery += `, client_uid`;
+    }
+
+    insertQuery += `) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11`;
+
+    // Add client_uid value if using new schema
+    if (usingNewSchema && property.client_uid) {
+      insertQuery += `, $12`;
+    }
+
+    insertQuery += `) RETURNING *`;
 
     const insertParams = [
       offer_uid,
@@ -155,27 +189,51 @@ export async function POST(request: NextRequest) {
       inspection_period_days,
     ];
 
+    // Add client_uid param if using new schema
+    if (usingNewSchema && property.client_uid) {
+      insertParams.push(property.client_uid);
+    }
+
     const result = await pool.query(insertQuery, insertParams);
     const newOffer = result.rows[0];
 
     // Create notification for seller
     const notificationMessage = `New offer of $${offer_amount.toLocaleString()} received for "${property.title}"`;
 
-    // New notification system (only using offer_uid now)
-    await pool.query(
-      `INSERT INTO user_notifications 
-       (user_email, title, message, type, related_offer_uid, related_property_uid, priority)
-       VALUES ($1, $2, $3, $4, $5, $6, $7)`,
-      [
-        seller_email,
-        'New Offer Received!',
-        notificationMessage,
-        'offer_received',
-        newOffer.offer_uid,
-        property_uid,
-        'high',
-      ],
-    );
+    // Create notification with client_uid if available
+    if (usingNewSchema && property.client_uid) {
+      await pool.query(
+        `INSERT INTO user_notifications 
+         (user_email, title, message, type, related_offer_uid, related_property_uid, priority, client_uid)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+        [
+          seller_email,
+          'New Offer Received!',
+          notificationMessage,
+          'offer_received',
+          newOffer.offer_uid,
+          property_uid,
+          'high',
+          property.client_uid,
+        ],
+      );
+    } else {
+      // New notification system (only using offer_uid)
+      await pool.query(
+        `INSERT INTO user_notifications 
+         (user_email, title, message, type, related_offer_uid, related_property_uid, priority)
+         VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+        [
+          seller_email,
+          'New Offer Received!',
+          notificationMessage,
+          'offer_received',
+          newOffer.offer_uid,
+          property_uid,
+          'high',
+        ],
+      );
+    }
 
     return NextResponse.json({
       message: 'Offer submitted successfully',

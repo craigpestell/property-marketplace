@@ -24,11 +24,16 @@ export async function GET() {
     let properties = [];
     let timeFrame = '';
 
+    // Check if we're using the new schema
+    const { isUsingNewSchema } = await import('@/lib/db');
+    const usingNewSchema = await isUsingNewSchema();
+
     // Try to get most loved properties from the last day
     const oneDayAgo = new Date();
     oneDayAgo.setDate(oneDayAgo.getDate() - 1);
 
-    const dayQuery = `
+    // Base selection with conditional fields depending on schema
+    const baseSelect = `
       SELECT 
         p.id, 
         p.uuid, 
@@ -38,18 +43,56 @@ export async function GET() {
         p.details,
         p.image_url, 
         p.created_at, 
-        p.address,
+        ${!usingNewSchema ? 'p.address,' : ''}
+        ${
+          usingNewSchema
+            ? `
+        p.formatted_address,
+        p.street_number,
+        p.street_name,
+        p.unit,
+        p.city,
+        p.province,
+        p.postal_code,
+        p.country,
+        p.client_uid,`
+            : ''
+        }
         p.client_id,
         p.user_email,
-        (SELECT email FROM clients WHERE clients.id = p.client_id) as client_email,
+        ${
+          usingNewSchema
+            ? `(SELECT email FROM clients WHERE clients.id = p.client_id OR clients.client_uid = p.client_uid LIMIT 1) as client_email,`
+            : `(SELECT email FROM clients WHERE clients.id = p.client_id) as client_email,`
+        }
         COUNT(sp.property_uid) as saves
+    `;
+
+    const joinCondition = `
       FROM properties p
+      ${usingNewSchema ? 'LEFT JOIN clients c ON p.client_uid = c.client_uid' : ''}
       LEFT JOIN saved_properties sp ON COALESCE(p.property_uid, CONCAT('PROP-', EXTRACT(EPOCH FROM p.created_at)::text, '-', SUBSTRING(p.id::text, 1, 6))) = sp.property_uid 
-        AND sp.created_at >= $1
-      WHERE (p.deleted IS NULL OR p.deleted = FALSE)
-      GROUP BY p.id, p.uuid, p.property_uid, p.title, p.price, p.details, p.image_url, p.created_at, p.address, p.client_id, p.user_email
+    `;
+
+    const whereCondition = `WHERE (p.deleted IS NULL OR p.deleted = FALSE)`;
+
+    // Create group by based on schema
+    const groupBy = `GROUP BY p.id, p.uuid, p.property_uid, p.title, p.price, p.details, p.image_url, p.created_at, ${!usingNewSchema ? 'p.address, ' : ''}p.client_id, p.user_email${
+      usingNewSchema
+        ? ', p.formatted_address, p.street_number, p.street_name, p.unit, p.city, p.province, p.postal_code, p.country, p.client_uid'
+        : ''
+    }`;
+
+    const orderBy = `ORDER BY saves DESC, p.created_at DESC`;
+
+    // Day query
+    const dayQuery = `
+      ${baseSelect}
+      ${joinCondition} AND sp.created_at >= $1
+      ${whereCondition}
+      ${groupBy}
       HAVING COUNT(sp.property_uid) > 0
-      ORDER BY saves DESC, p.created_at DESC
+      ${orderBy}
       LIMIT $2
     `;
 
@@ -65,30 +108,16 @@ export async function GET() {
       // Try to get most loved properties from the last week
       const oneWeekAgo = new Date();
       oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+
       const weekQuery = `
-          SELECT 
-            p.id, 
-            p.uuid, 
-            COALESCE(p.property_uid, CONCAT('PROP-', EXTRACT(EPOCH FROM p.created_at)::text, '-', SUBSTRING(p.id::text, 1, 6))) as property_uid,
-            p.title, 
-            p.price, 
-            p.details,
-            p.image_url, 
-            p.created_at, 
-            p.address,
-            p.client_id,
-            p.user_email,
-            (SELECT email FROM clients WHERE clients.id = p.client_id) as client_email,
-            COUNT(sp.property_uid) as saves
-          FROM properties p
-          LEFT JOIN saved_properties sp ON COALESCE(p.property_uid, CONCAT('PROP-', EXTRACT(EPOCH FROM p.created_at)::text, '-', SUBSTRING(p.id::text, 1, 6))) = sp.property_uid 
-            AND sp.created_at >= $1
-          WHERE (p.deleted IS NULL OR p.deleted = FALSE)
-          GROUP BY p.id, p.uuid, p.property_uid, p.title, p.price, p.details, p.image_url, p.created_at, p.address, p.client_id, p.user_email
-          HAVING COUNT(sp.property_uid) > 0
-          ORDER BY saves DESC, p.created_at DESC
-          LIMIT $2
-        `;
+        ${baseSelect}
+        ${joinCondition} AND sp.created_at >= $1
+        ${whereCondition}
+        ${groupBy}
+        HAVING COUNT(sp.property_uid) > 0
+        ${orderBy}
+        LIMIT $2
+      `;
 
       const weekResult = await pool.query(weekQuery, [
         oneWeekAgo.toISOString(),
@@ -102,30 +131,16 @@ export async function GET() {
         // Try to get most loved properties from the last month
         const oneMonthAgo = new Date();
         oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+
         const monthQuery = `
-            SELECT 
-              p.id, 
-              p.uuid, 
-              COALESCE(p.property_uid, CONCAT('PROP-', EXTRACT(EPOCH FROM p.created_at)::text, '-', SUBSTRING(p.id::text, 1, 6))) as property_uid,
-              p.title, 
-              p.price, 
-              p.details,
-              p.image_url, 
-              p.created_at, 
-              p.address,
-              p.client_id,
-              p.user_email,
-              (SELECT email FROM clients WHERE clients.id = p.client_id) as client_email,
-              COUNT(sp.property_uid) as saves
-            FROM properties p
-            LEFT JOIN saved_properties sp ON COALESCE(p.property_uid, CONCAT('PROP-', EXTRACT(EPOCH FROM p.created_at)::text, '-', SUBSTRING(p.id::text, 1, 6))) = sp.property_uid 
-              AND sp.created_at >= $1
-            WHERE (p.deleted IS NULL OR p.deleted = FALSE)
-            GROUP BY p.id, p.uuid, p.property_uid, p.title, p.price, p.details, p.image_url, p.created_at, p.address, p.client_id, p.user_email
-            HAVING COUNT(sp.property_uid) > 0
-            ORDER BY saves DESC, p.created_at DESC
-            LIMIT $2
-          `;
+          ${baseSelect}
+          ${joinCondition} AND sp.created_at >= $1
+          ${whereCondition}
+          ${groupBy}
+          HAVING COUNT(sp.property_uid) > 0
+          ${orderBy}
+          LIMIT $2
+        `;
 
         const monthResult = await pool.query(monthQuery, [
           oneMonthAgo.toISOString(),
@@ -138,28 +153,14 @@ export async function GET() {
         } else {
           // Fall back to all-time most loved properties
           const allTimeQuery = `
-              SELECT 
-                p.id, 
-                p.uuid, 
-                COALESCE(p.property_uid, CONCAT('PROP-', EXTRACT(EPOCH FROM p.created_at)::text, '-', SUBSTRING(p.id::text, 1, 6))) as property_uid,
-                p.title, 
-                p.price, 
-                p.details,
-                p.image_url, 
-                p.created_at, 
-                p.address,
-                p.client_id,
-                p.user_email,
-                (SELECT email FROM clients WHERE clients.id = p.client_id) as client_email,
-                COUNT(sp.property_uid) as saves
-              FROM properties p
-              LEFT JOIN saved_properties sp ON COALESCE(p.property_uid, CONCAT('PROP-', EXTRACT(EPOCH FROM p.created_at)::text, '-', SUBSTRING(p.id::text, 1, 6))) = sp.property_uid
-              WHERE (p.deleted IS NULL OR p.deleted = FALSE)
-              GROUP BY p.id, p.uuid, p.property_uid, p.title, p.price, p.details, p.image_url, p.created_at, p.address, p.client_id, p.user_email
-              HAVING COUNT(sp.property_uid) > 0
-              ORDER BY saves DESC, p.created_at DESC
-              LIMIT $1
-            `;
+            ${baseSelect}
+            ${joinCondition}
+            ${whereCondition}
+            ${groupBy}
+            HAVING COUNT(sp.property_uid) > 0
+            ${orderBy}
+            LIMIT $1
+          `;
 
           const allTimeResult = await pool.query(allTimeQuery, [limit]);
           properties = allTimeResult.rows;
@@ -175,6 +176,7 @@ export async function GET() {
       count: properties.length,
     });
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error('Database error fetching most loved properties:', error);
     return NextResponse.json(
       { error: 'Failed to fetch most loved properties' },

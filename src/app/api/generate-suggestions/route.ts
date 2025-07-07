@@ -40,7 +40,31 @@ export async function POST(request: NextRequest) {
     }
 
     const imageFile = formData.get('image') as File;
-    const address = formData.get('address') as string;
+
+    // Extract granular address fields
+    const streetNumber = formData.get('streetNumber') as string;
+    const streetName = formData.get('streetName') as string;
+    const unit = formData.get('unit') as string;
+    const city = (formData.get('city') as string) || 'Vancouver';
+    const province = (formData.get('province') as string) || 'British Columbia';
+    const postalCode = formData.get('postalCode') as string;
+    const country = (formData.get('country') as string) || 'Canada';
+
+    // Legacy address field for backward compatibility
+    let address = formData.get('address') as string;
+
+    // If using the new schema but no legacy address was provided, construct it
+    if (!address && (streetNumber || streetName)) {
+      const addressParts = [
+        streetNumber && streetName ? `${streetNumber} ${streetName}` : null,
+        unit,
+        city,
+        province,
+        postalCode,
+        country,
+      ].filter(Boolean);
+      address = addressParts.join(', ');
+    }
 
     if (!imageFile) {
       return NextResponse.json(

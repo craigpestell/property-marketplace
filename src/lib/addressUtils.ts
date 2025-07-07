@@ -146,12 +146,6 @@ export function formatCityProvince(property: {
   city?: string;
   province?: string;
 }): string {
-  if (property.city && property.province) {
-    // Show BC instead of full province name for brevity
-    const provinceCode =
-      property.province === 'British Columbia' ? 'BC' : property.province;
-    return `${property.city}, ${provinceCode}`;
-  }
   if (property.city) {
     return property.city;
   }

@@ -9,8 +9,25 @@ const pool = new Pool({
   port: process.env.PGPORT ? parseInt(process.env.PGPORT) : 5432,
 });
 
+// Check if the new schema has been migrated
+let isNewSchema: boolean | null = null;
+
+async function checkSchema(): Promise<boolean> {
+  if (isNewSchema !== null) return isNewSchema;
+
+  try {
+    await pool.query('SELECT client_uid FROM properties LIMIT 1');
+    isNewSchema = true;
+  } catch {
+    isNewSchema = false;
+  }
+
+  return isNewSchema;
+}
+
 export async function GET(request: Request) {
   try {
+    const isNew = await checkSchema();
     const { searchParams } = new URL(request.url);
 
     // Advanced search parameters
@@ -37,30 +54,41 @@ export async function GET(request: Request) {
     const sortBy = searchParams.get('sortBy') || 'created_at';
     const sortOrder = searchParams.get('sortOrder') || 'DESC';
 
-    const whereConditions = ['(deleted IS NULL OR deleted = FALSE)'];
+    const whereConditions = ['(p.deleted IS NULL OR p.deleted = FALSE)'];
     const queryParams: any[] = [];
     let paramIndex = 1;
 
-    // Full-text search
+    // Full-text search - adapt based on schema
     if (query) {
-      whereConditions.push(`(
-        title ILIKE $${paramIndex} OR 
-        address ILIKE $${paramIndex} OR 
-        details ILIKE $${paramIndex}
-      )`);
+      if (isNew) {
+        whereConditions.push(`(
+          p.title ILIKE $${paramIndex} OR
+          p.formatted_address ILIKE $${paramIndex} OR
+          CONCAT(p.street_number, ' ', p.street_name) ILIKE $${paramIndex} OR
+          p.city ILIKE $${paramIndex} OR
+          p.details ILIKE $${paramIndex} OR
+          p.search_vector @@ plainto_tsquery('english', $${paramIndex})
+        )`);
+      } else {
+        whereConditions.push(`(
+          p.title ILIKE $${paramIndex} OR 
+          p.address ILIKE $${paramIndex} OR 
+          p.details ILIKE $${paramIndex}
+        )`);
+      }
       queryParams.push(`%${query}%`);
       paramIndex++;
     }
 
     // Price range
     if (filters.minPrice) {
-      whereConditions.push(`price >= $${paramIndex}`);
+      whereConditions.push(`p.price >= $${paramIndex}`);
       queryParams.push(parseFloat(filters.minPrice));
       paramIndex++;
     }
 
     if (filters.maxPrice) {
-      whereConditions.push(`price <= $${paramIndex}`);
+      whereConditions.push(`p.price <= $${paramIndex}`);
       queryParams.push(parseFloat(filters.maxPrice));
       paramIndex++;
     }
@@ -68,7 +96,7 @@ export async function GET(request: Request) {
     // Property type
     if (filters.propertyType) {
       whereConditions.push(
-        `details::jsonb ->> 'propertyType' = $${paramIndex}`,
+        `p.details::jsonb ->> 'propertyType' = $${paramIndex}`,
       );
       queryParams.push(filters.propertyType);
       paramIndex++;
@@ -77,7 +105,7 @@ export async function GET(request: Request) {
     // Bedroom range
     if (filters.minBedrooms) {
       whereConditions.push(
-        `COALESCE((details::jsonb ->> 'bedrooms')::int, 0) >= $${paramIndex}`,
+        `COALESCE((p.details::jsonb ->> 'bedrooms')::int, 0) >= $${paramIndex}`,
       );
       queryParams.push(parseInt(filters.minBedrooms));
       paramIndex++;
@@ -85,7 +113,7 @@ export async function GET(request: Request) {
 
     if (filters.maxBedrooms) {
       whereConditions.push(
-        `COALESCE((details::jsonb ->> 'bedrooms')::int, 999) <= $${paramIndex}`,
+        `COALESCE((p.details::jsonb ->> 'bedrooms')::int, 999) <= $${paramIndex}`,
       );
       queryParams.push(parseInt(filters.maxBedrooms));
       paramIndex++;
@@ -94,7 +122,7 @@ export async function GET(request: Request) {
     // Bathroom range
     if (filters.minBathrooms) {
       whereConditions.push(
-        `COALESCE((details::jsonb ->> 'bathrooms')::int, 0) >= $${paramIndex}`,
+        `COALESCE((p.details::jsonb ->> 'bathrooms')::int, 0) >= $${paramIndex}`,
       );
       queryParams.push(parseInt(filters.minBathrooms));
       paramIndex++;
@@ -102,7 +130,7 @@ export async function GET(request: Request) {
 
     if (filters.maxBathrooms) {
       whereConditions.push(
-        `COALESCE((details::jsonb ->> 'bathrooms')::int, 999) <= $${paramIndex}`,
+        `COALESCE((p.details::jsonb ->> 'bathrooms')::int, 999) <= $${paramIndex}`,
       );
       queryParams.push(parseInt(filters.maxBathrooms));
       paramIndex++;
@@ -111,7 +139,7 @@ export async function GET(request: Request) {
     // Square footage range
     if (filters.minSquareFootage) {
       whereConditions.push(
-        `COALESCE((details::jsonb ->> 'squareFootage')::int, 0) >= $${paramIndex}`,
+        `COALESCE((p.details::jsonb ->> 'squareFootage')::int, 0) >= $${paramIndex}`,
       );
       queryParams.push(parseInt(filters.minSquareFootage));
       paramIndex++;
@@ -119,7 +147,7 @@ export async function GET(request: Request) {
 
     if (filters.maxSquareFootage) {
       whereConditions.push(
-        `COALESCE((details::jsonb ->> 'squareFootage')::int, 999999) <= $${paramIndex}`,
+        `COALESCE((p.details::jsonb ->> 'squareFootage')::int, 999999) <= $${paramIndex}`,
       );
       queryParams.push(parseInt(filters.maxSquareFootage));
       paramIndex++;
@@ -128,7 +156,7 @@ export async function GET(request: Request) {
     // Year built range
     if (filters.yearBuiltMin) {
       whereConditions.push(
-        `COALESCE((details::jsonb ->> 'yearBuilt')::int, 0) >= $${paramIndex}`,
+        `COALESCE((p.details::jsonb ->> 'yearBuilt')::int, 0) >= $${paramIndex}`,
       );
       queryParams.push(parseInt(filters.yearBuiltMin));
       paramIndex++;
@@ -136,7 +164,7 @@ export async function GET(request: Request) {
 
     if (filters.yearBuiltMax) {
       whereConditions.push(
-        `COALESCE((details::jsonb ->> 'yearBuilt')::int, 9999) <= $${paramIndex}`,
+        `COALESCE((p.details::jsonb ->> 'yearBuilt')::int, 9999) <= $${paramIndex}`,
       );
       queryParams.push(parseInt(filters.yearBuiltMax));
       paramIndex++;
@@ -145,7 +173,7 @@ export async function GET(request: Request) {
     // Features filtering
     if (filters.features && filters.features.length > 0) {
       const featureConditions = filters.features.map((feature) => {
-        const condition = `details::jsonb -> 'features' @> $${paramIndex}`;
+        const condition = `p.details::jsonb -> 'features' @> $${paramIndex}`;
         queryParams.push(JSON.stringify([feature]));
         paramIndex++;
         return condition;
@@ -153,15 +181,24 @@ export async function GET(request: Request) {
       whereConditions.push(`(${featureConditions.join(' AND ')})`);
     }
 
-    // City filtering
+    // City filtering - adapt based on schema
     if (filters.city) {
-      whereConditions.push(`address ILIKE $${paramIndex}`);
+      if (isNew) {
+        whereConditions.push(`p.city ILIKE $${paramIndex}`);
+      } else {
+        whereConditions.push(`p.address ILIKE $${paramIndex}`);
+      }
       queryParams.push(`%${filters.city}%`);
       paramIndex++;
     }
 
     const offset = (page - 1) * limit;
-    const allowedSortColumns = ['created_at', 'price', 'title'];
+
+    // Define allowed sort columns based on schema
+    const allowedSortColumns = isNew
+      ? ['created_at', 'price', 'title', 'city']
+      : ['created_at', 'price', 'title'];
+
     const validSortBy = allowedSortColumns.includes(sortBy)
       ? sortBy
       : 'created_at';
@@ -172,27 +209,66 @@ export async function GET(request: Request) {
         ? `WHERE ${whereConditions.join(' AND ')}`
         : '';
 
-    const mainQuery = `
+    // Conditional SELECT query based on schema
+    const mainQuery = isNew
+      ? `
       SELECT 
-        id, 
-        uuid, 
-        property_uid,
-        title, 
-        price, 
-        details,
-        image_url, 
-        created_at, 
-        address,
-        client_id
-      FROM properties 
+        p.id, 
+        p.uuid, 
+        p.property_uid,
+        p.title, 
+        p.price, 
+        p.details,
+        p.image_url, 
+        p.created_at,
+        p.street_number,
+        p.street_name,
+        p.unit,
+        p.city,
+        p.province,
+        p.postal_code,
+        p.country,
+        p.latitude,
+        p.longitude,
+        p.formatted_address,
+        p.address_type,
+        p.client_uid,
+        c.email as client_email,
+        c.name as client_name
+      FROM properties p
+      LEFT JOIN clients c ON p.client_uid = c.client_uid
       ${whereClause}
-      ORDER BY ${validSortBy} ${validSortOrder}
+      ORDER BY ${validSortBy === 'city' ? 'p.city' : 'p.' + validSortBy} ${validSortOrder}
+      LIMIT $${paramIndex} OFFSET $${paramIndex + 1}
+    `
+      : `
+      SELECT 
+        p.id, 
+        p.uuid, 
+        p.property_uid,
+        p.title, 
+        p.price, 
+        p.details,
+        p.image_url, 
+        p.created_at, 
+        p.address,
+        p.client_id,
+        p.user_email
+      FROM properties p
+      ${whereClause}
+      ORDER BY p.${validSortBy} ${validSortOrder}
       LIMIT $${paramIndex} OFFSET $${paramIndex + 1}
     `;
 
     queryParams.push(limit, offset);
 
-    const countQuery = `SELECT COUNT(*) as total FROM properties ${whereClause}`;
+    const countQuery = `
+      SELECT COUNT(*) as total 
+      FROM properties p
+      ${isNew ? 'LEFT JOIN clients c ON p.client_uid = c.client_uid' : ''}
+      ${whereClause}
+    `;
+
     const countParams = queryParams.slice(0, -2);
 
     const [result, countResult] = await Promise.all([
@@ -213,11 +289,15 @@ export async function GET(request: Request) {
         hasNext: page < totalPages,
         hasPrev: page > 1,
       },
-      appliedFilters: filters,
-      searchQuery: query,
+      filters: {
+        query,
+        ...filters,
+        sortBy: validSortBy,
+        sortOrder: validSortOrder,
+      },
     });
   } catch (error: any) {
-    console.error('Search error:', error);
+    console.error('Search API error:', error);
     return NextResponse.json(
       { error: error.message || 'Search error' },
       { status: 500 },

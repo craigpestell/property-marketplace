@@ -58,7 +58,7 @@ export async function generateMetadata({
   }
 
   // Extract description from details if available
-  let description = `${property.title} located at ${property.address}. Price: $${property.price.toLocaleString()}`;
+  let description = `${property.title} located at ${property.formatted_address || `${property.street_number || ''} ${property.street_name || ''}, ${property.city}, ${property.province}`.trim()}. Price: $${property.price.toLocaleString()}`;
 
   if (property.details) {
     try {

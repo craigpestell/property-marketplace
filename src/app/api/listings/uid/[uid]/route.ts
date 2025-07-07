@@ -22,8 +22,40 @@ export async function GET(
 ) {
   try {
     const { uid } = await params;
-    const result = await pool.query(
-      `SELECT 
+
+    // Check if we're using the new schema with granular address fields
+    const { isUsingNewSchema } = await import('@/lib/db');
+    const usingNewSchema = await isUsingNewSchema();
+
+    let query;
+    if (usingNewSchema) {
+      query = `SELECT 
+        id, 
+        uuid, 
+        property_uid,
+        title, 
+        price, 
+        details,
+        image_url, 
+        created_at, 
+        street_number,
+        street_name,
+        unit,
+        city,
+        province,
+        postal_code,
+        country,
+        latitude,
+        longitude,
+        formatted_address,
+        client_uid,
+        user_email,
+        (SELECT email FROM clients WHERE clients.client_uid = properties.client_uid) as client_email
+      FROM properties 
+      WHERE property_uid = $1 AND (deleted IS NULL OR deleted = FALSE)`;
+    } else {
+      // Legacy schema query
+      query = `SELECT 
         id, 
         uuid, 
         property_uid,
@@ -37,9 +69,10 @@ export async function GET(
         user_email,
         (SELECT email FROM clients WHERE clients.id = properties.client_id) as client_email
       FROM properties 
-      WHERE property_uid = $1 AND (deleted IS NULL OR deleted = FALSE)`,
-      [uid],
-    );
+      WHERE property_uid = $1 AND (deleted IS NULL OR deleted = FALSE)`;
+    }
+
+    const result = await pool.query(query, [uid]);
 
     if (result.rows.length === 0) {
       return NextResponse.json(
@@ -71,12 +104,33 @@ export async function PUT(
       : fields.userEmail;
     const title = Array.isArray(fields.title) ? fields.title[0] : fields.title;
     const price = Array.isArray(fields.price) ? fields.price[0] : fields.price;
-    const address = Array.isArray(fields.address)
-      ? fields.address[0]
-      : fields.address;
     const details = Array.isArray(fields.details)
       ? fields.details[0]
       : fields.details;
+
+    // Get granular address fields
+    const streetNumber = Array.isArray(fields.streetNumber)
+      ? fields.streetNumber[0]
+      : fields.streetNumber;
+    const streetName = Array.isArray(fields.streetName)
+      ? fields.streetName[0]
+      : fields.streetName;
+    const unit = Array.isArray(fields.unit) ? fields.unit[0] : fields.unit;
+    const city = Array.isArray(fields.city) ? fields.city[0] : fields.city;
+    const province = Array.isArray(fields.province)
+      ? fields.province[0]
+      : fields.province;
+    const postalCode = Array.isArray(fields.postalCode)
+      ? fields.postalCode[0]
+      : fields.postalCode;
+    const country = Array.isArray(fields.country)
+      ? fields.country[0]
+      : fields.country || 'Canada';
+
+    // Legacy address field for backward compatibility
+    const address = Array.isArray(fields.address)
+      ? fields.address[0]
+      : fields.address;
     const imageFile = files.image;
 
     if (!userEmail) {
@@ -115,14 +169,59 @@ export async function PUT(
       image_url = '/uploads/' + path.basename(imageFile[0].filepath);
     }
 
-    // Update the property
-    const updateResult = await pool.query(
-      `UPDATE properties 
-       SET title = $1, price = $2, details = $3, image_url = $4, address = $5
-       WHERE property_uid = $6
-       RETURNING id, property_uid`,
-      [title, price, details, image_url, address, uid],
-    );
+    // Check if we're using the new schema
+    const { isUsingNewSchema, formatAddress } = await import('@/lib/db');
+    const usingNewSchema = await isUsingNewSchema();
+
+    let updateResult;
+
+    if (usingNewSchema) {
+      // Calculate formatted address
+      const formattedAddress = formatAddress(
+        streetNumber,
+        streetName,
+        unit,
+        city,
+        province,
+        postalCode,
+        country,
+      );
+
+      // Update with the new schema
+      updateResult = await pool.query(
+        `UPDATE properties 
+         SET title = $1, price = $2, details = $3, image_url = $4,
+             street_number = $5, street_name = $6, unit = $7, 
+             city = $8, province = $9, postal_code = $10, country = $11,
+             formatted_address = $12
+         WHERE property_uid = $13
+         RETURNING id, property_uid`,
+        [
+          title,
+          price,
+          details,
+          image_url,
+          streetNumber,
+          streetName,
+          unit,
+          city,
+          province,
+          postalCode,
+          country,
+          formattedAddress,
+          uid,
+        ],
+      );
+    } else {
+      // Update with the legacy schema
+      updateResult = await pool.query(
+        `UPDATE properties 
+         SET title = $1, price = $2, details = $3, image_url = $4, address = $5
+         WHERE property_uid = $6
+         RETURNING id, property_uid`,
+        [title, price, details, image_url, address, uid],
+      );
+    }
 
     return NextResponse.json({
       success: true,

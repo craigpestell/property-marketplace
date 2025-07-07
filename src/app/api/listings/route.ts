@@ -15,6 +15,9 @@ const pool = new Pool({
   port: process.env.PGPORT ? parseInt(process.env.PGPORT) : 5432,
 });
 
+// Use the shared schema detection function from db.ts
+import { isUsingNewSchema } from '@/lib/db';
+
 function generatePropertyUID(): string {
   const prefix = 'PROP';
   const timestamp = Date.now().toString(36).toUpperCase();
@@ -24,6 +27,7 @@ function generatePropertyUID(): string {
 
 export async function GET(request: Request) {
   try {
+    const isNew = await isUsingNewSchema();
     const { searchParams } = new URL(request.url);
 
     // Extract query parameters
@@ -39,21 +43,30 @@ export async function GET(request: Request) {
     const bathrooms = searchParams.get('bathrooms');
     const city = searchParams.get('city');
     const clientId = searchParams.get('clientId');
-    const userEmail = searchParams.get('userEmail'); // Add user email filter
+    const userEmail = searchParams.get('userEmail');
 
     const offset = (page - 1) * limit;
 
     const whereConditions = ['(p.deleted IS NULL OR p.deleted = FALSE)'];
-    const queryParams: any[] = [];
+    const queryParams: (string | number)[] = [];
     let paramIndex = 1;
 
-    // Search in title, address, and details (instead of description)
+    // Search logic - adapt based on schema
     if (search) {
-      whereConditions.push(`(
-        p.title ILIKE $${paramIndex} OR 
-        p.address ILIKE $${paramIndex} OR 
-        p.details ILIKE $${paramIndex}
-      )`);
+      if (isNew) {
+        whereConditions.push(`(
+          p.title ILIKE $${paramIndex} OR 
+          p.formatted_address ILIKE $${paramIndex} OR 
+          p.search_location ILIKE $${paramIndex} OR 
+          p.details ILIKE $${paramIndex}
+        )`);
+      } else {
+        whereConditions.push(`(
+          p.title ILIKE $${paramIndex} OR 
+          p.address ILIKE $${paramIndex} OR 
+          p.details ILIKE $${paramIndex}
+        )`);
+      }
       queryParams.push(`%${search}%`);
       paramIndex++;
     }
@@ -71,23 +84,38 @@ export async function GET(request: Request) {
       paramIndex++;
     }
 
-    // City filtering
+    // City filtering - adapt based on schema
     if (city) {
-      whereConditions.push(`p.address ILIKE $${paramIndex}`);
+      if (isNew) {
+        whereConditions.push(`p.city ILIKE $${paramIndex}`);
+      } else {
+        whereConditions.push(`p.address ILIKE $${paramIndex}`);
+      }
       queryParams.push(`%${city}%`);
       paramIndex++;
     }
 
-    // Client filtering
+    // Client filtering - adapt based on schema
     if (clientId) {
-      whereConditions.push(`p.client_id = $${paramIndex}`);
-      queryParams.push(parseInt(clientId));
+      if (isNew) {
+        whereConditions.push(`p.client_uid = $${paramIndex}`);
+        queryParams.push(clientId);
+      } else {
+        whereConditions.push(`p.client_id = $${paramIndex}`);
+        queryParams.push(parseInt(clientId));
+      }
       paramIndex++;
     }
 
-    // User email filtering (for user's own listings)
+    // User email filtering - adapt based on schema
     if (userEmail) {
-      whereConditions.push(`p.user_email = $${paramIndex}`);
+      if (isNew) {
+        whereConditions.push(
+          `p.client_uid IN (SELECT client_uid FROM clients WHERE email = $${paramIndex})`,
+        );
+      } else {
+        whereConditions.push(`p.user_email = $${paramIndex}`);
+      }
       queryParams.push(userEmail);
       paramIndex++;
     }
@@ -119,13 +147,9 @@ export async function GET(request: Request) {
       paramIndex++;
     }
 
-    const allowedSortColumns = [
-      'created_at',
-      'price',
-      'title',
-      'address',
-      'saves',
-    ];
+    const allowedSortColumns = isNew
+      ? ['created_at', 'price', 'title', 'city', 'saves']
+      : ['created_at', 'price', 'title', 'address', 'saves'];
     const validSortBy = allowedSortColumns.includes(sortBy)
       ? sortBy
       : 'created_at';
@@ -136,8 +160,44 @@ export async function GET(request: Request) {
         ? `WHERE ${whereConditions.join(' AND ')}`
         : '';
 
-    // Remove description from SELECT query
-    const mainQuery = `
+    // Conditional SELECT query based on schema
+    const mainQuery = isNew
+      ? `
+      SELECT 
+        p.id, 
+        p.uuid, 
+        COALESCE(p.property_uid, CONCAT('PROP-', EXTRACT(EPOCH FROM p.created_at)::text, '-', SUBSTRING(p.id::text, 1, 6))) as property_uid,
+        p.title, 
+        p.price, 
+        p.details,
+        p.image_url, 
+        p.created_at,
+        p.street_number,
+        p.street_name,
+        p.unit,
+        p.city,
+        p.province,
+        p.postal_code,
+        p.country,
+        p.latitude,
+        p.longitude,
+        p.formatted_address,
+        p.address_type,
+        p.client_uid,
+        c.email as client_email,
+        c.name as client_name,
+        COALESCE(COUNT(sp.property_uid), 0) as saves
+      FROM properties p
+      LEFT JOIN clients c ON p.client_uid = c.client_uid
+      LEFT JOIN saved_properties sp ON COALESCE(p.property_uid, CONCAT('PROP-', EXTRACT(EPOCH FROM p.created_at)::text, '-', SUBSTRING(p.id::text, 1, 6))) = sp.property_uid
+      ${whereClause}
+      GROUP BY p.id, p.uuid, p.property_uid, p.title, p.price, p.details, p.image_url, p.created_at, 
+               p.street_number, p.street_name, p.unit, p.city, p.province, p.postal_code, p.country,
+               p.latitude, p.longitude, p.formatted_address, p.address_type, p.client_uid, c.email, c.name
+      ORDER BY ${validSortBy === 'saves' ? 'saves' : 'p.' + validSortBy} ${validSortOrder}
+      LIMIT $${paramIndex} OFFSET $${paramIndex + 1}
+    `
+      : `
       SELECT 
         p.id, 
         p.uuid, 
@@ -162,7 +222,15 @@ export async function GET(request: Request) {
 
     queryParams.push(limit, offset);
 
-    const countQuery = `
+    const countQuery = isNew
+      ? `
+      SELECT COUNT(DISTINCT p.id) as total
+      FROM properties p
+      LEFT JOIN clients c ON p.client_uid = c.client_uid
+      LEFT JOIN saved_properties sp ON COALESCE(p.property_uid, CONCAT('PROP-', EXTRACT(EPOCH FROM p.created_at)::text, '-', SUBSTRING(p.id::text, 1, 6))) = sp.property_uid
+      ${whereClause}
+    `
+      : `
       SELECT COUNT(DISTINCT p.id) as total
       FROM properties p
       LEFT JOIN saved_properties sp ON COALESCE(p.property_uid, CONCAT('PROP-', EXTRACT(EPOCH FROM p.created_at)::text, '-', SUBSTRING(p.id::text, 1, 6))) = sp.property_uid
@@ -202,10 +270,11 @@ export async function GET(request: Request) {
         clientId,
       },
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
+    // eslint-disable-next-line no-console
     console.error('Database error:', error);
     return NextResponse.json(
-      { error: error.message || 'Database error' },
+      { error: error instanceof Error ? error.message : 'Database error' },
       { status: 500 },
     );
   }
@@ -218,10 +287,37 @@ export async function POST(req: Request) {
     const email = Array.isArray(fields.email) ? fields.email[0] : fields.email;
     const title = Array.isArray(fields.title) ? fields.title[0] : fields.title;
     const price = Array.isArray(fields.price) ? fields.price[0] : fields.price;
-    const address = Array.isArray(fields.address)
-      ? fields.address[0]
-      : fields.address;
-    // Remove description field handling
+
+    // Extract granular address fields
+    const streetNumber = Array.isArray(fields.streetNumber)
+      ? fields.streetNumber[0]
+      : fields.streetNumber;
+    const streetName = Array.isArray(fields.streetName)
+      ? fields.streetName[0]
+      : fields.streetName;
+    const unit = Array.isArray(fields.unit) ? fields.unit[0] : fields.unit;
+    const city = Array.isArray(fields.city)
+      ? fields.city[0]
+      : fields.city || 'Vancouver';
+    const province = Array.isArray(fields.province)
+      ? fields.province[0]
+      : fields.province || 'British Columbia';
+    const postalCode = Array.isArray(fields.postalCode)
+      ? fields.postalCode[0]
+      : fields.postalCode;
+    const country = Array.isArray(fields.country)
+      ? fields.country[0]
+      : fields.country || 'Canada';
+    const latitude = Array.isArray(fields.latitude)
+      ? fields.latitude[0]
+      : fields.latitude;
+    const longitude = Array.isArray(fields.longitude)
+      ? fields.longitude[0]
+      : fields.longitude;
+    const addressType = Array.isArray(fields.addressType)
+      ? fields.addressType[0]
+      : fields.addressType || 'residential';
+
     const details = Array.isArray(fields.details)
       ? fields.details[0]
       : fields.details;
@@ -235,8 +331,9 @@ export async function POST(req: Request) {
     const propertyUID = generatePropertyUID();
     const uuid = uuidv4();
 
+    // Get client by email and retrieve client_uid
     const clientResult = await pool.query(
-      'SELECT id FROM clients WHERE email = $1',
+      'SELECT client_uid FROM clients WHERE email = $1',
       [email],
     );
     const client = clientResult.rows[0];
@@ -244,10 +341,25 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Remove description from INSERT query
+    // Generate formatted address
+    const formattedAddress = [
+      streetNumber && streetName ? `${streetNumber} ${streetName}` : null,
+      unit,
+      city,
+      province,
+      postalCode,
+      country,
+    ]
+      .filter(Boolean)
+      .join(', ');
+
+    // Insert with new schema
     const insertResult = await pool.query(
-      `INSERT INTO properties (uuid, property_uid, title, price, details, image_url, address, client_id, user_email) 
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+      `INSERT INTO properties (
+        uuid, property_uid, title, price, details, image_url, 
+        street_number, street_name, unit, city, province, postal_code, country,
+        latitude, longitude, formatted_address, address_type, client_uid
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18)
        RETURNING id, property_uid`,
       [
         uuid,
@@ -256,9 +368,18 @@ export async function POST(req: Request) {
         price,
         details,
         image_url,
-        address,
-        client.id,
-        email,
+        streetNumber,
+        streetName,
+        unit,
+        city,
+        province,
+        postalCode,
+        country,
+        latitude ? parseFloat(latitude) : null,
+        longitude ? parseFloat(longitude) : null,
+        formattedAddress,
+        addressType,
+        client.client_uid,
       ],
     );
 
@@ -267,10 +388,11 @@ export async function POST(req: Request) {
       propertyUID: insertResult.rows[0].property_uid,
       id: insertResult.rows[0].id,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
+    // eslint-disable-next-line no-console
     console.error('Error adding property:', error);
     return NextResponse.json(
-      { error: error.message || 'Database error' },
+      { error: error instanceof Error ? error.message : 'Database error' },
       { status: 500 },
     );
   }
@@ -289,9 +411,12 @@ export async function DELETE(request: Request) {
       );
     }
 
-    // First, verify the property belongs to the user
+    // First, verify the property belongs to the user via client_uid
     const propertyResult = await pool.query(
-      'SELECT id, property_uid, user_email, title FROM properties WHERE property_uid = $1 AND (deleted IS NULL OR deleted = FALSE)',
+      `SELECT p.id, p.property_uid, p.title, p.client_uid, c.email as client_email 
+       FROM properties p 
+       JOIN clients c ON p.client_uid = c.client_uid 
+       WHERE p.property_uid = $1 AND (p.deleted IS NULL OR p.deleted = FALSE)`,
       [propertyUid],
     );
 
@@ -305,7 +430,7 @@ export async function DELETE(request: Request) {
     const property = propertyResult.rows[0];
 
     // Check if the user owns this property
-    if (property.user_email !== userEmail) {
+    if (property.client_email !== userEmail) {
       return NextResponse.json(
         { error: 'Unauthorized: You can only delete your own listings' },
         { status: 403 },
@@ -341,15 +466,18 @@ async function parseForm(req: Request) {
     uploadDir,
     keepExtensions: true,
   });
-  return new Promise<{ fields: any; files: any }>((resolve, reject) => {
-    const stream = requestToNodeStreamWithHeaders(req);
-    form.parse(stream, (err, fields, files) => {
-      if (err) reject(err);
-      else resolve({ fields, files });
-    });
-  });
+  return new Promise<{ fields: formidable.Fields; files: formidable.Files }>(
+    (resolve, reject) => {
+      const stream = requestToNodeStreamWithHeaders(req);
+      form.parse(stream, (err, fields, files) => {
+        if (err) reject(err);
+        else resolve({ fields, files });
+      });
+    },
+  );
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function requestToNodeStreamWithHeaders(req: Request): any {
   const reader = req.body?.getReader();
   const stream = new Readable({
