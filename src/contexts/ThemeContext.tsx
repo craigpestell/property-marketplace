@@ -10,9 +10,19 @@ interface ThemeContextType {
   setTheme: (theme: Theme) => void;
 }
 
-export const ThemeContext = createContext<ThemeContextType | undefined>(
-  undefined,
-);
+// Create context with default values to avoid undefined checks
+const defaultContextValue: ThemeContextType = {
+  theme: 'light',
+  toggleTheme: () => {
+    // Default implementation will be overridden by provider
+  },
+  setTheme: () => {
+    // Default implementation will be overridden by provider
+  },
+};
+
+export const ThemeContext =
+  createContext<ThemeContextType>(defaultContextValue);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setTheme] = useState<Theme>('light');
@@ -20,15 +30,19 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   // Check for saved theme preference or default to light mode
   useEffect(() => {
-    const savedTheme = localStorage.getItem('theme') as Theme;
-    const prefersDark = window.matchMedia(
-      '(prefers-color-scheme: dark)',
-    ).matches;
+    try {
+      const savedTheme = localStorage.getItem('theme') as Theme;
+      const prefersDark = window.matchMedia(
+        '(prefers-color-scheme: dark)',
+      ).matches;
 
-    if (savedTheme) {
-      setTheme(savedTheme);
-    } else if (prefersDark) {
-      setTheme('dark');
+      if (savedTheme) {
+        setTheme(savedTheme);
+      } else if (prefersDark) {
+        setTheme('dark');
+      }
+    } catch (error) {
+      // Silent error handling for environments without localStorage
     }
 
     setMounted(true);
@@ -37,9 +51,13 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   // Update document class and localStorage when theme changes
   useEffect(() => {
     if (mounted) {
-      document.documentElement.classList.remove('light', 'dark');
-      document.documentElement.classList.add(theme);
-      localStorage.setItem('theme', theme);
+      try {
+        document.documentElement.classList.remove('light', 'dark');
+        document.documentElement.classList.add(theme);
+        localStorage.setItem('theme', theme);
+      } catch (error) {
+        // Silent error handling for SSR and environments without localStorage
+      }
     }
   }, [theme, mounted]);
 
@@ -51,15 +69,15 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     setTheme(newTheme);
   };
 
-  // Prevent hydration mismatch by not rendering until mounted
-  if (!mounted) {
-    return <div suppressHydrationWarning>{children}</div>;
-  }
+  // Use the context value object with the current state
+  const contextValue = {
+    theme,
+    toggleTheme,
+    setTheme: handleSetTheme,
+  };
 
   return (
-    <ThemeContext.Provider
-      value={{ theme, toggleTheme, setTheme: handleSetTheme }}
-    >
+    <ThemeContext.Provider value={contextValue}>
       {children}
     </ThemeContext.Provider>
   );
@@ -67,8 +85,5 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
 export function useTheme() {
   const context = useContext(ThemeContext);
-  if (context === undefined) {
-    throw new Error('useTheme must be used within a ThemeProvider');
-  }
   return context;
 }

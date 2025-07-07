@@ -3,38 +3,16 @@
 import { MoonIcon, SunIcon } from '@heroicons/react/24/outline';
 import { useEffect, useState } from 'react';
 
+import { useTheme } from '@/contexts/ThemeContext';
+
 export default function SimpleThemeSwitch() {
-  const [theme, setTheme] = useState<'light' | 'dark'>('light');
+  const { theme, toggleTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
-  // Check for saved theme preference or default to light mode
+  // Initialize mounted state
   useEffect(() => {
-    const savedTheme = localStorage.getItem('theme') as 'light' | 'dark';
-    const prefersDark = window.matchMedia(
-      '(prefers-color-scheme: dark)',
-    ).matches;
-
-    let initialTheme: 'light' | 'dark' = 'light';
-
-    if (savedTheme) {
-      initialTheme = savedTheme;
-    } else if (prefersDark) {
-      initialTheme = 'dark';
-    }
-
-    setTheme(initialTheme);
-    document.documentElement.classList.remove('light', 'dark');
-    document.documentElement.classList.add(initialTheme);
     setMounted(true);
   }, []);
-
-  const toggleTheme = () => {
-    const newTheme = theme === 'light' ? 'dark' : 'light';
-    setTheme(newTheme);
-    document.documentElement.classList.remove('light', 'dark');
-    document.documentElement.classList.add(newTheme);
-    localStorage.setItem('theme', newTheme);
-  };
 
   // Prevent hydration mismatch by not rendering until mounted
   if (!mounted) {
@@ -52,7 +30,7 @@ export default function SimpleThemeSwitch() {
       <div className='relative w-5 h-5'>
         {/* Sun Icon */}
         <SunIcon
-          className={`absolute inset-0 w-5 h-5 text-yellow-500 transition-all duration-300 ${
+          className={`absolute inset-0 w-5 h-5 transition-all duration-300 ${
             theme === 'light'
               ? 'opacity-100 rotate-0 scale-100'
               : 'opacity-0 rotate-90 scale-75'

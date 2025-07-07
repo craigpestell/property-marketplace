@@ -5,6 +5,7 @@ import '@/styles/globals.css';
 // !STARTERCONF This is for demo purposes, remove @/styles/colors.css import immediately
 import '@/styles/colors.css';
 
+import ClientThemeProvider from '@/components/ClientThemeProvider';
 import Footer from '@/components/Footer';
 import Header from '@/components/Header';
 import SessionWrapper from '@/components/SessionWrapper';
@@ -60,13 +61,15 @@ export default function RootLayout({
     <html>
       <body className='bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-200'>
         <SessionWrapper>
-          <SavedPropertiesProvider>
-            <ToastProvider>
-              <Header />
-              <main className='min-h-[calc(100vh-80px)]'>{children}</main>
-              <Footer />
-            </ToastProvider>
-          </SavedPropertiesProvider>
+          <ClientThemeProvider>
+            <SavedPropertiesProvider>
+              <ToastProvider>
+                <Header />
+                <main className='min-h-[calc(100vh-80px)]'>{children}</main>
+                <Footer />
+              </ToastProvider>
+            </SavedPropertiesProvider>
+          </ClientThemeProvider>
         </SessionWrapper>
       </body>
     </html>

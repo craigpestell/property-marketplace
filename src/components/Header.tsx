@@ -114,9 +114,6 @@ export default function Header() {
               <div className='w-16 h-4 bg-gray-200 dark:bg-gray-700 animate-pulse rounded'></div>
             ) : status === 'authenticated' ? (
               <div className='flex items-center space-x-4'>
-                {/* Notification Center */}
-                <NotificationCenter />
-
                 {/* User Dropdown */}
                 <div className='relative' ref={dropdownRef}>
                   <button
@@ -190,14 +187,20 @@ export default function Header() {
               </div>
             )}
 
-            {/* Theme Switch */}
-            <SimpleThemeSwitch />
+            {/* Theme Switch - Only show for non-authenticated users */}
+            {status !== 'authenticated' && <SimpleThemeSwitch />}
+
+            {/* Notification Center - Only show for authenticated users */}
+            {status === 'authenticated' && <NotificationCenter />}
           </nav>
 
           {/* Mobile Menu Button */}
           <div className='md:hidden flex items-center space-x-3'>
-            {/* Theme Switch for Mobile */}
-            <SimpleThemeSwitch />
+            {/* Theme Switch for Mobile - Only show for non-authenticated users */}
+            {status !== 'authenticated' && <SimpleThemeSwitch />}
+
+            {/* Notification Center for Mobile - Only show for authenticated users */}
+            {status === 'authenticated' && <NotificationCenter />}
 
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}

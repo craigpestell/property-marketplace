@@ -1,10 +1,14 @@
 'use client';
 
+import { MoonIcon, SunIcon } from '@heroicons/react/24/outline';
 import { signOut, useSession } from 'next-auth/react';
 import { useState } from 'react';
 
+import { useTheme } from '@/contexts/ThemeContext';
+
 export default function SettingsTab() {
   const { data: _session } = useSession();
+  const { theme, setTheme } = useTheme();
   const [isDeleting, setIsDeleting] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
@@ -42,6 +46,48 @@ export default function SettingsTab() {
       </div>
 
       <div className='space-y-8'>
+        {/* UI Preferences */}
+        <div className='border-b border-gray-200 dark:border-gray-700 pb-8'>
+          <h3 className='text-lg font-semibold text-gray-900 dark:text-white mb-4'>
+            UI Preferences
+          </h3>
+          <div className='space-y-6'>
+            <div>
+              <div className='font-medium text-gray-900 dark:text-white mb-2'>
+                Theme
+              </div>
+              <div className='text-sm text-gray-600 dark:text-gray-400 mb-4'>
+                Choose your preferred color theme
+              </div>
+              <div className='flex flex-wrap gap-3'>
+                <button
+                  onClick={() => setTheme('light')}
+                  className={`flex items-center justify-center space-x-2 px-4 py-2 rounded-lg border ${
+                    theme === 'light'
+                      ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400'
+                      : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300'
+                  } hover:border-blue-400 dark:hover:border-blue-500 transition-colors`}
+                >
+                  <SunIcon className='w-5 h-5 text-yellow-500' />
+                  <span>Light</span>
+                </button>
+
+                <button
+                  onClick={() => setTheme('dark')}
+                  className={`flex items-center justify-center space-x-2 px-4 py-2 rounded-lg border ${
+                    theme === 'dark'
+                      ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400'
+                      : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300'
+                  } hover:border-blue-400 dark:hover:border-blue-500 transition-colors`}
+                >
+                  <MoonIcon className='w-5 h-5 text-blue-400' />
+                  <span>Dark</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* Notification Settings */}
         <div className='border-b border-gray-200 dark:border-gray-700 pb-8'>
           <h3 className='text-lg font-semibold text-gray-900 dark:text-white mb-4'>
