@@ -1,3 +1,6 @@
+/* Import Poppins + Lato font combination */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -68,32 +71,32 @@
 
   /* #region  /**=========== Typography =========== */
   .h0 {
-    @apply font-primary text-3xl font-bold md:text-5xl;
+    @apply font-heading text-3xl font-bold md:text-5xl tracking-normal;
   }
 
   h1,
   .h1 {
-    @apply font-primary text-2xl font-bold md:text-4xl;
+    @apply font-heading text-2xl font-semibold md:text-4xl tracking-normal;
   }
 
   h2,
   .h2 {
-    @apply font-primary text-xl font-bold md:text-3xl;
+    @apply font-heading text-xl font-semibold md:text-3xl tracking-normal;
   }
 
   h3,
   .h3 {
-    @apply font-primary text-lg font-bold md:text-2xl;
+    @apply font-heading text-lg font-semibold md:text-2xl tracking-normal;
   }
 
   h4,
   .h4 {
-    @apply font-primary text-base font-bold md:text-lg;
+    @apply font-heading text-base font-semibold md:text-lg tracking-normal;
   }
 
   body,
   .p {
-    @apply font-primary text-sm md:text-base;
+    @apply font-body text-sm md:text-base;
   }
   /* #endregion  /**======== Typography =========== */
 

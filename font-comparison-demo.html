@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Font Comparison - Sans-serif Options</title>
+  
+  <!-- Import all font options -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Lato:wght@400;700&family=Outfit:wght@400;500;600;700&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --blue-600: #2563eb;
+      --blue-400: #60a5fa;
+      --gray-900: #111827;
+      --gray-800: #1f2937;
+      --gray-700: #374151;
+      --gray-600: #4b5563;
+      --gray-400: #9ca3af;
+      --gray-300: #d1d5db;
+      --gray-200: #e5e7eb;
+      --gray-100: #f3f4f6;
+      --gray-50: #f9fafb;
+    }
+    
+    body {
+      font-family: system-ui, sans-serif;
+      margin: 0;
+      padding: 40px;
+      background-color: var(--gray-50);
+      color: var(--gray-900);
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    .heading {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    
+    .comparison {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      margin-bottom: 60px;
+    }
+    
+    .option {
+      flex: 1;
+      min-width: 500px;
+      background-color: white;
+      border-radius: 8px;
+      padding: 30px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    }
+    
+    .option-header {
+      margin-bottom: 30px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--gray-200);
+    }
+    
+    /* Option 1: Poppins + Lato */
+    .poppins-lato h1, 
+    .poppins-lato h2, 
+    .poppins-lato h3 {
+      font-family: 'Poppins', sans-serif;
+      letter-spacing: normal;
+    }
+    
+    .poppins-lato p,
+    .poppins-lato li {
+      font-family: 'Lato', sans-serif;
+    }
+    
+    /* Option 2: Outfit + Work Sans */
+    .outfit-worksans h1, 
+    .outfit-worksans h2, 
+    .outfit-worksans h3 {
+      font-family: 'Outfit', sans-serif;
+      letter-spacing: normal;
+    }
+    
+    .outfit-worksans p,
+    .outfit-worksans li {
+      font-family: 'Work Sans', sans-serif;
+    }
+    
+    /* Common styles */
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: var(--gray-900);
+    }
+    
+    h2 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin: 1.5rem 0 1rem;
+      color: var(--gray-800);
+    }
+    
+    h3 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin: 1.5rem 0 1rem;
+      color: var(--gray-700);
+    }
+    
+    p {
+      font-size: 1rem;
+      line-height: 1.6;
+      margin-bottom: 1rem;
+      color: var(--gray-600);
+    }
+    
+    .highlight {
+      color: var(--blue-600);
+    }
+    
+    .stats {
+      display: flex;
+      gap: 20px;
+      margin-top: 30px;
+    }
+    
+    .stat-card {
+      flex: 1;
+      background-color: var(--gray-50);
+      border: 1px solid var(--gray-200);
+      border-radius: 6px;
+      padding: 15px;
+      text-align: center;
+    }
+    
+    .stat-number {
+      font-size: 1.75rem;
+      font-weight: 600;
+      color: var(--blue-600);
+      display: block;
+      margin-bottom: 5px;
+    }
+    
+    .stat-label {
+      font-size: 0.875rem;
+      color: var(--gray-600);
+    }
+    
+    ul {
+      padding-left: 20px;
+    }
+    
+    li {
+      margin-bottom: 10px;
+      color: var(--gray-600);
+    }
+    
+    .features {
+      margin-top: 30px;
+    }
+    
+    .button {
+      display: inline-block;
+      background-color: var(--blue-600);
+      color: white;
+      padding: 10px 16px;
+      border-radius: 4px;
+      text-decoration: none;
+      font-weight: 500;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="heading">
+      <h1>Font Comparison: Sans-serif Options</h1>
+      <p>Comparing Poppins + Lato vs. Outfit + Work Sans for the Real Estate Marketplace</p>
+    </div>
+    
+    <div class="comparison">
+      <!-- Option 1: Poppins + Lato -->
+      <div class="option poppins-lato">
+        <div class="option-header">
+          <h1>Option 1: Poppins + Lato</h1>
+          <p>Current selection: Poppins for headings, Lato for body text</p>
+        </div>
+        
+        <h1>Save <span class="highlight">$41K+</span> on Your Dream Home</h1>
+        
+        <p>With our <strong>0.9% seller commission</strong> and zero buyer fees, you get full-service support plus exclusive access to properties others won't show you.</p>
+        
+        <h2>Why Choose Our Platform</h2>
+        
+        <ul class="features">
+          <li>0.9% seller commission vs traditional 2.5%</li>
+          <li>Zero buyer agent fees - save $25K+</li>
+          <li>Full-service support from search to closing</li>
+          <li>Access to exclusive FSBO properties</li>
+        </ul>
+        
+        <div class="stats">
+          <div class="stat-card">
+            <span class="stat-number">0.9%</span>
+            <span class="stat-label">Seller Commission</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-number">$41K+</span>
+            <span class="stat-label">Average Savings</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-number">5K+</span>
+            <span class="stat-label">Happy Customers</span>
+          </div>
+        </div>
+        
+        <a href="#" class="button">Browse Properties</a>
+      </div>
+      
+      <!-- Option 2: Outfit + Work Sans -->
+      <div class="option outfit-worksans">
+        <div class="option-header">
+          <h1>Option 2: Outfit + Work Sans</h1>
+          <p>Alternative: Outfit for headings, Work Sans for body text</p>
+        </div>
+        
+        <h1>Save <span class="highlight">$41K+</span> on Your Dream Home</h1>
+        
+        <p>With our <strong>0.9% seller commission</strong> and zero buyer fees, you get full-service support plus exclusive access to properties others won't show you.</p>
+        
+        <h2>Why Choose Our Platform</h2>
+        
+        <ul class="features">
+          <li>0.9% seller commission vs traditional 2.5%</li>
+          <li>Zero buyer agent fees - save $25K+</li>
+          <li>Full-service support from search to closing</li>
+          <li>Access to exclusive FSBO properties</li>
+        </ul>
+        
+        <div class="stats">
+          <div class="stat-card">
+            <span class="stat-number">0.9%</span>
+            <span class="stat-label">Seller Commission</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-number">$41K+</span>
+            <span class="stat-label">Average Savings</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-number">5K+</span>
+            <span class="stat-label">Happy Customers</span>
+          </div>
+        </div>
+        
+        <a href="#" class="button">Browse Properties</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

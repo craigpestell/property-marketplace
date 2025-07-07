@@ -8,6 +8,8 @@ export default {
     extend: {
       fontFamily: {
         primary: ['Inter', ...defaultTheme.fontFamily.sans],
+        heading: ['Poppins', ...defaultTheme.fontFamily.sans],
+        body: ['Lato', ...defaultTheme.fontFamily.sans],
       },
       colors: {
         primary: {
