@@ -190,19 +190,44 @@ psql -h $PGHOST -p $PGPORT -U $PGUSER -d $PGDATABASE < database/backups/backup_b
 
 ### Migration Files
 
-- `database/migrations/comprehensive_address_client_migration_pg.sql` - Main PostgreSQL migration
-- `database/run_address_migration.sh` - Migration execution script
+- `database/migrations/comprehensive_address_client_migration.sql` - Main migration script
+- `run_migration.sh` - Migration helper script (main entry point)
 - `database/backup_before_migration.sh` - Backup creation script
+- `database/run_address_migration.sh` - Migration execution script
+- `database/verify_migration.sh` - Migration verification script
 
-## Migration Files
+## Running the Migration
 
-1. `comprehensive_address_client_migration.sql` - Main migration script
-2. `addressUtils.ts` - Utility functions for address handling
-3. Updated TypeScript interfaces in `types/index.ts`
+1. Ensure your `.env` file contains the database connection variables:
+   - `PGUSER`
+   - `PGHOST`
+   - `PGDATABASE`
+   - `PGPASSWORD`
+   - `PGPORT`
 
-## Next Steps
+2. Run the migration script:
 
-1. Run the migration on your database
+   ```bash
+   ./run_migration.sh
+   ```
+
+3. The script will:
+   - Load database credentials from your `.env` file
+   - Create a backup of your current database
+   - Apply the address and client relationship migration
+   - Verify the migration was successful
+
+## Migration Process
+
+1. Database backup (with timestamp) is created in `database/backups/`
+2. Schema migration adds new columns and constraints
+3. Data migration extracts structured address data
+4. Foreign keys and indexes are created
+5. Verification ensures all changes were applied correctly
+
+## Next Steps After Migration
+
+1. Test the application with the new schema
 2. Update API endpoints to use new address fields
 3. Update forms to collect structured address data
 4. Integrate with geocoding service for lat/lng population

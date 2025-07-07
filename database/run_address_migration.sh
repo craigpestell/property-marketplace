@@ -6,13 +6,19 @@
 echo "🔄 Property Marketplace - Address Migration"
 echo "=========================================="
 
+# Source environment variables from .env file if not already set
+if [ -f ".env" ] && { [ -z "$PGDATABASE" ] || [ -z "$PGUSER" ] || [ -z "$PGPASSWORD" ]; }; then
+    echo "📂 Loading environment variables from .env file..."
+    set -a
+    source .env
+    set +a
+fi
+
 # Check if database connection details are provided
-if [ -z "$PGDATABASE" ] || [ -z "$PGUSER" ]; then
-    echo "⚠️  Please set required environment variables:"
+if [ -z "$PGDATABASE" ] || [ -z "$PGUSER" ] || [ -z "$PGPASSWORD" ]; then
+    echo "⚠️  Required database variables are not set."
+    echo "   Please make sure your .env file contains:"
     echo "   PGDATABASE, PGUSER, PGPASSWORD, PGHOST, PGPORT"
-    echo ""
-    echo "   You can source them from .env file:"
-    echo "   export \$(grep -v '^#' .env | xargs)"
     exit 1
 fi
 
