@@ -71,12 +71,6 @@ export default function PropertyCard({
           <p className='text-xl font-bold text-primary-600 dark:text-primary-400 mb-2'>
             ${property.price.toLocaleString()}
           </p>
-          <p className='text-gray-600 dark:text-gray-300 text-sm mb-2'>
-            {property.address}
-          </p>
-          <p className='text-gray-500 dark:text-gray-400 text-xs'>
-            Listed: {new Date(property.created_at).toLocaleDateString()}
-          </p>
         </div>
       </Link>
     </div>
