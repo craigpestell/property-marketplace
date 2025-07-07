@@ -413,7 +413,9 @@ export default function PropertyDetailClient({
                     </span>
                   </div>
                   <div className='flex justify-between items-center'>
-                    <span className='text-gray-600'>Listed</span>
+                    <span className='text-gray-600 dark:text-gray-400'>
+                      Listed
+                    </span>
                     <span className='font-medium'>
                       {new Date(property.created_at).toLocaleDateString()}
                     </span>
@@ -446,66 +448,164 @@ export default function PropertyDetailClient({
                 </div>
               </div>
 
-              {/* Contact Form */}
+              {/* Contact Form or Sign Up Actions */}
               <div className='bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm dark:shadow-gray-900/20 border border-gray-200 dark:border-gray-700'>
-                <h3 className='text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4'>
-                  Interested in this property?
-                </h3>
+                {session?.user ? (
+                  // Contact Form for logged in users
+                  <>
+                    <h3 className='text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4'>
+                      Interested in this property?
+                    </h3>
 
-                <form className='space-y-4'>
-                  <div>
-                    <label
-                      htmlFor='name'
-                      className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1'
+                    <form className='space-y-4'>
+                      <div>
+                        <label
+                          htmlFor='name'
+                          className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1'
+                        >
+                          Full Name
+                        </label>
+                        <input
+                          type='text'
+                          id='name'
+                          className='w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400'
+                          placeholder='Your full name'
+                        />
+                      </div>
+
+                      <div>
+                        <label
+                          htmlFor='email'
+                          className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1'
+                        >
+                          Email Address
+                        </label>
+                        <input
+                          type='email'
+                          id='email'
+                          className='w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400'
+                          placeholder='your.email@example.com'
+                        />
+                      </div>
+
+                      <div>
+                        <label
+                          htmlFor='message'
+                          className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1'
+                        >
+                          Message
+                        </label>
+                        <textarea
+                          id='message'
+                          rows={4}
+                          className='w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400'
+                          placeholder="I'm interested in this property..."
+                          defaultValue={`I'm interested in ${property.title} (${property.property_uid}) at ${property.address}. Please contact me with more information.`}
+                        />
+                      </div>
+
+                      <button
+                        type='submit'
+                        className='w-full bg-primary-600 dark:bg-primary-700 text-white py-3 px-4 rounded-lg hover:bg-primary-700 dark:hover:bg-primary-600 transition-colors font-medium'
+                      >
+                        Send Message
+                      </button>
+                    </form>
+                  </>
+                ) : (
+                  // Sign up actions for non-logged in users
+                  <>
+                    <h3 className='text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4'>
+                      Create an account to:
+                    </h3>
+
+                    <ul className='space-y-3 mb-5'>
+                      <li className='flex items-start'>
+                        <svg
+                          className='h-5 w-5 text-primary-600 mr-2 mt-0.5 flex-shrink-0'
+                          fill='none'
+                          viewBox='0 0 24 24'
+                          stroke='currentColor'
+                        >
+                          <path
+                            strokeLinecap='round'
+                            strokeLinejoin='round'
+                            strokeWidth='2'
+                            d='M5 13l4 4L19 7'
+                          />
+                        </svg>
+                        <span className='text-gray-700 dark:text-gray-300'>
+                          Contact property owners directly
+                        </span>
+                      </li>
+                      <li className='flex items-start'>
+                        <svg
+                          className='h-5 w-5 text-primary-600 mr-2 mt-0.5 flex-shrink-0'
+                          fill='none'
+                          viewBox='0 0 24 24'
+                          stroke='currentColor'
+                        >
+                          <path
+                            strokeLinecap='round'
+                            strokeLinejoin='round'
+                            strokeWidth='2'
+                            d='M5 13l4 4L19 7'
+                          />
+                        </svg>
+                        <span className='text-gray-700 dark:text-gray-300'>
+                          Save properties to your favorites
+                        </span>
+                      </li>
+                      <li className='flex items-start'>
+                        <svg
+                          className='h-5 w-5 text-primary-600 mr-2 mt-0.5 flex-shrink-0'
+                          fill='none'
+                          viewBox='0 0 24 24'
+                          stroke='currentColor'
+                        >
+                          <path
+                            strokeLinecap='round'
+                            strokeLinejoin='round'
+                            strokeWidth='2'
+                            d='M5 13l4 4L19 7'
+                          />
+                        </svg>
+                        <span className='text-gray-700 dark:text-gray-300'>
+                          Make offers on properties you like
+                        </span>
+                      </li>
+                      <li className='flex items-start'>
+                        <svg
+                          className='h-5 w-5 text-primary-600 mr-2 mt-0.5 flex-shrink-0'
+                          fill='none'
+                          viewBox='0 0 24 24'
+                          stroke='currentColor'
+                        >
+                          <path
+                            strokeLinecap='round'
+                            strokeLinejoin='round'
+                            strokeWidth='2'
+                            d='M5 13l4 4L19 7'
+                          />
+                        </svg>
+                        <span className='text-gray-700 dark:text-gray-300'>
+                          Receive notifications about price drops
+                        </span>
+                      </li>
+                    </ul>
+
+                    <Link
+                      href='/api/auth/signin'
+                      className='block w-full bg-primary-600 dark:bg-primary-700 text-white py-3 px-4 rounded-lg hover:bg-primary-700 dark:hover:bg-primary-600 transition-colors font-medium text-center mb-3'
                     >
-                      Full Name
-                    </label>
-                    <input
-                      type='text'
-                      id='name'
-                      className='w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400'
-                      placeholder='Your full name'
-                    />
-                  </div>
+                      Sign Up / Log In
+                    </Link>
 
-                  <div>
-                    <label
-                      htmlFor='email'
-                      className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1'
-                    >
-                      Email Address
-                    </label>
-                    <input
-                      type='email'
-                      id='email'
-                      className='w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400'
-                      placeholder='your.email@example.com'
-                    />
-                  </div>
-
-                  <div>
-                    <label
-                      htmlFor='message'
-                      className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1'
-                    >
-                      Message
-                    </label>
-                    <textarea
-                      id='message'
-                      rows={4}
-                      className='w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400'
-                      placeholder="I'm interested in this property..."
-                      defaultValue={`I'm interested in ${property.title} (${property.property_uid}) at ${property.address}. Please contact me with more information.`}
-                    />
-                  </div>
-
-                  <button
-                    type='submit'
-                    className='w-full bg-primary-600 dark:bg-primary-700 text-white py-3 px-4 rounded-lg hover:bg-primary-700 dark:hover:bg-primary-600 transition-colors font-medium'
-                  >
-                    Send Message
-                  </button>
-                </form>
+                    <p className='text-sm text-center text-gray-500 dark:text-gray-400'>
+                      Join thousands of users finding their perfect property
+                    </p>
+                  </>
+                )}
               </div>
             </div>
           </div>
