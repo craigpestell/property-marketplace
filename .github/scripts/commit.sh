@@ -84,8 +84,13 @@ if [ ${#MESSAGE} -gt $MAX_SUBJECT_LENGTH ]; then
     fi
 fi
 
+# Ensure first letter of message is lowercase
+FIRST_CHAR=$(echo "${MESSAGE:0:1}" | tr '[:upper:]' '[:lower:]')
+REST_OF_MESSAGE="${MESSAGE:1}"
+LOWERCASE_MESSAGE="${FIRST_CHAR}${REST_OF_MESSAGE}"
+
 # Construct the commit message
-COMMIT_MESSAGE="${TYPE}(${SCOPE}): ${MESSAGE}"
+COMMIT_MESSAGE="${TYPE}(${SCOPE}): ${LOWERCASE_MESSAGE}"
 
 # Show the final message
 echo -e "${GREEN}Commit message:${NC}"

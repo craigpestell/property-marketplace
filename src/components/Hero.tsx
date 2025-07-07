@@ -2,141 +2,191 @@ import Link from 'next/link';
 
 export default function Hero() {
   return (
-    <section className='relative bg-gradient-to-br from-indigo-900 via-blue-900 to-purple-900 text-white overflow-hidden'>
-      {/* Animated background elements */}
-      <div className='absolute inset-0'>
-        {/* Gradient overlay */}
-        <div className='absolute inset-0 bg-gradient-to-r from-blue-900/80 via-indigo-900/70 to-purple-900/80'></div>
-
-        {/* Floating shapes */}
-        <div className='absolute top-20 left-20 w-32 h-32 bg-blue-400/20 rounded-full blur-xl animate-pulse'></div>
-        <div className='absolute top-40 right-32 w-48 h-48 bg-purple-400/20 rounded-full blur-xl animate-pulse delay-1000'></div>
-        <div className='absolute bottom-32 left-1/4 w-24 h-24 bg-indigo-400/20 rounded-full blur-xl animate-pulse delay-500'></div>
-
-        {/* Grid pattern */}
-        <div className='absolute inset-0 bg-[url("data:image/svg+xml,%3csvg width="60" height="60" xmlns="http://www.w3.org/2000/svg"%3e%3cdefs%3e%3cpattern id="a" patternUnits="userSpaceOnUse" width="60" height="60" patternTransform="translate(0,0) rotate(0) skewX(0) skewY(0)"%3e%3csvg viewBox="0 0 15 15" width="15" height="15" xmlns="http://www.w3.org/2000/svg"%3e%3cg fill="%23ffffff" fill-opacity="0.03" fill-rule="evenodd"%3e%3ccircle cx="3" cy="3" r="1"/%3e%3c/g%3e%3c/svg%3e%3c/pattern%3e%3c/defs%3e%3crect width="100%25" height="100%25" fill="url(%23a)"/%3e%3c/svg%3e")] opacity-50'></div>
-      </div>
+    <section className='bg-white dark:bg-gray-900 text-gray-800 dark:text-white border-b border-gray-200 dark:border-gray-800 relative'>
+      {/* Light background pattern for subtle texture */}
+      <div className='absolute inset-0 bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-900 opacity-50'></div>
 
       {/* Content */}
-      <div className='relative layout py-28 lg:py-36'>
-        <div className='max-w-6xl mx-auto text-center'>
-          {/* Badge */}
-          <div className='inline-flex items-center bg-gradient-to-r from-blue-500/20 to-purple-500/20 border border-blue-400/30 rounded-full px-6 py-3 mb-8 backdrop-blur-sm'>
-            <span className='relative flex h-3 w-3 mr-3'>
-              <span className='animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75'></span>
-              <span className='relative inline-flex rounded-full h-3 w-3 bg-green-500'></span>
-            </span>
-            <span className='text-sm font-medium text-blue-100'>
-              Revolutionary Real Estate Platform
-            </span>
-          </div>
+      <div className='relative layout py-16 lg:py-24'>
+        <div className='max-w-5xl mx-auto'>
+          <div className='flex flex-col lg:flex-row items-center gap-8'>
+            <div className='lg:w-3/5 mb-10 lg:mb-0'>
+              <h1 className='font-heading text-4xl md:text-5xl font-semibold mb-6 leading-tight text-gray-900 dark:text-gray-100 tracking-normal'>
+                Save{' '}
+                <span className='text-blue-600 dark:text-blue-400'>$41K+</span>{' '}
+                on Your Dream Home
+              </h1>
 
-          <h1 className='text-5xl md:text-7xl lg:text-8xl font-black mb-8 leading-tight'>
-            Save{' '}
-            <span className='relative inline-block'>
-              <span className='bg-gradient-to-r from-emerald-400 via-blue-400 to-purple-400 bg-clip-text text-transparent animate-pulse'>
-                $41K+
-              </span>
-              <div className='absolute -inset-1 bg-gradient-to-r from-emerald-400/20 to-purple-400/20 blur-lg -z-10 animate-pulse'></div>
-            </span>{' '}
-            on Your
-            <span className='block mt-4 bg-gradient-to-r from-blue-200 via-indigo-200 to-purple-200 bg-clip-text text-transparent'>
-              Dream Home
-            </span>
-          </h1>
+              <p className='font-body text-lg text-gray-600 dark:text-gray-400 mb-8 leading-relaxed'>
+                With our{' '}
+                <span className='font-medium text-gray-800 dark:text-gray-200'>
+                  0.9% seller commission
+                </span>{' '}
+                and zero buyer fees, you get full-service support plus exclusive
+                access to properties others won't show you.
+              </p>
 
-          <p className='text-xl md:text-2xl lg:text-3xl text-blue-100 mb-12 max-w-4xl mx-auto leading-relaxed font-light'>
-            Revolutionary{' '}
-            <span className='font-bold bg-gradient-to-r from-emerald-300 to-blue-300 bg-clip-text text-transparent'>
-              0.9% seller commission
-            </span>
-            . Zero buyer fees.
-            <span className='block mt-4 text-lg md:text-xl lg:text-2xl opacity-90'>
-              Full-service support + exclusive FSBO access others won't show
-              you.
-            </span>
-          </p>
-
-          <div className='flex flex-col sm:flex-row gap-6 justify-center items-center mb-16'>
-            <Link
-              href='/listings'
-              className='group relative bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 hover:from-blue-700 hover:via-indigo-700 hover:to-purple-700 text-white px-12 py-5 rounded-2xl font-bold transition-all duration-500 text-lg shadow-2xl hover:shadow-blue-500/25 transform hover:-translate-y-2 hover:scale-105 border border-blue-400/20'
-            >
-              <div className='absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 opacity-0 group-hover:opacity-100 rounded-2xl transition-opacity duration-500'></div>
-              <span className='relative flex items-center'>
-                🏠 Browse Properties
-                <svg
-                  className='ml-3 w-6 h-6 group-hover:translate-x-2 transition-transform duration-300'
-                  fill='currentColor'
-                  viewBox='0 0 20 20'
+              <div className='flex flex-col sm:flex-row gap-4'>
+                <Link
+                  href='/listings'
+                  className='inline-flex font-body items-center justify-center px-6 py-3 bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 text-white font-medium rounded shadow-sm transition-all hover:shadow'
                 >
-                  <path
-                    fillRule='evenodd'
-                    d='M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z'
-                    clipRule='evenodd'
-                  />
-                </svg>
-              </span>
-            </Link>
-            <Link
-              href='/signup'
-              className='group relative bg-white/10 backdrop-blur-md text-white hover:bg-white hover:text-indigo-900 px-12 py-5 rounded-2xl font-bold transition-all duration-500 text-lg shadow-2xl hover:shadow-white/25 transform hover:-translate-y-2 hover:scale-105 border border-white/30 hover:border-white'
-            >
-              <div className='absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 opacity-0 group-hover:opacity-100 rounded-2xl transition-opacity duration-500'></div>
-              <span className='relative flex items-center'>
-                ✨ Start Saving Today
-              </span>
-            </Link>
+                  Browse Properties
+                  <svg
+                    className='ml-2 w-4 h-4'
+                    fill='currentColor'
+                    viewBox='0 0 20 20'
+                  >
+                    <path
+                      fillRule='evenodd'
+                      d='M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z'
+                      clipRule='evenodd'
+                    />
+                  </svg>
+                </Link>
+                <Link
+                  href='/signup'
+                  className='inline-flex font-body items-center justify-center px-6 py-3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 font-medium rounded shadow-sm transition-all hover:shadow'
+                >
+                  Start Saving Today
+                </Link>
+              </div>
+            </div>
+
+            <div className='lg:w-2/5'>
+              <div className='bg-white dark:bg-gray-800 p-8 rounded-lg border border-gray-200 dark:border-gray-700 shadow'>
+                <h3 className='font-heading text-xl font-semibold mb-4 text-gray-800 dark:text-gray-200 pb-2 border-b border-gray-100 dark:border-gray-700 tracking-normal'>
+                  Why Choose Our Platform
+                </h3>
+                <ul className='space-y-4 mt-4'>
+                  <li className='flex items-start'>
+                    <div className='flex-shrink-0 bg-blue-50 dark:bg-blue-900/20 p-1 rounded mt-0.5'>
+                      <svg
+                        className='w-4 h-4 text-blue-600 dark:text-blue-400'
+                        fill='none'
+                        stroke='currentColor'
+                        viewBox='0 0 24 24'
+                      >
+                        <path
+                          strokeLinecap='round'
+                          strokeLinejoin='round'
+                          strokeWidth={2}
+                          d='M5 13l4 4L19 7'
+                        />
+                      </svg>
+                    </div>
+                    <span className='font-body text-gray-700 dark:text-gray-300 ml-3'>
+                      0.9% seller commission vs traditional 2.5%
+                    </span>
+                  </li>
+                  <li className='flex items-start'>
+                    <div className='flex-shrink-0 bg-blue-50 dark:bg-blue-900/20 p-1 rounded mt-0.5'>
+                      <svg
+                        className='w-4 h-4 text-blue-600 dark:text-blue-400'
+                        fill='none'
+                        stroke='currentColor'
+                        viewBox='0 0 24 24'
+                      >
+                        <path
+                          strokeLinecap='round'
+                          strokeLinejoin='round'
+                          strokeWidth={2}
+                          d='M5 13l4 4L19 7'
+                        />
+                      </svg>
+                    </div>
+                    <span className='font-body text-gray-700 dark:text-gray-300 ml-3'>
+                      Zero buyer agent fees - save $25K+
+                    </span>
+                  </li>
+                  <li className='flex items-start'>
+                    <div className='flex-shrink-0 bg-blue-50 dark:bg-blue-900/20 p-1 rounded mt-0.5'>
+                      <svg
+                        className='w-4 h-4 text-blue-600 dark:text-blue-400'
+                        fill='none'
+                        stroke='currentColor'
+                        viewBox='0 0 24 24'
+                      >
+                        <path
+                          strokeLinecap='round'
+                          strokeLinejoin='round'
+                          strokeWidth={2}
+                          d='M5 13l4 4L19 7'
+                        />
+                      </svg>
+                    </div>
+                    <span className='font-body text-gray-700 dark:text-gray-300 ml-3'>
+                      Full-service support from search to closing
+                    </span>
+                  </li>
+                  <li className='flex items-start'>
+                    <div className='flex-shrink-0 bg-blue-50 dark:bg-blue-900/20 p-1 rounded mt-0.5'>
+                      <svg
+                        className='w-4 h-4 text-blue-600 dark:text-blue-400'
+                        fill='none'
+                        stroke='currentColor'
+                        viewBox='0 0 24 24'
+                      >
+                        <path
+                          strokeLinecap='round'
+                          strokeLinejoin='round'
+                          strokeWidth={2}
+                          d='M5 13l4 4L19 7'
+                        />
+                      </svg>
+                    </div>
+                    <span className='font-body text-gray-700 dark:text-gray-300 ml-3'>
+                      Access to exclusive FSBO properties
+                    </span>
+                  </li>
+                </ul>
+              </div>
+            </div>
           </div>
         </div>
 
-        {/* Enhanced Stats with Cards */}
-        <div className='grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto'>
-          <div className='group relative'>
-            <div className='absolute inset-0 bg-gradient-to-r from-emerald-600/20 to-blue-600/20 rounded-3xl blur-xl group-hover:blur-2xl transition-all duration-500'></div>
-            <div className='relative bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-8 text-center group-hover:bg-white/15 transition-all duration-500 hover:scale-105'>
-              <div className='text-5xl md:text-6xl font-black text-transparent bg-gradient-to-r from-emerald-400 to-blue-400 bg-clip-text mb-3 group-hover:scale-110 transition-transform duration-500'>
+        {/* Statistics - Clean & Traditional Style */}
+        <div className='mt-16 max-w-5xl mx-auto'>
+          <div className='w-full h-px bg-gray-200 dark:bg-gray-800 mb-12'></div>
+
+          <div className='grid grid-cols-1 sm:grid-cols-3 gap-8'>
+            <div className='bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded p-6 text-center shadow-sm'>
+              <div className='font-heading text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-2 tracking-normal'>
                 0.9%
               </div>
-              <div className='text-white text-xl font-bold mb-2'>
+              <div className='font-body text-gray-800 dark:text-gray-200 font-medium mb-2'>
                 Seller Commission
               </div>
-              <div className='text-blue-200 text-sm flex items-center justify-center'>
-                <span className='bg-red-500/20 text-red-300 px-3 py-1 rounded-full line-through mr-2'>
+              <div className='font-body text-gray-500 dark:text-gray-400 text-sm flex items-center justify-center'>
+                <span className='line-through text-red-500 dark:text-red-400 mr-2'>
                   2.5%
                 </span>
-                <span className='text-emerald-300'>vs. traditional</span>
+                <span>traditional rate</span>
               </div>
             </div>
-          </div>
 
-          <div className='group relative'>
-            <div className='absolute inset-0 bg-gradient-to-r from-purple-600/20 to-indigo-600/20 rounded-3xl blur-xl group-hover:blur-2xl transition-all duration-500'></div>
-            <div className='relative bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-8 text-center group-hover:bg-white/15 transition-all duration-500 hover:scale-105'>
-              <div className='text-5xl md:text-6xl font-black text-transparent bg-gradient-to-r from-purple-400 to-indigo-400 bg-clip-text mb-3 group-hover:scale-110 transition-transform duration-500'>
+            <div className='bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded p-6 text-center shadow-sm'>
+              <div className='font-heading text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-2 tracking-normal'>
                 $41K+
               </div>
-              <div className='text-white text-xl font-bold mb-2'>
-                Combined Savings
+              <div className='font-body text-gray-800 dark:text-gray-200 font-medium mb-2'>
+                Average Savings
               </div>
-              <div className='text-blue-200 text-sm'>
-                <span className='text-emerald-300'>on $1M property</span>
+              <div className='font-body text-gray-500 dark:text-gray-400 text-sm'>
+                on $1M property
               </div>
             </div>
-          </div>
 
-          <div className='group relative'>
-            <div className='absolute inset-0 bg-gradient-to-r from-blue-600/20 to-cyan-600/20 rounded-3xl blur-xl group-hover:blur-2xl transition-all duration-500'></div>
-            <div className='relative bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-8 text-center group-hover:bg-white/15 transition-all duration-500 hover:scale-105'>
-              <div className='text-5xl md:text-6xl font-black text-transparent bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text mb-3 group-hover:scale-110 transition-transform duration-500'>
+            <div className='bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded p-6 text-center shadow-sm'>
+              <div className='font-heading text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-2 tracking-normal'>
                 5K+
               </div>
-              <div className='text-white text-xl font-bold mb-2'>
+              <div className='font-body text-gray-800 dark:text-gray-200 font-medium mb-2'>
                 Happy Customers
               </div>
-              <div className='text-blue-200 text-sm flex items-center justify-center'>
-                <span className='w-2 h-2 bg-green-400 rounded-full mr-2 animate-pulse'></span>
-                <span className='text-green-300'>and growing daily</span>
+              <div className='font-body text-gray-500 dark:text-gray-400 text-sm flex items-center justify-center'>
+                <div className='w-2 h-2 bg-green-500 rounded-full mr-2'></div>
+                <span>and growing daily</span>
               </div>
             </div>
           </div>

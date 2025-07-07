@@ -1,0 +1,23 @@
+/* Add these imports to the top of your globals.css */
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+/* Typography styles for this elegant luxury look */
+h1,
+.h1 {
+  @apply font-heading text-3xl font-medium md:text-5xl tracking-wide;
+}
+
+h2,
+.h2 {
+  @apply font-heading text-2xl font-medium md:text-4xl tracking-wide;
+}
+
+h3,
+.h3 {
+  @apply font-heading text-xl font-medium md:text-3xl tracking-wide;
+}
+
+/* Example Hero component update */
+.hero-heading {
+  @apply font-heading text-4xl md:text-6xl font-medium mb-6 leading-tight text-gray-900 dark:text-gray-100 tracking-wide;
+}

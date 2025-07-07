@@ -5,7 +5,7 @@ const nextConfig = {
   },
 
   reactStrictMode: true,
-  swcMinify: true,
+  //swcMinify: true,
 
   // Uncoment to add domain whitelist
   images: {
@@ -20,7 +20,14 @@ const nextConfig = {
       },
     ],
   },
-
+  turbopack: {
+    rules: {
+      '*.svg': {
+        loaders: ['@svgr/webpack'],
+        as: '*.js',
+      },
+    },
+  },
   webpack(config) {
     // Grab the existing rule that handles SVG imports
     const fileLoaderRule = config.module.rules.find((rule) =>

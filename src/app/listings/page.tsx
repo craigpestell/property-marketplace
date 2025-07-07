@@ -118,8 +118,6 @@ export default function ListingsPage() {
     sortOrder,
   ]);
 
-  // Remove the client-side filtering useEffect since we're doing server-side filtering now
-
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
   };
@@ -130,7 +128,7 @@ export default function ListingsPage() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleItemsPerPageChange = (newLimit: number) => {
+  const _handleItemsPerPageChange = (newLimit: number) => {
     setItemsPerPage(newLimit);
     setCurrentPage(1); // Reset to first page when changing items per page
   };
@@ -152,21 +150,19 @@ export default function ListingsPage() {
 
   return (
     <section className='bg-white dark:bg-gray-900 transition-colors duration-200'>
-      <div className='layout min-h-screen py-12'>
-        <div className='mb-12'>
-          <div className='text-center mb-6'>
-            <h1 className='text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4'>
+      <div className='layout min-h-screen py-6'>
+        {/* Compact Header */}
+        <div className='mb-4'>
+          <div className='flex justify-between items-center mb-3'>
+            <h1 className='text-2xl font-bold text-gray-900 dark:text-gray-100'>
               Property Listings
             </h1>
-            <p className='text-lg text-gray-600 dark:text-gray-400 mb-4'>
-              Browse all available properties in our marketplace
-            </p>
             <Link
               href='/listings/create'
-              className='inline-flex items-center px-6 py-3 bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 text-white font-medium rounded-lg transition-colors'
+              className='inline-flex items-center px-3 py-2 bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 text-white text-sm font-medium rounded-md transition-colors'
             >
               <svg
-                className='w-5 h-5 mr-2'
+                className='w-4 h-4 mr-1'
                 fill='none'
                 stroke='currentColor'
                 viewBox='0 0 24 24'
@@ -178,16 +174,16 @@ export default function ListingsPage() {
                   d='M12 4v16m8-8H4'
                 />
               </svg>
-              List Your Property
+              List Property
             </Link>
           </div>
 
-          {/* Simplified Incentive Tagline */}
-          <div className='bg-gradient-to-r from-blue-600 to-blue-700 dark:from-blue-700 dark:to-blue-800 text-white rounded-lg p-4 max-w-4xl mx-auto mb-6'>
-            <div className='flex items-center justify-center gap-4 text-center'>
+          {/* Compact Incentive Banner */}
+          <div className='bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-3 mb-4'>
+            <div className='flex items-center justify-between text-sm'>
               <div className='flex items-center gap-2'>
                 <svg
-                  className='w-5 h-5 text-yellow-300'
+                  className='w-4 h-4 text-blue-600 dark:text-blue-400'
                   fill='none'
                   stroke='currentColor'
                   viewBox='0 0 24 24'
@@ -199,204 +195,116 @@ export default function ListingsPage() {
                     d='M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1'
                   />
                 </svg>
-                <span className='font-bold text-xl'>
+                <span className='font-semibold text-blue-700 dark:text-blue-300'>
                   Save $41K+ with Zero Buyer Commission
                 </span>
               </div>
-              <div className='hidden md:block text-blue-200 dark:text-blue-300'>
-                •
-              </div>
-              <div className='text-blue-100 dark:text-blue-200 text-sm'>
+              <span className='text-blue-600 dark:text-blue-400 text-xs'>
                 Access FSBO properties others won't show
-              </div>
+              </span>
             </div>
           </div>
 
-          {/* Search Bar */}
-          <div className='max-w-4xl mx-auto mb-8'>
-            {/* Search Input */}
-            <div className='relative mb-4'>
-              <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'>
-                <svg
-                  className='h-5 w-5 text-gray-400 dark:text-gray-500'
-                  fill='none'
-                  stroke='currentColor'
-                  viewBox='0 0 24 24'
-                >
-                  <path
-                    strokeLinecap='round'
-                    strokeLinejoin='round'
-                    strokeWidth={2}
-                    d='M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z'
-                  />
-                </svg>
+          {/* Compact Search and Filters */}
+          <div className='space-y-3'>
+            <div className='flex gap-2'>
+              <div className='relative flex-grow'>
+                <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'>
+                  <svg
+                    className='h-4 w-4 text-gray-400'
+                    fill='none'
+                    stroke='currentColor'
+                    viewBox='0 0 24 24'
+                  >
+                    <path
+                      strokeLinecap='round'
+                      strokeLinejoin='round'
+                      strokeWidth={2}
+                      d='M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z'
+                    />
+                  </svg>
+                </div>
+                <input
+                  type='text'
+                  placeholder='Search properties...'
+                  value={searchQuery}
+                  onChange={handleSearchChange}
+                  className='block w-full pl-10 pr-4 py-2 text-sm border border-gray-200 dark:border-gray-700 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500'
+                />
               </div>
-              <input
-                type='text'
-                placeholder='Search properties...'
-                value={searchQuery}
-                onChange={handleSearchChange}
-                className='block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md leading-5 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:placeholder-gray-400 dark:focus:placeholder-gray-500 focus:ring-1 focus:ring-blue-500 focus:border-blue-500'
-              />
-            </div>
-
-            {/* Filter Toggle Button */}
-            <div className='flex justify-center mb-4'>
               <button
                 onClick={() => setShowFilters(!showFilters)}
-                className='inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-900'
+                className='px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700'
               >
-                <svg
-                  className='w-4 h-4 mr-2'
-                  fill='none'
-                  stroke='currentColor'
-                  viewBox='0 0 24 24'
-                >
-                  <path
-                    strokeLinecap='round'
-                    strokeLinejoin='round'
-                    strokeWidth={2}
-                    d='M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.207A1 1 0 013 6.5V4z'
-                  />
-                </svg>
-                {showFilters ? 'Hide Filters' : 'Show Filters'}
+                Filters
               </button>
             </div>
 
-            {/* Filter Panel */}
             {showFilters && (
-              <div className='bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6 mb-6'>
-                <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
-                  {/* Price Range */}
-                  <div className='col-span-full md:col-span-2 lg:col-span-2 xl:col-span-2'>
-                    <label className='block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2'>
-                      Price Range
-                    </label>
-                    <div className='flex items-center space-x-2'>
+              <div className='bg-gray-50 dark:bg-gray-800 rounded-lg p-3 border border-gray-200 dark:border-gray-700'>
+                <div className='grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-2'>
+                  <div className='col-span-2'>
+                    <div className='flex gap-1'>
                       <input
                         type='number'
                         placeholder='Min Price'
                         value={minPrice}
                         onChange={(e) => setMinPrice(e.target.value)}
-                        className='flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500'
+                        className='w-full px-2 py-1 text-xs border border-gray-200 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100'
                       />
-                      <span className='text-gray-500 dark:text-gray-400'>
-                        to
-                      </span>
                       <input
                         type='number'
                         placeholder='Max Price'
                         value={maxPrice}
                         onChange={(e) => setMaxPrice(e.target.value)}
-                        className='flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500'
+                        className='w-full px-2 py-1 text-xs border border-gray-200 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100'
                       />
                     </div>
                   </div>
-
-                  {/* Property Type */}
-                  <div>
-                    <label className='block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2'>
-                      Property Type
-                    </label>
-                    <select
-                      value={propertyType}
-                      onChange={(e) => setPropertyType(e.target.value)}
-                      className='w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500'
-                    >
-                      <option value=''>All Types</option>
-                      <option value='house'>House</option>
-                      <option value='apartment'>Apartment</option>
-                      <option value='condo'>Condo</option>
-                      <option value='townhouse'>Townhouse</option>
-                      <option value='commercial'>Commercial</option>
-                    </select>
-                  </div>
-
-                  {/* Bedrooms */}
-                  <div>
-                    <label className='block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2'>
-                      Bedrooms
-                    </label>
-                    <select
-                      value={bedrooms}
-                      onChange={(e) => setBedrooms(e.target.value)}
-                      className='w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500'
-                    >
-                      <option value=''>Any</option>
-                      <option value='1'>1+</option>
-                      <option value='2'>2+</option>
-                      <option value='3'>3+</option>
-                      <option value='4'>4+</option>
-                      <option value='5'>5+</option>
-                    </select>
-                  </div>
-
-                  {/* Bathrooms */}
-                  <div>
-                    <label className='block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2'>
-                      Bathrooms
-                    </label>
-                    <select
-                      value={bathrooms}
-                      onChange={(e) => setBathrooms(e.target.value)}
-                      className='w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500'
-                    >
-                      <option value=''>Any</option>
-                      <option value='1'>1+</option>
-                      <option value='2'>2+</option>
-                      <option value='3'>3+</option>
-                      <option value='4'>4+</option>
-                    </select>
-                  </div>
-
-                  {/* Sort By */}
-                  <div>
-                    <label className='block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2'>
-                      Sort By
-                    </label>
-                    <select
-                      value={sortBy}
-                      onChange={(e) => setSortBy(e.target.value)}
-                      className='w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500'
-                    >
-                      <option value='created_at'>Newest First</option>
-                      <option value='saves'>Most Popular</option>
-                      <option value='price'>Price</option>
-                      <option value='title'>Title</option>
-                      <option value='address'>Location</option>
-                    </select>
-                  </div>
-
-                  {/* Sort Order */}
-                  <div>
-                    <label className='block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2'>
-                      Order
-                    </label>
-                    <select
-                      value={sortOrder}
-                      onChange={(e) => setSortOrder(e.target.value)}
-                      className='w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500'
-                    >
-                      <option value='DESC'>
-                        {sortBy === 'price'
-                          ? 'High to Low'
-                          : sortBy === 'saves'
-                            ? 'Most to Least'
-                            : 'Descending'}
-                      </option>
-                      <option value='ASC'>
-                        {sortBy === 'price'
-                          ? 'Low to High'
-                          : sortBy === 'saves'
-                            ? 'Least to Most'
-                            : 'Ascending'}
-                      </option>
-                    </select>
-                  </div>
+                  <select
+                    value={propertyType}
+                    onChange={(e) => setPropertyType(e.target.value)}
+                    className='px-2 py-1 text-xs border border-gray-200 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100'
+                  >
+                    <option value=''>All Types</option>
+                    <option value='house'>House</option>
+                    <option value='apartment'>Apartment</option>
+                    <option value='condo'>Condo</option>
+                    <option value='townhouse'>Townhouse</option>
+                  </select>
+                  <select
+                    value={bedrooms}
+                    onChange={(e) => setBedrooms(e.target.value)}
+                    className='px-2 py-1 text-xs border border-gray-200 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100'
+                  >
+                    <option value=''>Beds</option>
+                    <option value='1'>1+</option>
+                    <option value='2'>2+</option>
+                    <option value='3'>3+</option>
+                    <option value='4'>4+</option>
+                  </select>
+                  <select
+                    value={bathrooms}
+                    onChange={(e) => setBathrooms(e.target.value)}
+                    className='px-2 py-1 text-xs border border-gray-200 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100'
+                  >
+                    <option value=''>Baths</option>
+                    <option value='1'>1+</option>
+                    <option value='2'>2+</option>
+                    <option value='3'>3+</option>
+                    <option value='4'>4+</option>
+                  </select>
+                  <select
+                    value={sortBy}
+                    onChange={(e) => setSortBy(e.target.value)}
+                    className='px-2 py-1 text-xs border border-gray-200 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100'
+                  >
+                    <option value='created_at'>Newest</option>
+                    <option value='price'>Price</option>
+                    <option value='saves'>Popular</option>
+                  </select>
                 </div>
-
-                {/* Clear Filters Button */}
-                <div className='mt-4 flex justify-center'>
+                <div className='flex justify-between items-center mt-2'>
                   <button
                     onClick={() => {
                       setMinPrice('');
@@ -407,11 +315,16 @@ export default function ListingsPage() {
                       setSortBy('created_at');
                       setSortOrder('DESC');
                       setSearchQuery('');
-                      setCurrentPage(1); // Reset pagination
                     }}
-                    className='px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-900'
+                    className='text-xs text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'
                   >
-                    Clear All Filters
+                    Clear
+                  </button>
+                  <button
+                    onClick={() => setShowFilters(false)}
+                    className='px-2 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700'
+                  >
+                    Apply
                   </button>
                 </div>
               </div>
@@ -420,293 +333,108 @@ export default function ListingsPage() {
         </div>
 
         {loading ? (
-          <div className='text-center text-gray-500 dark:text-gray-400 py-8'>
-            <div className='inline-flex items-center'>
-              <svg
-                className='animate-spin -ml-1 mr-3 h-5 w-5 text-blue-500'
-                xmlns='http://www.w3.org/2000/svg'
-                fill='none'
-                viewBox='0 0 24 24'
-              >
-                <circle
-                  className='opacity-25'
-                  cx='12'
-                  cy='12'
-                  r='10'
-                  stroke='currentColor'
-                  strokeWidth='4'
-                ></circle>
-                <path
-                  className='opacity-75'
-                  fill='currentColor'
-                  d='M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z'
-                ></path>
-              </svg>
-              Loading properties...
-            </div>
+          <div className='flex items-center justify-center py-12'>
+            <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600'></div>
           </div>
         ) : filteredProperties.length === 0 ? (
-          <div className='text-center text-gray-500 dark:text-gray-400'>
-            {debouncedSearchQuery ||
-            minPrice ||
-            maxPrice ||
-            propertyType ||
-            bedrooms ||
-            bathrooms ? (
-              <p>No properties found matching your search criteria.</p>
-            ) : (
-              <p>No properties available at the moment.</p>
-            )}
+          <div className='text-center py-12 text-gray-500 dark:text-gray-400'>
+            <p>No properties found</p>
           </div>
         ) : (
           <>
-            {/* Top Pagination Controls - Simplified */}
-            {totalPages > 1 && (
-              <div className='flex items-center justify-center gap-4 mb-6 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg'>
-                {/* Pagination Buttons */}
-                <div className='flex items-center gap-2'>
-                  {/* Previous Button */}
+            {/* Compact Results Header */}
+            <div className='flex justify-between items-center mb-3 text-sm text-gray-600 dark:text-gray-400'>
+              <span>
+                {totalItems} propert{totalItems === 1 ? 'y' : 'ies'}
+                {totalPages > 1 && ` • Page ${currentPage} of ${totalPages}`}
+              </span>
+              {totalPages > 1 && (
+                <div className='flex items-center gap-1'>
                   <button
                     onClick={() => handlePageChange(currentPage - 1)}
                     disabled={!hasPrev}
-                    className={`px-3 py-2 text-sm font-medium rounded-md transition-colors ${
-                      hasPrev
-                        ? 'text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600'
-                        : 'text-gray-400 dark:text-gray-500 bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 cursor-not-allowed'
-                    }`}
+                    className={`p-1 rounded ${hasPrev ? 'hover:bg-gray-100 dark:hover:bg-gray-700' : 'opacity-50 cursor-not-allowed'}`}
                   >
-                    Previous
+                    <svg
+                      className='w-4 h-4'
+                      fill='none'
+                      stroke='currentColor'
+                      viewBox='0 0 24 24'
+                    >
+                      <path
+                        strokeLinecap='round'
+                        strokeLinejoin='round'
+                        strokeWidth={2}
+                        d='M15 19l-7-7 7-7'
+                      />
+                    </svg>
                   </button>
-
-                  {/* Page Numbers */}
-                  <div className='flex items-center gap-1'>
-                    {/* First page */}
-                    {currentPage > 3 && (
-                      <>
-                        <button
-                          onClick={() => handlePageChange(1)}
-                          className='px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors'
-                        >
-                          1
-                        </button>
-                        {currentPage > 4 && (
-                          <span className='px-2 text-gray-400 dark:text-gray-500'>
-                            ...
-                          </span>
-                        )}
-                      </>
-                    )}
-
-                    {/* Previous page */}
-                    {currentPage > 1 && (
-                      <button
-                        onClick={() => handlePageChange(currentPage - 1)}
-                        className='px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors'
-                      >
-                        {currentPage - 1}
-                      </button>
-                    )}
-
-                    {/* Current page */}
-                    <button className='px-3 py-2 text-sm font-medium text-white bg-blue-600 dark:bg-blue-700 border border-blue-600 dark:border-blue-700 rounded-md'>
-                      {currentPage}
-                    </button>
-
-                    {/* Next page */}
-                    {currentPage < totalPages && (
-                      <button
-                        onClick={() => handlePageChange(currentPage + 1)}
-                        className='px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors'
-                      >
-                        {currentPage + 1}
-                      </button>
-                    )}
-
-                    {/* Last page */}
-                    {currentPage < totalPages - 2 && (
-                      <>
-                        {currentPage < totalPages - 3 && (
-                          <span className='px-2 text-gray-400 dark:text-gray-500'>
-                            ...
-                          </span>
-                        )}
-                        <button
-                          onClick={() => handlePageChange(totalPages)}
-                          className='px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors'
-                        >
-                          {totalPages}
-                        </button>
-                      </>
-                    )}
-                  </div>
-
-                  {/* Next Button */}
                   <button
                     onClick={() => handlePageChange(currentPage + 1)}
                     disabled={!hasNext}
-                    className={`px-3 py-2 text-sm font-medium rounded-md transition-colors ${
-                      hasNext
-                        ? 'text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600'
-                        : 'text-gray-400 dark:text-gray-500 bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 cursor-not-allowed'
-                    }`}
+                    className={`p-1 rounded ${hasNext ? 'hover:bg-gray-100 dark:hover:bg-gray-700' : 'opacity-50 cursor-not-allowed'}`}
                   >
-                    Next
+                    <svg
+                      className='w-4 h-4'
+                      fill='none'
+                      stroke='currentColor'
+                      viewBox='0 0 24 24'
+                    >
+                      <path
+                        strokeLinecap='round'
+                        strokeLinejoin='round'
+                        strokeWidth={2}
+                        d='M9 5l7 7-7 7'
+                      />
+                    </svg>
                   </button>
                 </div>
-              </div>
-            )}
+              )}
+            </div>
 
-            {/* Property Grid */}
-            <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8'>
+            {/* Property Grid - Optimized for more properties above fold */}
+            <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3'>
               {filteredProperties.map((property) => (
-                <PropertyCard
-                  key={property.id}
-                  property={property}
-                  showSaveCount={true}
-                />
+                <div key={property.id}>
+                  <PropertyCard property={property} showSaveCount={true} />
+                </div>
               ))}
             </div>
 
-            {/* Bottom Pagination Controls - Complete */}
+            {/* Bottom Pagination */}
             {totalPages > 1 && (
-              <div className='flex flex-col gap-4'>
-                {/* Results Info and Items Per Page Selector */}
-                <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4'>
-                  <div className='text-center sm:text-left text-gray-600 dark:text-gray-400'>
-                    {debouncedSearchQuery ||
-                    minPrice ||
-                    maxPrice ||
-                    propertyType ||
-                    bedrooms ||
-                    bathrooms ? (
-                      <p>
-                        Found {totalItems} propert
-                        {totalItems === 1 ? 'y' : 'ies'} matching your criteria{' '}
-                        {totalPages > 1 &&
-                          `(Page ${currentPage} of ${totalPages})`}
-                      </p>
-                    ) : (
-                      <p>
-                        Showing {totalItems} propert
-                        {totalItems === 1 ? 'y' : 'ies'}
-                        {totalPages > 1 &&
-                          ` (Page ${currentPage} of ${totalPages})`}
-                      </p>
-                    )}
-                  </div>
-
-                  {/* Items Per Page Selector */}
-                  <div className='flex items-center gap-2 text-sm'>
-                    <label className='text-gray-600 dark:text-gray-400'>
-                      Show:
-                    </label>
-                    <select
-                      value={itemsPerPage}
-                      onChange={(e) =>
-                        handleItemsPerPageChange(parseInt(e.target.value))
-                      }
-                      className='px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500'
-                    >
-                      <option value={10}>10</option>
-                      <option value={20}>20</option>
-                      <option value={50}>50</option>
-                      <option value={100}>100</option>
-                    </select>
-                    <span className='text-gray-600 dark:text-gray-400'>
-                      per page
-                    </span>
-                  </div>
-                </div>
-
-                {/* Pagination Navigation */}
-                <div className='flex items-center justify-center gap-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg'>
-                  {/* Pagination Buttons */}
-                  <div className='flex items-center gap-2'>
-                    {/* Previous Button */}
-                    <button
-                      onClick={() => handlePageChange(currentPage - 1)}
-                      disabled={!hasPrev}
-                      className={`px-3 py-2 text-sm font-medium rounded-md ${
-                        hasPrev
-                          ? 'text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700'
-                          : 'text-gray-400 dark:text-gray-500 bg-gray-100 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 cursor-not-allowed'
-                      }`}
-                    >
-                      Previous
-                    </button>
-
-                    {/* Page Numbers */}
-                    <div className='flex items-center gap-1'>
-                      {/* First page */}
-                      {currentPage > 3 && (
-                        <>
-                          <button
-                            onClick={() => handlePageChange(1)}
-                            className='px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700'
-                          >
-                            1
-                          </button>
-                          {currentPage > 4 && (
-                            <span className='px-2 text-gray-400'>...</span>
-                          )}
-                        </>
-                      )}
-
-                      {/* Previous page */}
-                      {currentPage > 1 && (
-                        <button
-                          onClick={() => handlePageChange(currentPage - 1)}
-                          className='px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700'
-                        >
-                          {currentPage - 1}
-                        </button>
-                      )}
-
-                      {/* Current page */}
-                      <button className='px-3 py-2 text-sm font-medium text-white bg-blue-600 dark:bg-blue-700 border border-blue-600 dark:border-blue-700 rounded-md'>
-                        {currentPage}
-                      </button>
-
-                      {/* Next page */}
-                      {currentPage < totalPages && (
-                        <button
-                          onClick={() => handlePageChange(currentPage + 1)}
-                          className='px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700'
-                        >
-                          {currentPage + 1}
-                        </button>
-                      )}
-
-                      {/* Last page */}
-                      {currentPage < totalPages - 2 && (
-                        <>
-                          {currentPage < totalPages - 3 && (
-                            <span className='px-2 text-gray-400'>...</span>
-                          )}
-                          <button
-                            onClick={() => handlePageChange(totalPages)}
-                            className='px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700'
-                          >
-                            {totalPages}
-                          </button>
-                        </>
-                      )}
-                    </div>
-
-                    {/* Next Button */}
-                    <button
-                      onClick={() => handlePageChange(currentPage + 1)}
-                      disabled={!hasNext}
-                      className={`px-3 py-2 text-sm font-medium rounded-md ${
-                        hasNext
-                          ? 'text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700'
-                          : 'text-gray-400 dark:text-gray-500 bg-gray-100 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 cursor-not-allowed'
-                      }`}
-                    >
-                      Next
-                    </button>
-                  </div>
-                </div>
+              <div className='flex justify-center items-center gap-2 mt-6 text-sm'>
+                <button
+                  onClick={() => handlePageChange(1)}
+                  disabled={currentPage === 1}
+                  className={`px-2 py-1 rounded ${currentPage === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100 dark:hover:bg-gray-700'}`}
+                >
+                  First
+                </button>
+                <button
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  disabled={!hasPrev}
+                  className={`px-2 py-1 rounded ${!hasPrev ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100 dark:hover:bg-gray-700'}`}
+                >
+                  Previous
+                </button>
+                <span className='px-2 py-1 bg-blue-600 text-white rounded'>
+                  {currentPage}
+                </span>
+                <button
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  disabled={!hasNext}
+                  className={`px-2 py-1 rounded ${!hasNext ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100 dark:hover:bg-gray-700'}`}
+                >
+                  Next
+                </button>
+                <button
+                  onClick={() => handlePageChange(totalPages)}
+                  disabled={currentPage === totalPages}
+                  className={`px-2 py-1 rounded ${currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100 dark:hover:bg-gray-700'}`}
+                >
+                  Last
+                </button>
               </div>
             )}
           </>

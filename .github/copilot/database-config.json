@@ -1,0 +1,167 @@
+{
+  "databaseConnection": {
+    "type": "postgresql",
+    "host": "localhost",
+    "port": 5432,
+    "database": "real_estate_marketplace",
+    "user": "PGUSER",
+    "password": "PGPASSWORD",
+    "ssl": false
+  },
+  "databaseModels": {
+    "users": {
+      "fields": [
+        { "name": "id", "type": "uuid", "isPrimary": true },
+        { "name": "email", "type": "string", "isUnique": true },
+        { "name": "name", "type": "string" },
+        { "name": "password", "type": "string" },
+        { "name": "role", "type": "enum", "values": ["user", "admin"] },
+        { "name": "created_at", "type": "timestamp" },
+        { "name": "updated_at", "type": "timestamp" }
+      ]
+    },
+    "properties": {
+      "fields": [
+        { "name": "id", "type": "uuid", "isPrimary": true },
+        { "name": "title", "type": "string" },
+        { "name": "description", "type": "text" },
+        { "name": "price", "type": "decimal" },
+        { "name": "address", "type": "string" },
+        { "name": "city", "type": "string" },
+        { "name": "state", "type": "string" },
+        { "name": "zip_code", "type": "string" },
+        { "name": "bedrooms", "type": "integer" },
+        { "name": "bathrooms", "type": "decimal" },
+        { "name": "square_footage", "type": "integer" },
+        { "name": "property_type", "type": "string" },
+        { "name": "color", "type": "string", "isNullable": true },
+        { "name": "user_id", "type": "uuid", "references": "users.id" },
+        { "name": "created_at", "type": "timestamp" },
+        { "name": "updated_at", "type": "timestamp" }
+      ]
+    },
+    "saved_properties": {
+      "fields": [
+        { "name": "id", "type": "uuid", "isPrimary": true },
+        { "name": "user_id", "type": "uuid", "references": "users.id" },
+        {
+          "name": "property_id",
+          "type": "uuid",
+          "references": "properties.id"
+        },
+        { "name": "created_at", "type": "timestamp" }
+      ]
+    },
+    "offers": {
+      "fields": [
+        { "name": "id", "type": "uuid", "isPrimary": true },
+        { "name": "uid", "type": "string", "isUnique": true },
+        {
+          "name": "property_id",
+          "type": "uuid",
+          "references": "properties.id"
+        },
+        { "name": "user_id", "type": "uuid", "references": "users.id" },
+        { "name": "amount", "type": "decimal" },
+        {
+          "name": "status",
+          "type": "enum",
+          "values": ["pending", "accepted", "rejected", "withdrawn"]
+        },
+        { "name": "message", "type": "text", "isNullable": true },
+        { "name": "created_at", "type": "timestamp" },
+        { "name": "updated_at", "type": "timestamp" }
+      ]
+    },
+    "notifications": {
+      "fields": [
+        { "name": "id", "type": "uuid", "isPrimary": true },
+        { "name": "user_id", "type": "uuid", "references": "users.id" },
+        { "name": "title", "type": "string" },
+        { "name": "message", "type": "text" },
+        { "name": "type", "type": "string" },
+        { "name": "read", "type": "boolean", "defaultValue": false },
+        { "name": "link", "type": "string", "isNullable": true },
+        { "name": "created_at", "type": "timestamp" }
+      ]
+    },
+    "showings": {
+      "fields": [
+        { "name": "id", "type": "uuid", "isPrimary": true },
+        {
+          "name": "property_id",
+          "type": "uuid",
+          "references": "properties.id"
+        },
+        { "name": "user_id", "type": "uuid", "references": "users.id" },
+        { "name": "showing_date", "type": "date" },
+        {
+          "name": "showing_time_id",
+          "type": "uuid",
+          "references": "showing_times.id"
+        },
+        {
+          "name": "status",
+          "type": "enum",
+          "values": ["scheduled", "completed", "cancelled"]
+        },
+        { "name": "notes", "type": "text", "isNullable": true },
+        { "name": "created_at", "type": "timestamp" },
+        { "name": "updated_at", "type": "timestamp" }
+      ]
+    },
+    "showing_times": {
+      "fields": [
+        { "name": "id", "type": "uuid", "isPrimary": true },
+        {
+          "name": "property_id",
+          "type": "uuid",
+          "references": "properties.id"
+        },
+        { "name": "start_time", "type": "time" },
+        { "name": "end_time", "type": "time" },
+        { "name": "is_available", "type": "boolean", "defaultValue": true },
+        { "name": "created_at", "type": "timestamp" },
+        { "name": "updated_at", "type": "timestamp" }
+      ]
+    }
+  },
+  "environmentVariables": {
+    "database": {
+      "PGUSER": "Database username",
+      "PGHOST": "Database host (default: localhost)",
+      "PGDATABASE": "Database name (default: real_estate_marketplace)",
+      "PGPASSWORD": "Database password",
+      "PGPORT": "Database port (default: 5432)"
+    },
+    "authentication": {
+      "NEXTAUTH_SECRET": "Secret used for NextAuth.js",
+      "NEXTAUTH_URL": "Base URL for NextAuth.js callbacks",
+      "AUTH_SECRET": "Authentication secret"
+    },
+    "application": {
+      "NODE_ENV": "Environment (development, production, etc.)",
+      "NEXT_PUBLIC_SHOW_LOGGER": "Show logs in client",
+      "NEXT_PUBLIC_BASE_URL": "Application base URL"
+    },
+    "ai": {
+      "OLLAMA_BASE_URL": "Ollama API base URL",
+      "OLLAMA_MODEL": "Ollama model to use"
+    }
+  },
+  "databaseQueries": {
+    "common": [
+      "SELECT * FROM properties WHERE price <= $1 AND bedrooms >= $2 ORDER BY created_at DESC LIMIT $3",
+      "SELECT p.*, u.name as owner_name FROM properties p JOIN users u ON p.user_id = u.id WHERE p.id = $1",
+      "INSERT INTO saved_properties (id, user_id, property_id, created_at) VALUES ($1, $2, $3, NOW()) RETURNING *",
+      "DELETE FROM saved_properties WHERE user_id = $1 AND property_id = $2",
+      "INSERT INTO offers (id, uid, property_id, user_id, amount, status, message, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, $6, $7, NOW(), NOW()) RETURNING *",
+      "UPDATE offers SET status = $1, updated_at = NOW() WHERE id = $2 RETURNING *",
+      "INSERT INTO notifications (id, user_id, title, message, type, read, link, created_at) VALUES ($1, $2, $3, $4, $5, $6, $7, NOW()) RETURNING *",
+      "UPDATE notifications SET read = true WHERE id = $1",
+      "SELECT * FROM notifications WHERE user_id = $1 ORDER BY created_at DESC LIMIT $2",
+      "INSERT INTO showings (id, property_id, user_id, showing_date, showing_time_id, status, notes, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, $6, $7, NOW(), NOW()) RETURNING *",
+      "SELECT * FROM showing_times WHERE property_id = $1 AND is_available = true ORDER BY start_time ASC"
+    ]
+  }
+}

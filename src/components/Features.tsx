@@ -38,15 +38,16 @@ const features = [
 
 export default function Features() {
   return (
-    <section className='py-20 bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800'>
+    <section className='py-20 bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800'>
       <div className='layout'>
         <div className='max-w-3xl mx-auto text-center mb-16'>
-          <h2 className='text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6'>
+          <h2 className='text-3xl font-bold text-gray-900 dark:text-gray-100 mb-6'>
             Why Choose Our Platform?
           </h2>
-          <p className='text-xl text-gray-600 dark:text-gray-400 leading-relaxed'>
-            Revolutionary commission structure with complete service support.
-            Save money without sacrificing quality.
+          <div className='w-24 h-px bg-blue-500 dark:bg-blue-400 mx-auto mb-8'></div>
+          <p className='text-lg text-gray-700 dark:text-gray-300 leading-relaxed'>
+            Traditional service quality with a modern commission structure. Get
+            full support while keeping more money in your pocket.
           </p>
         </div>
 
@@ -54,22 +55,27 @@ export default function Features() {
           {features.map((feature) => (
             <div
               key={feature.name}
-              className='group text-center p-6 rounded-2xl bg-white dark:bg-gray-800 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100 dark:border-gray-700'
+              className='bg-white dark:bg-gray-800 p-6 rounded border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow duration-300'
             >
-              <div className='flex justify-center mb-6'>
-                <div className='flex items-center justify-center h-20 w-20 rounded-2xl bg-gradient-to-br from-blue-500 to-blue-600 text-white shadow-lg group-hover:scale-110 transition-transform duration-300'>
-                  <feature.icon className='h-10 w-10' aria-hidden='true' />
+              <div className='flex justify-center mb-5'>
+                <div className='flex items-center justify-center h-14 w-14 rounded-full bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400'>
+                  <feature.icon className='h-7 w-7' aria-hidden='true' />
                 </div>
               </div>
-              <h3 className='text-xl font-bold text-gray-900 dark:text-white mb-3'>
+
+              <h3 className='text-lg font-semibold text-gray-900 dark:text-white text-center mb-3'>
                 {feature.name}
               </h3>
-              <div className='text-sm font-semibold text-blue-600 dark:text-blue-400 mb-3 bg-blue-50 dark:bg-blue-900/30 px-3 py-1 rounded-full inline-block'>
-                {feature.highlight}
-              </div>
-              <p className='text-gray-600 dark:text-gray-400 leading-relaxed'>
+
+              <p className='text-gray-600 dark:text-gray-400 text-sm text-center mb-4 leading-relaxed'>
                 {feature.description}
               </p>
+
+              <div className='flex justify-center'>
+                <div className='text-xs font-medium text-blue-700 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 px-3 py-1 rounded-full inline-block border border-blue-100 dark:border-blue-800/50'>
+                  {feature.highlight}
+                </div>
+              </div>
             </div>
           ))}
         </div>

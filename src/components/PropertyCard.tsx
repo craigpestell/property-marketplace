@@ -71,6 +71,12 @@ export default function PropertyCard({
           <p className='text-xl font-bold text-primary-600 dark:text-primary-400 mb-2'>
             ${property.price.toLocaleString()}
           </p>
+          {property.city && (
+            <p className='text-gray-600 dark:text-gray-300 text-sm'>
+              {property.city}
+              {property.province && `, ${property.province}`}
+            </p>
+          )}
         </div>
       </Link>
     </div>

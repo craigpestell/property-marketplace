@@ -207,3 +207,65 @@ export function generateOfferUID(): string {
 ## Migration Status: ✅ COMPLETE
 
 The database has been successfully updated to support offer UIDs while maintaining backwards compatibility. All existing data has been migrated and indexed appropriately. The application is ready for production use with the new UID-based system.
+
+---
+
+# Database Migration Summary
+
+## Overview
+
+This document summarizes all database migrations for the property marketplace application, focusing on the transition to granular address fields and improved client relationships.
+
+## Major Migrations
+
+### 1. Address and Client Relationship Migration (2025-01-07)
+
+**Status**: Ready to Execute  
+**Files**:
+
+- `database/migrations/comprehensive_address_client_migration_pg.sql`
+- `database/run_address_migration.sh`
+- `database/backup_before_migration.sh`
+
+#### Changes:
+
+##### Clients Table:
+
+- **Added**: `client_uid VARCHAR(36) UNIQUE NOT NULL` - UUID-based client identifier
+- **Purpose**: Stable, unique identifier for better relationship management
+- **Migration**: Auto-generated UUIDs for all existing clients
+
+##### Properties Table:
+
+- **Removed**:
+  - `address` (single text field)
+  - `user_email` (replaced with proper foreign key)
+  - `client_email` (redundant field)
+- **Added**:
+  - `street_number VARCHAR(20)` - Street number
+  - `street_name VARCHAR(255)` - Street name
+  - `unit VARCHAR(50)` - Unit/suite information
+  - `city VARCHAR(100)` - City (defaults to Vancouver)
+  - `province VARCHAR(50)` - Province (defaults to BC)
+  - `postal_code VARCHAR(10)` - Canadian postal code
+  - `country VARCHAR(100)` - Country (defaults to Canada)
+  - `latitude DECIMAL(10,8)` - Latitude coordinates
+  - `longitude DECIMAL(11,8)` - Longitude coordinates
+  - `formatted_address TEXT` - Full formatted address
+  - `address_type VARCHAR(20)` - Property type with constraints
+  - `client_uid VARCHAR(36)` - Foreign key to clients
+  - `search_location TEXT` - Computed search field
+
+##### Indexes Added:
+
+- `idx_clients_client_uid` - Client UID lookups
+- `idx_properties_city` - City-based filtering
+- `idx_properties_province` - Province filtering
+- `idx_properties_postal_code` - Postal code lookups
+- `idx_properties_location` - Geographic queries (lat/lng)
+- `idx_properties_client_uid` - Client relationship lookups
+- `idx_properties_search_location_gin` - Full-text location search
+
+### 2. Offer UID Implementation (Previous)
+
+// ...existing content...

@@ -5,13 +5,37 @@ export interface Property {
   title: string;
   price: number;
   details?: string; // Keep this for all property details
-  address: string;
+  // New granular address fields
+  street_number?: string;
+  street_name?: string;
+  unit?: string;
+  city: string;
+  province: string;
+  postal_code?: string;
+  country: string;
+  latitude?: number;
+  longitude?: number;
+  formatted_address?: string;
+  address_type?: 'residential' | 'commercial' | 'mixed';
   image_url: string;
   created_at: string;
   client_id: string;
-  client_email?: string;
-  user_email?: string;
+  client_uid: string; // New relationship field
   saves?: number; // Number of times this property has been saved by users
+}
+
+export interface Address {
+  street_number?: string;
+  street_name?: string;
+  unit?: string;
+  city: string;
+  province: string;
+  postal_code?: string;
+  country: string;
+  latitude?: number;
+  longitude?: number;
+  formatted_address?: string;
+  address_type?: 'residential' | 'commercial' | 'mixed';
 }
 
 export interface PropertyDetails {

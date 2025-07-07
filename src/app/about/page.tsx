@@ -2,40 +2,125 @@ import Link from 'next/link';
 
 export default function AboutPage() {
   return (
-    <div className='min-h-screen bg-gray-50 dark:bg-gray-900'>
+    <div className='min-h-screen bg-white dark:bg-gray-900'>
       <div className='layout'>
-        {/* Hero Section */}
-        <section className='py-20 bg-white dark:bg-gray-800'>
-          <div className='max-w-4xl mx-auto text-center'>
-            <h1 className='text-4xl md:text-5xl font-bold text-gray-900 dark:text-gray-100 mb-6'>
-              About Real Estate Marketplace
-            </h1>
-            <p className='text-xl text-gray-600 dark:text-gray-400 mb-8 max-w-3xl mx-auto'>
+        {/* Hero Section - Clean Traditional Style */}
+        <section className='py-16 md:py-20 border-b border-gray-200 dark:border-gray-800'>
+          <div className='max-w-4xl mx-auto'>
+            <div className='text-center mb-12'>
+              <h1 className='text-3xl md:text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4'>
+                About Real Estate Marketplace
+              </h1>
+              <div className='w-16 h-px bg-blue-500 mx-auto mb-8'></div>
+              <p className='text-gray-600 dark:text-gray-400 max-w-2xl mx-auto'>
+                Transforming the real estate experience with modern technology
+                and traditional values
+              </p>
+            </div>
+
+            <p className='text-lg text-gray-700 dark:text-gray-300 mb-8 leading-relaxed'>
               We're revolutionizing the way people buy, sell, and discover
               properties. Save thousands with our 0.9% seller commission and
               zero buyer commission vs. traditional 5% total commission while
               receiving full-service support from search to closing.
             </p>
+
+            <div className='bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded p-6 mb-8 shadow-sm'>
+              <div className='flex flex-col md:flex-row items-center justify-between gap-6 md:gap-8 text-center'>
+                <div className='bg-gray-50 dark:bg-gray-700/50 p-4 rounded flex-1'>
+                  <span className='block text-gray-900 dark:text-gray-100 font-bold text-lg mb-1'>
+                    Traditional
+                  </span>
+                  <span className='text-red-600 dark:text-red-400 font-medium'>
+                    5% Total Commission
+                  </span>
+                </div>
+
+                <div className='hidden md:block text-gray-400 dark:text-gray-500'>
+                  <svg
+                    className='w-6 h-6'
+                    fill='none'
+                    stroke='currentColor'
+                    viewBox='0 0 24 24'
+                  >
+                    <path
+                      strokeLinecap='round'
+                      strokeLinejoin='round'
+                      strokeWidth={2}
+                      d='M13 5l7 7-7 7M5 5l7 7-7 7'
+                    />
+                  </svg>
+                </div>
+
+                <div className='bg-gray-50 dark:bg-gray-700/50 p-4 rounded flex-1'>
+                  <span className='block text-gray-900 dark:text-gray-100 font-bold text-lg mb-1'>
+                    Our Platform
+                  </span>
+                  <span className='text-blue-600 dark:text-blue-400 font-medium'>
+                    0.9% Commission
+                  </span>
+                </div>
+
+                <div className='hidden md:block text-gray-400 dark:text-gray-500'>
+                  <svg
+                    className='w-6 h-6'
+                    fill='none'
+                    stroke='currentColor'
+                    viewBox='0 0 24 24'
+                  >
+                    <path
+                      strokeLinecap='round'
+                      strokeLinejoin='round'
+                      strokeWidth={2}
+                      d='M17 8l4 4m0 0l-4 4m4-4H3'
+                    />
+                  </svg>
+                </div>
+
+                <div className='bg-green-50 dark:bg-green-900/20 p-4 rounded flex-1'>
+                  <span className='block text-gray-900 dark:text-gray-100 font-bold text-lg mb-1'>
+                    Your Savings
+                  </span>
+                  <span className='text-green-600 dark:text-green-400 font-medium'>
+                    $41K+ on average
+                  </span>
+                </div>
+              </div>
+            </div>
+
             <div className='flex justify-center'>
               <Link
                 href='/listings'
-                className='bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition-colors font-semibold'
+                className='inline-flex items-center px-6 py-3 bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 text-white font-medium rounded transition-colors shadow-sm'
               >
                 Browse Properties
+                <svg
+                  className='ml-2 w-4 h-4'
+                  fill='currentColor'
+                  viewBox='0 0 20 20'
+                >
+                  <path
+                    fillRule='evenodd'
+                    d='M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z'
+                    clipRule='evenodd'
+                  />
+                </svg>
               </Link>
             </div>
           </div>
         </section>
 
-        {/* Mission Section */}
-        <section className='py-16'>
+        {/* Mission Section - Clean Traditional Style */}
+        <section className='py-16 md:py-20'>
           <div className='max-w-6xl mx-auto'>
-            <div className='grid grid-cols-1 lg:grid-cols-2 gap-12 items-center'>
+            <div className='grid grid-cols-1 lg:grid-cols-2 gap-12 items-start'>
               <div>
-                <h2 className='text-3xl font-bold text-gray-900 dark:text-gray-100 mb-6'>
+                <h2 className='text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6'>
                   Our Mission
+                  <div className='w-12 h-px bg-blue-500 dark:bg-blue-400 mt-2'></div>
                 </h2>
-                <p className='text-lg text-gray-600 dark:text-gray-400 mb-6'>
+
+                <p className='text-gray-700 dark:text-gray-300 mb-6 leading-relaxed'>
                   At Real Estate Marketplace, we believe that finding the
                   perfect property should be simple, transparent, and
                   affordable. Traditional real estate transactions involve 5%
@@ -44,7 +129,8 @@ export default function AboutPage() {
                   zero commission to buyers, saving both parties thousands of
                   dollars on your property transactions.
                 </p>
-                <p className='text-lg text-gray-600 dark:text-gray-400 mb-6'>
+
+                <p className='text-gray-700 dark:text-gray-300 mb-6 leading-relaxed'>
                   We provide comprehensive services to facilitate the entire
                   purchasing process - from contracts and paperwork to closing
                   support. Our platform brings together buyers, sellers, and
@@ -52,45 +138,86 @@ export default function AboutPage() {
                   transactions more efficient, accessible, and cost-effective
                   for everyone.
                 </p>
-                <p className='text-lg text-gray-600 dark:text-gray-400'>
-                  <strong>Why sellers choose us:</strong> Properties sell faster
-                  because buyers are attracted to our commission-free
-                  purchasing. A larger pool of motivated buyers means quicker
-                  sales and better offers for sellers, even with our lower 0.9%
-                  commission structure.
-                </p>
-              </div>
-              <div className='bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8 border border-gray-200 dark:border-gray-700'>
-                <div className='grid grid-cols-2 gap-6 text-center'>
-                  <div>
-                    <div className='text-3xl font-bold text-blue-600 dark:text-blue-400 mb-2'>
-                      0.9%
+
+                <div className='bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded p-5 mb-6 shadow-sm'>
+                  <div className='flex items-start'>
+                    <div className='bg-blue-50 dark:bg-blue-900/20 p-1.5 rounded-full mr-3 mt-0.5'>
+                      <svg
+                        className='w-4 h-4 text-blue-600 dark:text-blue-400'
+                        fill='none'
+                        stroke='currentColor'
+                        viewBox='0 0 24 24'
+                      >
+                        <path
+                          strokeLinecap='round'
+                          strokeLinejoin='round'
+                          strokeWidth={2}
+                          d='M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z'
+                        />
+                      </svg>
                     </div>
-                    <div className='text-gray-600 dark:text-gray-400'>
+                    <div>
+                      <h4 className='font-semibold text-gray-900 dark:text-gray-100 mb-1'>
+                        Why sellers choose us
+                      </h4>
+                      <p className='text-gray-600 dark:text-gray-400 text-sm leading-relaxed'>
+                        Properties sell faster because buyers are attracted to
+                        our commission-free purchasing. A larger pool of
+                        motivated buyers means quicker sales and better offers
+                        for sellers, even with our lower 0.9% commission
+                        structure.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className='bg-white dark:bg-gray-800 rounded p-8 border border-gray-200 dark:border-gray-700 shadow-sm'>
+                <h3 className='text-xl font-semibold text-gray-900 dark:text-gray-100 mb-8 text-center pb-2 border-b border-gray-100 dark:border-gray-700'>
+                  Our Impact
+                </h3>
+
+                <div className='grid grid-cols-2 gap-8'>
+                  <div className='text-center p-4'>
+                    <div className='inline-block rounded-full bg-blue-50 dark:bg-blue-900/20 p-3 mb-3'>
+                      <span className='block text-2xl font-bold text-blue-600 dark:text-blue-400'>
+                        0.9%
+                      </span>
+                    </div>
+                    <div className='text-gray-800 dark:text-gray-200 font-medium'>
                       Seller Commission
                     </div>
                   </div>
-                  <div>
-                    <div className='text-3xl font-bold text-blue-600 dark:text-blue-400 mb-2'>
-                      $41K+
+
+                  <div className='text-center p-4'>
+                    <div className='inline-block rounded-full bg-blue-50 dark:bg-blue-900/20 p-3 mb-3'>
+                      <span className='block text-2xl font-bold text-blue-600 dark:text-blue-400'>
+                        $41K+
+                      </span>
                     </div>
-                    <div className='text-gray-600 dark:text-gray-400'>
+                    <div className='text-gray-800 dark:text-gray-200 font-medium'>
                       Combined Savings
                     </div>
                   </div>
-                  <div>
-                    <div className='text-3xl font-bold text-blue-600 dark:text-blue-400 mb-2'>
-                      5K+
+
+                  <div className='text-center p-4'>
+                    <div className='inline-block rounded-full bg-blue-50 dark:bg-blue-900/20 p-3 mb-3'>
+                      <span className='block text-2xl font-bold text-blue-600 dark:text-blue-400'>
+                        5K+
+                      </span>
                     </div>
-                    <div className='text-gray-600 dark:text-gray-400'>
+                    <div className='text-gray-800 dark:text-gray-200 font-medium'>
                       Happy Customers
                     </div>
                   </div>
-                  <div>
-                    <div className='text-3xl font-bold text-blue-600 dark:text-blue-400 mb-2'>
-                      99%
+
+                  <div className='text-center p-4'>
+                    <div className='inline-block rounded-full bg-blue-50 dark:bg-blue-900/20 p-3 mb-3'>
+                      <span className='block text-2xl font-bold text-blue-600 dark:text-blue-400'>
+                        99%
+                      </span>
                     </div>
-                    <div className='text-gray-600 dark:text-gray-400'>
+                    <div className='text-gray-800 dark:text-gray-200 font-medium'>
                       Success Rate
                     </div>
                   </div>
