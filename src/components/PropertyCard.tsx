@@ -63,13 +63,10 @@ export default function PropertyCard({
           )}
         </div>
         <div className='p-4'>
-          <div className='flex justify-between items-start mb-2'>
+          <div className='mb-2'>
             <h3 className='text-lg font-semibold text-gray-900 dark:text-gray-100'>
               {property.title}
             </h3>
-            <span className='text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded font-mono'>
-              {property.property_uid}
-            </span>
           </div>
           <p className='text-xl font-bold text-primary-600 dark:text-primary-400 mb-2'>
             ${property.price.toLocaleString()}
