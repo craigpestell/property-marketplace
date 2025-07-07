@@ -11,7 +11,8 @@
       "users",
       "notifications",
       "config",
-      "docs"
+      "docs",
+      "theme"
     ],
     "types": [
       { "type": "feat", "section": "Features", "hidden": false },
@@ -30,7 +31,13 @@
       { "type": "chore", "section": "Chores", "hidden": false },
       { "type": "revert", "section": "Reverts", "hidden": false }
     ],
-    "maxSubjectLength": 72,
-    "maxBodyLineLength": 80
+    "maxSubjectLength": 50,
+    "maxBodyLineLength": 72,
+    "formatMessageOnCommit": true,
+    "splitCommitMessage": true,
+    "ignoreLineLength": {
+      "types": ["revert"],
+      "scopes": []
+    }
   }
 }
