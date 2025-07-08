@@ -19,25 +19,47 @@ export const GET = withClientUid(
       const stream = new ReadableStream({
         start(controller) {
           let isControllerActive = true;
+          // Use ReturnType<typeof setInterval> to get the correct type for the interval
+          let interval: ReturnType<typeof setInterval> | null = null;
 
-          // Send initial connection message
+          // Send initial connection message with better error handling
           const sendEvent = (
             data: Record<string, unknown>,
             event = 'message',
           ) => {
             try {
+              // Double check if the controller is still active before attempting to enqueue
               if (!isControllerActive) {
                 return;
               }
+
+              // Try to enqueue data - if this fails, we'll catch it and mark the controller as inactive
               controller.enqueue(
                 new TextEncoder().encode(
                   `event: ${event}\ndata: ${JSON.stringify(data)}\n\n`,
                 ),
               );
             } catch (error) {
-              // eslint-disable-next-line no-console
-              console.error('Error sending SSE event:', error);
+              // If we get an error (like "Controller is already closed"), mark the controller inactive
+              // to prevent future attempts
               isControllerActive = false;
+
+              // Only log if it's not a normal disconnection
+              if (
+                !(
+                  error instanceof TypeError &&
+                  error.message.includes('Controller is already closed')
+                )
+              ) {
+                // eslint-disable-next-line no-console
+                console.error('Error sending SSE event:', error);
+              }
+
+              // Clear the interval to prevent further attempts after an error
+              if (interval) {
+                clearInterval(interval);
+                interval = null;
+              }
             }
           };
 
@@ -48,7 +70,12 @@ export const GET = withClientUid(
 
           // Function to check for new notifications
           const checkNotifications = async () => {
+            // Stop checking if controller is not active or there was an error
             if (!isControllerActive) {
+              if (interval) {
+                clearInterval(interval);
+                interval = null;
+              }
               return;
             }
 
@@ -105,12 +132,15 @@ export const GET = withClientUid(
           checkNotifications();
 
           // Set up periodic checking (every 30 seconds)
-          const interval = setInterval(checkNotifications, 30000);
+          interval = setInterval(checkNotifications, 30000);
 
           // Clean up function
           return () => {
             isControllerActive = false;
-            clearInterval(interval);
+            if (interval) {
+              clearInterval(interval);
+              interval = null;
+            }
           };
         },
         cancel() {
