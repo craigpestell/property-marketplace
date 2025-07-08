@@ -22,9 +22,9 @@ export async function GET() {
       return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
     }
 
-    // Get user profile information
+    // Get user profile information including client_uid
     const userResult = await pool.query(
-      'SELECT id, name, email, created_at FROM clients WHERE email = $1',
+      'SELECT id, name, email, created_at, client_uid FROM clients WHERE email = $1',
       [session.user.email],
     );
 
@@ -34,10 +34,10 @@ export async function GET() {
 
     const user = userResult.rows[0];
 
-    // Get user's property count
+    // Get user's property count using client_uid
     const propertyCountResult = await pool.query(
-      'SELECT COUNT(*) as count FROM properties WHERE user_email = $1 AND (deleted IS NULL OR deleted = FALSE)',
-      [session.user.email],
+      'SELECT COUNT(*) as count FROM properties WHERE client_uid = $1 AND (deleted IS NULL OR deleted = FALSE)',
+      [user.client_uid],
     );
 
     const propertyCount = parseInt(propertyCountResult.rows[0].count);
@@ -95,7 +95,7 @@ export async function PUT(request: NextRequest) {
 
     // Update user profile
     const result = await pool.query(
-      'UPDATE clients SET name = $1, email = $2, updated_at = NOW() WHERE email = $3 RETURNING id, name, email, created_at',
+      'UPDATE clients SET name = $1, email = $2, updated_at = NOW() WHERE email = $3 RETURNING id, name, email, created_at, client_uid',
       [name, email, session.user.email],
     );
 
@@ -105,10 +105,10 @@ export async function PUT(request: NextRequest) {
 
     const updatedUser = result.rows[0];
 
-    // Get updated property count
+    // Get updated property count using client_uid
     const propertyCountResult = await pool.query(
-      'SELECT COUNT(*) as count FROM properties WHERE user_email = $1 AND (deleted IS NULL OR deleted = FALSE)',
-      [email],
+      'SELECT COUNT(*) as count FROM properties WHERE client_uid = $1 AND (deleted IS NULL OR deleted = FALSE)',
+      [updatedUser.client_uid],
     );
 
     const propertyCount = parseInt(propertyCountResult.rows[0].count);
