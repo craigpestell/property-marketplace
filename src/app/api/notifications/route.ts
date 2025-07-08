@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth/next';
 import { Pool } from 'pg';
 
 import { authOptions } from '@/lib/auth';
+import { getClientUidForUser } from '@/lib/db';
 
 const pool = new Pool({
   user: process.env.PGUSER,
@@ -23,9 +24,8 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Check if we're using the new schema
-    const { isUsingNewSchema } = await import('@/lib/db');
-    const usingNewSchema = await isUsingNewSchema();
+    // Get client_uid for the current user
+    const clientUid = await getClientUidForUser(session.user.email);
 
     const { searchParams } = new URL(request.url);
     const limit = parseInt(searchParams.get('limit') || '20');
@@ -34,27 +34,41 @@ export async function GET(request: NextRequest) {
     let query = `
       SELECT notification_id, title, message, type, 
              related_offer_uid, related_property_uid, priority, created_at, read_at
-             ${usingNewSchema ? ', client_uid' : ''}
       FROM user_notifications 
-      WHERE user_email = $1
+      WHERE ${clientUid ? 'client_uid = $1 OR ' : ''} user_email = $${clientUid ? '2' : '1'}
     `;
 
-    const params = [session.user.email];
+    let params = [];
+    if (clientUid) {
+      params = [clientUid, session.user.email];
+    } else {
+      params = [session.user.email];
+    }
 
     if (unreadOnly) {
       query += ' AND read_at IS NULL';
     }
 
-    query += ' ORDER BY created_at DESC LIMIT $2';
+    query += ' ORDER BY created_at DESC LIMIT $' + (params.length + 1);
     params.push(limit.toString());
 
     const result = await pool.query(query, params);
 
-    // Get unread count
-    const unreadResult = await pool.query(
-      'SELECT COUNT(*) as count FROM user_notifications WHERE user_email = $1 AND read_at IS NULL',
-      [session.user.email],
-    );
+    // Get unread count using the same client_uid/email logic
+    let unreadQuery = 'SELECT COUNT(*) as count FROM user_notifications WHERE ';
+    let unreadParams = [];
+
+    if (clientUid) {
+      unreadQuery += 'client_uid = $1 OR user_email = $2';
+      unreadParams = [clientUid, session.user.email];
+    } else {
+      unreadQuery += 'user_email = $1';
+      unreadParams = [session.user.email];
+    }
+
+    unreadQuery += ' AND read_at IS NULL';
+
+    const unreadResult = await pool.query(unreadQuery, unreadParams);
 
     return NextResponse.json({
       notifications: result.rows,
@@ -91,7 +105,7 @@ export async function POST(request: NextRequest) {
       related_property_uid,
       priority = 'normal',
       target_user_email, // Allow creating notifications for other users (e.g., when making offers)
-      client_uid, // New field for client relationship
+      client_uid: providedClientUid, // Client_uid can be provided directly
     } = body;
 
     if (!title || !message || !type) {
@@ -101,15 +115,19 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check if we're using the new schema
-    const { isUsingNewSchema } = await import('@/lib/db');
-    const usingNewSchema = await isUsingNewSchema();
-
-    // Use target_user_email if provided (for system notifications), otherwise use current user
+    // Use target_user_email if provided, otherwise use current user
     const recipientEmail = target_user_email || session.user.email;
 
-    // Include client_uid if it's provided and we're using the new schema
-    if (usingNewSchema && client_uid) {
+    // Get the client_uid either from the provided value or look it up
+    let targetClientUid = providedClientUid;
+
+    if (!targetClientUid) {
+      // Look up client_uid for the recipient email
+      targetClientUid = await getClientUidForUser(recipientEmail);
+    }
+
+    // Insert with client_uid if it's available
+    if (targetClientUid) {
       await pool.query(
         `INSERT INTO user_notifications 
          (user_email, title, message, type, related_offer_uid, related_property_uid, priority, client_uid)
@@ -123,7 +141,7 @@ export async function POST(request: NextRequest) {
           related_offer_uid,
           related_property_uid,
           priority,
-          client_uid,
+          targetClientUid,
         ],
       );
     } else {
@@ -154,7 +172,7 @@ export async function POST(request: NextRequest) {
         related_offer_uid,
         related_property_uid,
         priority,
-        client_uid: usingNewSchema ? client_uid : undefined,
+        client_uid: targetClientUid,
       },
     });
   } catch (error) {
@@ -178,27 +196,46 @@ export async function PATCH(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    // Get client_uid for the current user
+    const clientUid = await getClientUidForUser(session.user.email);
+
     const body = await request.json();
     const { notification_ids, mark_all_read } = body;
 
     if (mark_all_read) {
-      // Mark all notifications as read for the user
-      await pool.query(
-        'UPDATE user_notifications SET read_at = CURRENT_TIMESTAMP WHERE user_email = $1 AND read_at IS NULL',
-        [session.user.email],
-      );
+      // Mark all notifications as read for the user by client_uid or email
+      if (clientUid) {
+        await pool.query(
+          'UPDATE user_notifications SET read_at = CURRENT_TIMESTAMP WHERE (client_uid = $1 OR user_email = $2) AND read_at IS NULL',
+          [clientUid, session.user.email],
+        );
+      } else {
+        await pool.query(
+          'UPDATE user_notifications SET read_at = CURRENT_TIMESTAMP WHERE user_email = $1 AND read_at IS NULL',
+          [session.user.email],
+        );
+      }
 
       return NextResponse.json({
         message: 'All notifications marked as read',
       });
     } else if (notification_ids && Array.isArray(notification_ids)) {
-      // Mark specific notifications as read
-      await pool.query(
-        `UPDATE user_notifications 
-         SET read_at = CURRENT_TIMESTAMP 
-         WHERE notification_id = ANY($1) AND user_email = $2 AND read_at IS NULL`,
-        [notification_ids, session.user.email],
-      );
+      // Mark specific notifications as read, using client_uid when available
+      if (clientUid) {
+        await pool.query(
+          `UPDATE user_notifications 
+           SET read_at = CURRENT_TIMESTAMP 
+           WHERE notification_id = ANY($1) AND (client_uid = $2 OR user_email = $3) AND read_at IS NULL`,
+          [notification_ids, clientUid, session.user.email],
+        );
+      } else {
+        await pool.query(
+          `UPDATE user_notifications 
+           SET read_at = CURRENT_TIMESTAMP 
+           WHERE notification_id = ANY($1) AND user_email = $2 AND read_at IS NULL`,
+          [notification_ids, session.user.email],
+        );
+      }
 
       return NextResponse.json({
         message: 'Notifications marked as read',

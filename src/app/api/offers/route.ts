@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth/next';
 import { Pool } from 'pg';
 
 import { authOptions } from '@/lib/auth';
+import { getClientUidForUser } from '@/lib/db';
 import { generateOfferUID } from '@/lib/uid';
 
 const pool = new Pool({
@@ -27,22 +28,24 @@ export async function GET(request: NextRequest) {
     const role = searchParams.get('role'); // 'buyer' or 'seller'
     const status = searchParams.get('status');
 
-    // Check if we're using the new schema
-    const { isUsingNewSchema, formatAddress } = await import('@/lib/db');
-    const usingNewSchema = await isUsingNewSchema();
+    // Get client_uid for the current user
+    const clientUid = await getClientUidForUser(session.user.email);
 
     let query = `
       SELECT 
         o.*,
         p.title as property_title,
-        ${
-          usingNewSchema
-            ? `COALESCE(p.formatted_address, 
-               ${formatAddress.name}(p.street_number, p.street_name, p.unit, p.city, p.province, p.postal_code, p.country)) as property_address,
-               p.street_number, p.street_name, p.unit, p.city, p.province, p.postal_code, p.country,
-               p.client_uid,`
-            : 'p.formatted_address as property_address,'
-        }
+        COALESCE(p.formatted_address, 
+          CONCAT_WS(', ', 
+            CONCAT_WS(' ', p.street_number, p.street_name),
+            p.unit,
+            p.city,
+            p.province,
+            p.postal_code,
+            p.country
+          )) as property_address,
+        p.street_number, p.street_name, p.unit, p.city, p.province, p.postal_code, p.country,
+        p.client_uid,
         p.price as listing_price,
         p.image_url as property_image_url
       FROM offers o
@@ -50,20 +53,38 @@ export async function GET(request: NextRequest) {
       WHERE (p.deleted IS NULL OR p.deleted = false) AND (
     `;
 
-    const params: string[] = [session.user.email];
+    let params: string[] = [];
 
-    if (role === 'buyer') {
-      query += 'o.buyer_email = $1';
-    } else if (role === 'seller') {
-      query += 'o.seller_email = $1';
+    // Use client_uid for lookups when available, otherwise fall back to email
+    if (clientUid) {
+      // Use client_uid for both buyer and seller lookups, with type conversion for safety
+      if (role === 'buyer') {
+        query += 'o.buyer_client_uid::text = $1::text';
+        params = [clientUid];
+      } else if (role === 'seller') {
+        query += 'o.seller_client_uid::text = $1::text';
+        params = [clientUid];
+      } else {
+        query +=
+          '(o.buyer_client_uid::text = $1::text OR o.seller_client_uid::text = $1::text)';
+        params = [clientUid];
+      }
     } else {
-      query += 'o.buyer_email = $1 OR o.seller_email = $1';
+      // Fall back to email-based lookups if client_uid is unavailable
+      params = [session.user.email];
+      if (role === 'buyer') {
+        query += 'o.buyer_email = $1';
+      } else if (role === 'seller') {
+        query += 'o.seller_email = $1';
+      } else {
+        query += 'o.buyer_email = $1 OR o.seller_email = $1';
+      }
     }
 
     query += ')';
 
     if (status) {
-      query += ' AND o.status = $2';
+      query += ` AND o.status = $${params.length + 1}`;
       params.push(status);
     }
 
@@ -114,22 +135,15 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check if we're using the new schema
-    const { isUsingNewSchema } = await import('@/lib/db');
-    const usingNewSchema = await isUsingNewSchema();
+    // Get buyer's client_uid
+    const buyerClientUid = await getClientUidForUser(session.user.email);
 
-    // Get property details and seller email
-    const propertyQuery = usingNewSchema
-      ? `
-        SELECT user_email, price, title, client_uid
-        FROM properties 
-        WHERE property_uid = $1 AND (deleted IS NULL OR deleted = false)
-      `
-      : `
-        SELECT user_email, price, title 
-        FROM properties 
-        WHERE property_uid = $1 AND deleted = false
-      `;
+    // Get property details, seller email, and seller's client_uid
+    const propertyQuery = `
+      SELECT user_email, price, title, client_uid as seller_client_uid
+      FROM properties 
+      WHERE property_uid = $1 AND (deleted IS NULL OR deleted = false)
+    `;
 
     const propertyResult = await pool.query(propertyQuery, [property_uid]);
 
@@ -155,25 +169,12 @@ export async function POST(request: NextRequest) {
     const offer_uid = generateOfferUID();
 
     // Insert the new offer
-    let insertQuery = `
+    const insertQuery = `
       INSERT INTO offers (
         offer_uid, property_uid, buyer_email, seller_email, offer_amount, message,
-        financing_type, contingencies, closing_date, earnest_money, inspection_period_days
-    `;
-
-    // Add client_uid field if using new schema
-    if (usingNewSchema && property.client_uid) {
-      insertQuery += `, client_uid`;
-    }
-
-    insertQuery += `) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11`;
-
-    // Add client_uid value if using new schema
-    if (usingNewSchema && property.client_uid) {
-      insertQuery += `, $12`;
-    }
-
-    insertQuery += `) RETURNING *`;
+        financing_type, contingencies, closing_date, earnest_money, inspection_period_days,
+        seller_client_uid, buyer_client_uid
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) RETURNING *`;
 
     const insertParams = [
       offer_uid,
@@ -187,12 +188,9 @@ export async function POST(request: NextRequest) {
       closing_date,
       earnest_money,
       inspection_period_days,
+      property.seller_client_uid || null,
+      buyerClientUid || null,
     ];
-
-    // Add client_uid param if using new schema
-    if (usingNewSchema && property.client_uid) {
-      insertParams.push(property.client_uid);
-    }
 
     const result = await pool.query(insertQuery, insertParams);
     const newOffer = result.rows[0];
@@ -200,40 +198,23 @@ export async function POST(request: NextRequest) {
     // Create notification for seller
     const notificationMessage = `New offer of $${offer_amount.toLocaleString()} received for "${property.title}"`;
 
-    // Create notification with client_uid if available
-    if (usingNewSchema && property.client_uid) {
-      await pool.query(
-        `INSERT INTO user_notifications 
-         (user_email, title, message, type, related_offer_uid, related_property_uid, priority, client_uid)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
-        [
-          seller_email,
-          'New Offer Received!',
-          notificationMessage,
-          'offer_received',
-          newOffer.offer_uid,
-          property_uid,
-          'high',
-          property.client_uid,
-        ],
-      );
-    } else {
-      // New notification system (only using offer_uid)
-      await pool.query(
-        `INSERT INTO user_notifications 
-         (user_email, title, message, type, related_offer_uid, related_property_uid, priority)
-         VALUES ($1, $2, $3, $4, $5, $6, $7)`,
-        [
-          seller_email,
-          'New Offer Received!',
-          notificationMessage,
-          'offer_received',
-          newOffer.offer_uid,
-          property_uid,
-          'high',
-        ],
-      );
-    }
+    // Create notification with client_uid fields
+    await pool.query(
+      `INSERT INTO user_notifications 
+        (user_email, title, message, type, related_offer_uid, related_property_uid, priority, client_uid, related_client_uid)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
+      [
+        seller_email,
+        'New Offer Received!',
+        notificationMessage,
+        'offer_received',
+        newOffer.offer_uid,
+        property_uid,
+        'high',
+        property.seller_client_uid || null,
+        buyerClientUid || null,
+      ],
+    );
 
     return NextResponse.json({
       message: 'Offer submitted successfully',

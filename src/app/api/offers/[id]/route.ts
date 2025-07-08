@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth/next';
 import { Pool } from 'pg';
 
 import { authOptions } from '@/lib/auth';
+import { getClientUidForUser } from '@/lib/db';
 
 const pool = new Pool({
   user: process.env.PGUSER,
@@ -14,11 +15,10 @@ const pool = new Pool({
 
 // GET /api/offers/[id] - Get specific offer details
 export async function GET(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> },
+  _request: NextRequest,
+  { params: routeParams }: { params: { id: string } },
 ) {
   try {
-    const resolvedParams = await params;
     const session = (await getServerSession(authOptions)) as {
       user: { email: string; role?: string };
     } | null;
@@ -26,7 +26,7 @@ export async function GET(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const offerUid = resolvedParams.id;
+    const offerUid = routeParams.id;
 
     // Validate that this is a proper offer UID
     if (!offerUid.startsWith('OFFER-')) {
@@ -36,21 +36,39 @@ export async function GET(
       );
     }
 
+    // Get client_uid for the current user
+    const clientUid = await getClientUidForUser(session.user.email);
+
     const query = `
       SELECT 
         o.*,
         p.title as property_title,
-        p.address as property_address,
+        COALESCE(p.formatted_address, 
+          CONCAT_WS(', ', 
+            CONCAT_WS(' ', p.street_number, p.street_name),
+            p.unit,
+            p.city,
+            p.province,
+            p.postal_code,
+            p.country
+          )) as property_address,
         p.price as listing_price,
-        p.images as property_images
+        p.image_url as property_image_url
       FROM offers o
       JOIN properties p ON o.property_uid = p.property_uid
       WHERE o.offer_uid = $1
-        AND p.deleted = false 
-        AND (o.buyer_email = $2 OR o.seller_email = $2)
-    `;
+        AND (p.deleted IS NULL OR p.deleted = false)
+        AND (
+          ${clientUid ? 'o.buyer_client_uid::text = $2::text OR o.seller_client_uid::text = $2::text OR ' : ''}
+          o.buyer_email = $${clientUid ? '3' : '2'} OR o.seller_email = $${clientUid ? '3' : '2'}
+        )`;
 
-    const result = await pool.query(query, [offerUid, session.user.email]);
+    // Use client_uid if available, otherwise fall back to email
+    const queryParams = clientUid
+      ? [offerUid, clientUid, session.user.email]
+      : [offerUid, session.user.email];
+
+    const result = await pool.query(query, queryParams);
 
     if (result.rows.length === 0) {
       return NextResponse.json({ error: 'Offer not found' }, { status: 404 });
@@ -68,10 +86,9 @@ export async function GET(
 // PUT /api/offers/[id] - Update offer status (accept, reject, counter)
 export async function PUT(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> },
+  { params: routeParams }: { params: { id: string } },
 ) {
   try {
-    const resolvedParams = await params;
     const session = (await getServerSession(authOptions)) as {
       user: { email: string; role?: string };
     } | null;
@@ -79,7 +96,10 @@ export async function PUT(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const offerUid = resolvedParams.id;
+    // Get client_uid for the current user
+    const clientUid = await getClientUidForUser(session.user.email);
+
+    const offerUid = routeParams.id;
     const body = await request.json();
     const { status, counter_amount, counter_terms, message } = body;
 
@@ -102,8 +122,8 @@ export async function PUT(
       SELECT o.*, p.title as property_title
       FROM offers o
       JOIN properties p ON o.property_uid = p.property_uid
-      WHERE o.offer_uid = $1 AND p.deleted = false
-    `;
+      WHERE o.offer_uid = $1 AND (p.deleted IS NULL OR p.deleted = false)
+      `;
     const offerResult = await pool.query(offerQuery, [offerUid]);
 
     if (offerResult.rows.length === 0) {
@@ -113,17 +133,24 @@ export async function PUT(
     const offer = offerResult.rows[0];
 
     // Check permissions based on action
-    if (status === 'withdrawn' && offer.buyer_email !== session.user.email) {
+    const isBuyer = clientUid
+      ? clientUid === offer.buyer_client_uid ||
+        session.user.email === offer.buyer_email
+      : session.user.email === offer.buyer_email;
+
+    if (status === 'withdrawn' && !isBuyer) {
       return NextResponse.json(
         { error: 'Only the buyer can withdraw an offer' },
         { status: 403 },
       );
     }
 
-    if (
-      ['accepted', 'rejected', 'countered'].includes(status) &&
-      offer.seller_email !== session.user.email
-    ) {
+    const isSeller = clientUid
+      ? clientUid === offer.seller_client_uid ||
+        session.user.email === offer.seller_email
+      : session.user.email === offer.seller_email;
+
+    if (['accepted', 'rejected', 'countered'].includes(status) && !isSeller) {
       return NextResponse.json(
         { error: 'Only the seller can accept, reject, or counter an offer' },
         { status: 403 },
@@ -158,6 +185,10 @@ export async function PUT(
     const notificationRecipient =
       status === 'withdrawn' ? offer.seller_email : offer.buyer_email;
 
+    // Get recipient's client_uid
+    const recipientClientUid =
+      status === 'withdrawn' ? offer.seller_client_uid : offer.buyer_client_uid;
+
     const notificationMessages = {
       accepted: `Your offer of $${offer.offer_amount.toLocaleString()} for "${
         offer.property_title
@@ -171,22 +202,45 @@ export async function PUT(
       }" has been withdrawn.`,
     };
 
-    const notificationQuery = `
-      INSERT INTO user_notifications 
-       (user_email, title, message, type, related_offer_uid, related_property_uid, priority)
-       VALUES ($1, $2, $3, $4, $5, $6, $7)
-    `;
+    // Create notification with client_uid if available
+    if (recipientClientUid) {
+      const notificationQuery = `
+        INSERT INTO user_notifications 
+         (user_email, title, message, type, related_offer_uid, related_property_uid, priority, client_uid, related_client_uid)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+      `;
 
-    await pool.query(notificationQuery, [
-      notificationRecipient,
-      `Offer ${status.charAt(0).toUpperCase() + status.slice(1)}`,
-      message ||
-        notificationMessages[status as keyof typeof notificationMessages],
-      `offer_${status}`,
-      offerUid,
-      offer.property_uid,
-      'high',
-    ]);
+      await pool.query(notificationQuery, [
+        notificationRecipient,
+        `Offer ${status.charAt(0).toUpperCase() + status.slice(1)}`,
+        message ||
+          notificationMessages[status as keyof typeof notificationMessages],
+        `offer_${status}`,
+        offerUid,
+        offer.property_uid,
+        'high',
+        recipientClientUid,
+        clientUid || null, // Current user's client_uid as related_client_uid
+      ]);
+    } else {
+      // Legacy notification creation
+      const notificationQuery = `
+        INSERT INTO user_notifications 
+         (user_email, title, message, type, related_offer_uid, related_property_uid, priority)
+         VALUES ($1, $2, $3, $4, $5, $6, $7)
+      `;
+
+      await pool.query(notificationQuery, [
+        notificationRecipient,
+        `Offer ${status.charAt(0).toUpperCase() + status.slice(1)}`,
+        message ||
+          notificationMessages[status as keyof typeof notificationMessages],
+        `offer_${status}`,
+        offerUid,
+        offer.property_uid,
+        'high',
+      ]);
+    }
 
     return NextResponse.json({
       message: `Offer ${status} successfully`,
