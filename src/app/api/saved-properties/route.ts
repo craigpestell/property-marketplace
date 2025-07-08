@@ -3,7 +3,6 @@ import { getServerSession } from 'next-auth/next';
 import { Pool } from 'pg';
 
 import { authOptions } from '@/lib/auth';
-import { getClientUidForUser } from '@/lib/db';
 
 const pool = new Pool({
   user: process.env.PGUSER,
@@ -17,15 +16,15 @@ const pool = new Pool({
 export async function GET(_request: Request) {
   try {
     const session = (await getServerSession(authOptions)) as {
-      user?: { email?: string };
+      user?: { email?: string; client_uid?: string };
     } | null;
 
     if (!session?.user?.email) {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     }
 
-    // Get client_uid for the current user
-    const clientUid = await getClientUidForUser(session.user.email);
+    // Get client_uid directly from the session
+    const clientUid = session.user.client_uid;
 
     if (!clientUid) {
       return NextResponse.json({ error: 'Client not found' }, { status: 404 });
@@ -82,15 +81,15 @@ export async function GET(_request: Request) {
 export async function POST(request: Request) {
   try {
     const session = (await getServerSession(authOptions)) as {
-      user?: { email?: string };
+      user?: { email?: string; client_uid?: string };
     } | null;
 
     if (!session?.user?.email) {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     }
 
-    // Get client_uid for the current user
-    const clientUid = await getClientUidForUser(session.user.email);
+    // Get client_uid directly from the session
+    const clientUid = session.user.client_uid;
 
     if (!clientUid) {
       return NextResponse.json({ error: 'Client not found' }, { status: 404 });
@@ -147,15 +146,15 @@ export async function POST(request: Request) {
 export async function DELETE(request: Request) {
   try {
     const session = (await getServerSession(authOptions)) as {
-      user?: { email?: string };
+      user?: { email?: string; client_uid?: string };
     } | null;
 
     if (!session?.user?.email) {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     }
 
-    // Get client_uid for the current user
-    const clientUid = await getClientUidForUser(session.user.email);
+    // Get client_uid directly from the session
+    const clientUid = session.user.client_uid;
 
     const { searchParams } = new URL(request.url);
     const propertyUid = searchParams.get('propertyUid');

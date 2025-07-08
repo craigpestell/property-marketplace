@@ -3,7 +3,6 @@ import { getServerSession } from 'next-auth/next';
 import { Pool } from 'pg';
 
 import { authOptions } from '@/lib/auth';
-import { getClientUidForUser } from '@/lib/db';
 
 const pool = new Pool({
   user: process.env.PGUSER,
@@ -20,7 +19,7 @@ export async function GET(
 ) {
   try {
     const session = (await getServerSession(authOptions)) as {
-      user: { email: string; role?: string };
+      user: { email: string; role?: string; client_uid?: string };
     } | null;
     if (!session?.user?.email) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -36,8 +35,8 @@ export async function GET(
       );
     }
 
-    // Get client_uid for the current user
-    const clientUid = await getClientUidForUser(session.user.email);
+    // Get client_uid directly from the session
+    const clientUid = session.user.client_uid;
 
     const query = `
       SELECT 
@@ -90,14 +89,14 @@ export async function PUT(
 ) {
   try {
     const session = (await getServerSession(authOptions)) as {
-      user: { email: string; role?: string };
+      user: { email: string; role?: string; client_uid?: string };
     } | null;
     if (!session?.user?.email) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Get client_uid for the current user
-    const clientUid = await getClientUidForUser(session.user.email);
+    // Get client_uid directly from the session
+    const clientUid = session.user.client_uid;
 
     const offerUid = routeParams.id;
     const body = await request.json();

@@ -3,7 +3,6 @@ import { getServerSession } from 'next-auth/next';
 import { Pool } from 'pg';
 
 import { authOptions } from '@/lib/auth';
-import { getClientUidForUser } from '@/lib/db';
 import { generateOfferUID } from '@/lib/uid';
 
 const pool = new Pool({
@@ -18,7 +17,7 @@ const pool = new Pool({
 export async function GET(request: NextRequest) {
   try {
     const session = (await getServerSession(authOptions)) as {
-      user: { email: string; role?: string };
+      user: { email: string; role?: string; client_uid?: string };
     } | null;
     if (!session?.user?.email) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -28,8 +27,8 @@ export async function GET(request: NextRequest) {
     const role = searchParams.get('role'); // 'buyer' or 'seller'
     const status = searchParams.get('status');
 
-    // Get client_uid for the current user
-    const clientUid = await getClientUidForUser(session.user.email);
+    // Get client_uid directly from the session
+    const clientUid = session.user.client_uid;
 
     let query = `
       SELECT 
@@ -109,7 +108,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const session = (await getServerSession(authOptions)) as {
-      user: { email: string; role?: string };
+      user: { email: string; role?: string; client_uid?: string };
     } | null;
     if (!session?.user?.email) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -135,8 +134,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Get buyer's client_uid
-    const buyerClientUid = await getClientUidForUser(session.user.email);
+    // Get buyer's client_uid directly from the session
+    const buyerClientUid = session.user.client_uid;
 
     // Get property details, seller email, and seller's client_uid
     const propertyQuery = `
