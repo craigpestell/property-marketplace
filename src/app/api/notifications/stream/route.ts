@@ -16,14 +16,17 @@ const pool = new Pool({
 export async function GET(_request: NextRequest) {
   try {
     const session = (await getServerSession(authOptions)) as {
-      user: { email: string };
+      user: { email: string; client_uid?: string };
     } | null;
 
-    if (!session?.user?.email) {
-      return new Response('Unauthorized', { status: 401 });
+    // Require authentication with client_uid for notifications stream
+    if (!session?.user?.client_uid) {
+      return new Response('Not authenticated or missing client ID', {
+        status: 401,
+      });
     }
 
-    const userEmail = session.user.email;
+    const clientUid = session.user.client_uid;
 
     // Set up Server-Sent Events
     const stream = new ReadableStream({
@@ -63,14 +66,15 @@ export async function GET(_request: NextRequest) {
           }
 
           try {
+            // Query for notifications using only client_uid
             const result = await pool.query(
               `SELECT notification_id, title, message, type, 
                       related_offer_uid, related_property_uid, priority, created_at, read_at
                FROM user_notifications 
-               WHERE user_email = $1 AND read_at IS NULL 
+               WHERE client_uid = $1 AND read_at IS NULL 
                ORDER BY created_at DESC 
                LIMIT 10`,
-              [userEmail],
+              [clientUid],
             );
 
             if (result.rows.length > 0) {
@@ -84,15 +88,15 @@ export async function GET(_request: NextRequest) {
               );
             }
 
-            // Also check for unread offer updates
+            // Only check for offer updates using client_uid
             const offerUpdates = await pool.query(
               `SELECT o.offer_uid, o.status, o.updated_at, p.title as property_title
                FROM offers o
                JOIN properties p ON o.property_uid = p.property_uid
-               WHERE (o.buyer_email = $1 OR o.seller_email = $1)
+               WHERE (o.buyer_client_uid = $1 OR o.seller_client_uid = $1)
                AND o.updated_at > NOW() - INTERVAL '5 minutes'
                ORDER BY o.updated_at DESC`,
-              [userEmail],
+              [clientUid],
             );
 
             if (offerUpdates.rows.length > 0) {

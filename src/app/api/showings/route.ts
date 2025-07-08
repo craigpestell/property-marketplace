@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getServerSession } from 'next-auth/next';
 import { Pool } from 'pg';
 
-import { getClientUidForUser } from '@/lib/db';
+import { authOptions } from '@/lib/auth';
 
 const pool = new Pool({
   user: process.env.PGUSER,
@@ -13,8 +14,20 @@ const pool = new Pool({
 
 export async function POST(req: NextRequest) {
   try {
+    // Get authenticated user's session
+    const session = (await getServerSession(authOptions)) as {
+      user?: { name?: string; email?: string; client_uid?: string };
+    } | null;
+
+    if (!session?.user?.client_uid) {
+      return NextResponse.json(
+        { error: 'Not authenticated or missing client ID' },
+        { status: 401 },
+      );
+    }
+
     const data = await req.json();
-    const { propertyUid, date, time, user } = data;
+    const { propertyUid, date, time } = data;
 
     if (!propertyUid || !date || !time) {
       return NextResponse.json(
@@ -23,12 +36,13 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const userName = user?.name || null;
-    const userEmail = user?.email || null;
+    // Use authenticated user information
+    const userName = session.user.name || null;
+    const userEmail = session.user.email;
 
     // Get both client_uid values - one for the property owner and one for the user
     let propertyClientUid = null;
-    let userClientUid = null;
+    const userClientUid = session.user.client_uid; // We already verified this exists
 
     // Get the client_uid for the property owner
     const propertyResult = await pool.query(
@@ -40,10 +54,7 @@ export async function POST(req: NextRequest) {
       propertyClientUid = propertyResult.rows[0].client_uid;
     }
 
-    // Get the client_uid for the user booking the showing (if they have an email)
-    if (userEmail) {
-      userClientUid = await getClientUidForUser(userEmail);
-    }
+    // No need to look up client_uid as we already verified it exists in the session
 
     // Insert the showing record with client_uid values
     await pool.query(
@@ -70,17 +81,24 @@ export async function POST(req: NextRequest) {
 
 export async function GET(request: NextRequest) {
   try {
+    // Get authenticated user's session
+    const session = (await getServerSession(authOptions)) as {
+      user?: { email?: string; client_uid?: string };
+    } | null;
+
+    // Require authentication for viewing showings - check for client_uid directly
+    if (!session?.user?.client_uid) {
+      return NextResponse.json(
+        { error: 'Not authenticated or missing client ID' },
+        { status: 401 },
+      );
+    }
+
     const { searchParams } = new URL(request.url);
     const propertyUid = searchParams.get('propertyUid');
-    const clientUid = searchParams.get('clientUid');
-    const userEmail = searchParams.get('userEmail');
 
-    // If user email is provided but no client_uid, try to get client_uid
-    let effectiveClientUid = clientUid;
-
-    if (!effectiveClientUid && userEmail) {
-      effectiveClientUid = await getClientUidForUser(userEmail);
-    }
+    // Get client_uid from the session - we know it exists since we checked above
+    const effectiveClientUid = session.user.client_uid;
 
     let query = 'SELECT * FROM showings';
     const params: string[] = [];
@@ -92,15 +110,11 @@ export async function GET(request: NextRequest) {
       params.push(propertyUid);
     }
 
-    if (effectiveClientUid) {
-      conditions.push(
-        `(client_uid = $${params.length + 1} OR viewer_client_uid = $${params.length + 1})`,
-      );
-      params.push(effectiveClientUid);
-    } else if (userEmail) {
-      conditions.push(`user_email = $${params.length + 1}`);
-      params.push(userEmail);
-    }
+    // We should always have a client_uid by this point
+    conditions.push(
+      `(client_uid = $${params.length + 1} OR viewer_client_uid = $${params.length + 1})`,
+    );
+    params.push(effectiveClientUid);
 
     if (conditions.length > 0) {
       query += ' WHERE ' + conditions.join(' AND ');

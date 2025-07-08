@@ -3,7 +3,6 @@ import { getServerSession } from 'next-auth/next';
 import { Pool } from 'pg';
 
 import { authOptions } from '@/lib/auth';
-import { getClientUidForUser } from '@/lib/db';
 
 const pool = new Pool({
   user: process.env.PGUSER,
@@ -17,15 +16,19 @@ const pool = new Pool({
 export async function GET(request: NextRequest) {
   try {
     const session = (await getServerSession(authOptions)) as {
-      user: { email: string };
+      user: { email: string; client_uid?: string };
     } | null;
 
-    if (!session?.user?.email) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    // Require authentication with client_uid for notifications
+    if (!session?.user?.client_uid) {
+      return NextResponse.json(
+        { error: 'Not authenticated or missing client ID' },
+        { status: 401 },
+      );
     }
 
-    // Get client_uid for the current user
-    const clientUid = await getClientUidForUser(session.user.email);
+    // Get client_uid from the session directly
+    const clientUid = session.user.client_uid;
 
     const { searchParams } = new URL(request.url);
     const limit = parseInt(searchParams.get('limit') || '20');
@@ -35,15 +38,10 @@ export async function GET(request: NextRequest) {
       SELECT notification_id, title, message, type, 
              related_offer_uid, related_property_uid, priority, created_at, read_at
       FROM user_notifications 
-      WHERE ${clientUid ? 'client_uid = $1 OR ' : ''} user_email = $${clientUid ? '2' : '1'}
+      WHERE client_uid = $1
     `;
 
-    let params = [];
-    if (clientUid) {
-      params = [clientUid, session.user.email];
-    } else {
-      params = [session.user.email];
-    }
+    const params = [clientUid];
 
     if (unreadOnly) {
       query += ' AND read_at IS NULL';
@@ -54,17 +52,10 @@ export async function GET(request: NextRequest) {
 
     const result = await pool.query(query, params);
 
-    // Get unread count using the same client_uid/email logic
-    let unreadQuery = 'SELECT COUNT(*) as count FROM user_notifications WHERE ';
-    let unreadParams = [];
-
-    if (clientUid) {
-      unreadQuery += 'client_uid = $1 OR user_email = $2';
-      unreadParams = [clientUid, session.user.email];
-    } else {
-      unreadQuery += 'user_email = $1';
-      unreadParams = [session.user.email];
-    }
+    // Get unread count using only client_uid
+    let unreadQuery =
+      'SELECT COUNT(*) as count FROM user_notifications WHERE client_uid = $1';
+    const unreadParams = [clientUid];
 
     unreadQuery += ' AND read_at IS NULL';
 
@@ -89,11 +80,14 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const session = (await getServerSession(authOptions)) as {
-      user: { email: string };
+      user: { email: string; client_uid?: string };
     } | null;
 
-    if (!session?.user?.email) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    if (!session?.user?.client_uid) {
+      return NextResponse.json(
+        { error: 'Not authenticated or missing client ID' },
+        { status: 401 },
+      );
     }
 
     const body = await request.json();
@@ -118,49 +112,39 @@ export async function POST(request: NextRequest) {
     // Use target_user_email if provided, otherwise use current user
     const recipientEmail = target_user_email || session.user.email;
 
-    // Get the client_uid either from the provided value or look it up
+    // Get the client_uid either from the provided value or session
     let targetClientUid = providedClientUid;
 
-    if (!targetClientUid) {
-      // Look up client_uid for the recipient email
-      targetClientUid = await getClientUidForUser(recipientEmail);
+    if (!targetClientUid && recipientEmail === session.user.email) {
+      // Use client_uid from session if creating notification for current user
+      targetClientUid = session.user.client_uid;
     }
 
-    // Insert with client_uid if it's available
-    if (targetClientUid) {
-      await pool.query(
-        `INSERT INTO user_notifications 
-         (user_email, title, message, type, related_offer_uid, related_property_uid, priority, client_uid)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-         RETURNING *`,
-        [
-          recipientEmail,
-          title,
-          message,
-          type,
-          related_offer_uid,
-          related_property_uid,
-          priority,
-          targetClientUid,
-        ],
-      );
-    } else {
-      await pool.query(
-        `INSERT INTO user_notifications 
-         (user_email, title, message, type, related_offer_uid, related_property_uid, priority)
-         VALUES ($1, $2, $3, $4, $5, $6, $7)
-         RETURNING *`,
-        [
-          recipientEmail,
-          title,
-          message,
-          type,
-          related_offer_uid,
-          related_property_uid,
-          priority,
-        ],
+    // Require a client_uid for all notifications
+    if (!targetClientUid) {
+      return NextResponse.json(
+        { error: 'A client_uid is required for the notification recipient' },
+        { status: 400 },
       );
     }
+
+    // Insert with the client_uid
+    await pool.query(
+      `INSERT INTO user_notifications 
+       (user_email, title, message, type, related_offer_uid, related_property_uid, priority, client_uid)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+       RETURNING *`,
+      [
+        recipientEmail,
+        title,
+        message,
+        type,
+        related_offer_uid,
+        related_property_uid,
+        priority,
+        targetClientUid,
+      ],
+    );
 
     return NextResponse.json({
       message: 'Notification created successfully',
@@ -189,57 +173,68 @@ export async function POST(request: NextRequest) {
 export async function PATCH(request: NextRequest) {
   try {
     const session = (await getServerSession(authOptions)) as {
-      user: { email: string };
+      user: { email: string; client_uid?: string };
     } | null;
 
-    if (!session?.user?.email) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    if (!session?.user?.client_uid) {
+      return NextResponse.json(
+        { error: 'Not authenticated or missing client ID' },
+        { status: 401 },
+      );
     }
 
-    // Get client_uid for the current user
-    const clientUid = await getClientUidForUser(session.user.email);
+    // Get client_uid from the session directly
+    const clientUid = session.user.client_uid;
 
     const body = await request.json();
     const { notification_ids, mark_all_read } = body;
 
-    if (mark_all_read) {
-      // Mark all notifications as read for the user by client_uid or email
-      if (clientUid) {
-        await pool.query(
-          'UPDATE user_notifications SET read_at = CURRENT_TIMESTAMP WHERE (client_uid = $1 OR user_email = $2) AND read_at IS NULL',
-          [clientUid, session.user.email],
-        );
-      } else {
-        await pool.query(
-          'UPDATE user_notifications SET read_at = CURRENT_TIMESTAMP WHERE user_email = $1 AND read_at IS NULL',
-          [session.user.email],
-        );
-      }
+    let updateResult;
+    let updatedRowsCount = 0;
+
+    // Check if mark_all_read is true - handle different formats from frontend
+    if (
+      mark_all_read === true ||
+      mark_all_read === 'true' ||
+      mark_all_read === 1
+    ) {
+      // Use client_uid as the only identifier
+      const query = `
+        UPDATE user_notifications 
+        SET read_at = CURRENT_TIMESTAMP 
+        WHERE client_uid = $1
+        AND read_at IS NULL
+        RETURNING notification_id
+      `;
+
+      const params = [clientUid];
+
+      updateResult = await pool.query(query, params);
+      updatedRowsCount = updateResult.rowCount || 0;
 
       return NextResponse.json({
-        message: 'All notifications marked as read',
+        message: `All notifications marked as read (${updatedRowsCount} updated)`,
+        updated_count: updatedRowsCount,
       });
     } else if (notification_ids && Array.isArray(notification_ids)) {
-      // Mark specific notifications as read, using client_uid when available
-      if (clientUid) {
-        await pool.query(
-          `UPDATE user_notifications 
-           SET read_at = CURRENT_TIMESTAMP 
-           WHERE notification_id = ANY($1) AND (client_uid = $2 OR user_email = $3) AND read_at IS NULL`,
-          [notification_ids, clientUid, session.user.email],
-        );
-      } else {
-        await pool.query(
-          `UPDATE user_notifications 
-           SET read_at = CURRENT_TIMESTAMP 
-           WHERE notification_id = ANY($1) AND user_email = $2 AND read_at IS NULL`,
-          [notification_ids, session.user.email],
-        );
-      }
+      // Use client_uid as the only identifier
+      const query = `
+        UPDATE user_notifications 
+        SET read_at = CURRENT_TIMESTAMP 
+        WHERE notification_id = ANY($1::int[]) 
+        AND client_uid = $2
+        AND read_at IS NULL
+        RETURNING notification_id
+      `;
+
+      const params = [notification_ids, clientUid];
+
+      updateResult = await pool.query(query, params);
+      updatedRowsCount = updateResult.rowCount || 0;
 
       return NextResponse.json({
         message: 'Notifications marked as read',
-        updated_count: notification_ids.length,
+        updated_count: updatedRowsCount,
       });
     } else {
       return NextResponse.json(

@@ -21,8 +21,13 @@ export async function GET(
     const session = (await getServerSession(authOptions)) as {
       user: { email: string; role?: string; client_uid?: string };
     } | null;
-    if (!session?.user?.email) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
+    // Require authentication with client_uid for offers
+    if (!session?.user?.client_uid) {
+      return NextResponse.json(
+        { error: 'Not authenticated or missing client ID' },
+        { status: 401 },
+      );
     }
 
     const offerUid = routeParams.id;
@@ -57,15 +62,9 @@ export async function GET(
       JOIN properties p ON o.property_uid = p.property_uid
       WHERE o.offer_uid = $1
         AND (p.deleted IS NULL OR p.deleted = false)
-        AND (
-          ${clientUid ? 'o.buyer_client_uid::text = $2::text OR o.seller_client_uid::text = $2::text OR ' : ''}
-          o.buyer_email = $${clientUid ? '3' : '2'} OR o.seller_email = $${clientUid ? '3' : '2'}
-        )`;
+        AND (o.buyer_client_uid::text = $2::text OR o.seller_client_uid::text = $2::text)`;
 
-    // Use client_uid if available, otherwise fall back to email
-    const queryParams = clientUid
-      ? [offerUid, clientUid, session.user.email]
-      : [offerUid, session.user.email];
+    const queryParams = [offerUid, clientUid];
 
     const result = await pool.query(query, queryParams);
 
@@ -91,8 +90,13 @@ export async function PUT(
     const session = (await getServerSession(authOptions)) as {
       user: { email: string; role?: string; client_uid?: string };
     } | null;
-    if (!session?.user?.email) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
+    // Require authentication with client_uid for offers
+    if (!session?.user?.client_uid) {
+      return NextResponse.json(
+        { error: 'Not authenticated or missing client ID' },
+        { status: 401 },
+      );
     }
 
     // Get client_uid directly from the session
@@ -131,11 +135,8 @@ export async function PUT(
 
     const offer = offerResult.rows[0];
 
-    // Check permissions based on action
-    const isBuyer = clientUid
-      ? clientUid === offer.buyer_client_uid ||
-        session.user.email === offer.buyer_email
-      : session.user.email === offer.buyer_email;
+    // Check permissions based on action - using client_uid exclusively
+    const isBuyer = clientUid === offer.buyer_client_uid;
 
     if (status === 'withdrawn' && !isBuyer) {
       return NextResponse.json(
@@ -144,10 +145,7 @@ export async function PUT(
       );
     }
 
-    const isSeller = clientUid
-      ? clientUid === offer.seller_client_uid ||
-        session.user.email === offer.seller_email
-      : session.user.email === offer.seller_email;
+    const isSeller = clientUid === offer.seller_client_uid;
 
     if (['accepted', 'rejected', 'countered'].includes(status) && !isSeller) {
       return NextResponse.json(

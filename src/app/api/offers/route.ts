@@ -19,8 +19,13 @@ export async function GET(request: NextRequest) {
     const session = (await getServerSession(authOptions)) as {
       user: { email: string; role?: string; client_uid?: string };
     } | null;
-    if (!session?.user?.email) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
+    // Require authentication with client_uid for offers
+    if (!session?.user?.client_uid) {
+      return NextResponse.json(
+        { error: 'Not authenticated or missing client ID' },
+        { status: 401 },
+      );
     }
 
     const { searchParams } = new URL(request.url);
@@ -54,30 +59,17 @@ export async function GET(request: NextRequest) {
 
     let params: string[] = [];
 
-    // Use client_uid for lookups when available, otherwise fall back to email
-    if (clientUid) {
-      // Use client_uid for both buyer and seller lookups, with type conversion for safety
-      if (role === 'buyer') {
-        query += 'o.buyer_client_uid::text = $1::text';
-        params = [clientUid];
-      } else if (role === 'seller') {
-        query += 'o.seller_client_uid::text = $1::text';
-        params = [clientUid];
-      } else {
-        query +=
-          '(o.buyer_client_uid::text = $1::text OR o.seller_client_uid::text = $1::text)';
-        params = [clientUid];
-      }
+    // Use client_uid for both buyer and seller lookups, with type conversion for safety
+    if (role === 'buyer') {
+      query += 'o.buyer_client_uid::text = $1::text';
+      params = [clientUid];
+    } else if (role === 'seller') {
+      query += 'o.seller_client_uid::text = $1::text';
+      params = [clientUid];
     } else {
-      // Fall back to email-based lookups if client_uid is unavailable
-      params = [session.user.email];
-      if (role === 'buyer') {
-        query += 'o.buyer_email = $1';
-      } else if (role === 'seller') {
-        query += 'o.seller_email = $1';
-      } else {
-        query += 'o.buyer_email = $1 OR o.seller_email = $1';
-      }
+      query +=
+        '(o.buyer_client_uid::text = $1::text OR o.seller_client_uid::text = $1::text)';
+      params = [clientUid];
     }
 
     query += ')';
