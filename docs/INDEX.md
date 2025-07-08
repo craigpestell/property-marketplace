@@ -19,11 +19,12 @@ This is a comprehensive index of all documentation in the Property Marketplace p
 
 ## ⚡ Features & Implementation
 
-| Document                 | Location                                                                                              | Description                                        |
-| ------------------------ | ----------------------------------------------------------------------------------------------------- | -------------------------------------------------- |
-| **Notifications System** | [`docs/features/NOTIFICATIONS_IMPLEMENTATION.md`](features/NOTIFICATIONS_IMPLEMENTATION.md)           | Real-time notifications with SSE                   |
-| **Offer System**         | [`docs/features/OFFER_SYSTEM.md`](features/OFFER_SYSTEM.md)                                           | Property offer management architecture             |
-| **Image Processing**     | [`docs/features/WEBP_IMAGE_PROCESSING_ENHANCEMENT.md`](features/WEBP_IMAGE_PROCESSING_ENHANCEMENT.md) | AI-powered image description and format conversion |
+| Document                 | Location                                                                                              | Description                                              |
+| ------------------------ | ----------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
+| **Notifications System** | [`docs/features/NOTIFICATIONS_IMPLEMENTATION.md`](features/NOTIFICATIONS_IMPLEMENTATION.md)           | Real-time notifications with SSE                         |
+| **Offer System**         | [`docs/features/OFFER_SYSTEM.md`](features/OFFER_SYSTEM.md)                                           | Property offer management architecture                   |
+| **Image Processing**     | [`docs/features/WEBP_IMAGE_PROCESSING_ENHANCEMENT.md`](features/WEBP_IMAGE_PROCESSING_ENHANCEMENT.md) | AI-powered image description and format conversion       |
+| **Client Normalization** | [`docs/features/CLIENT_REFERENCES_NORMALIZATION.md`](features/CLIENT_REFERENCES_NORMALIZATION.md)     | Normalized database schema with client_uid relationships |
 
 ## 📚 Developer Guides
 

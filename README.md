@@ -22,7 +22,7 @@ This property marketplace includes cutting-edge AI capabilities:
 - **Location Context**: AI considers local market conditions and regional property characteristics
 - **International Addresses**: Works with addresses from multiple countries
 
-### � **Technical Architecture**
+### 🔧 **Technical Architecture**
 
 - **Next.js 14** with App Router and TypeScript
 - **Ollama Integration** for local AI processing with LLaVA vision model
@@ -30,6 +30,7 @@ This property marketplace includes cutting-edge AI capabilities:
 - **Automatic Format Conversion** for optimal AI model compatibility
 - **Real-time Notifications** system for property updates
 - **UID-Based Architecture** for secure and scalable property management
+- **Normalized Database Schema** with client_uid-based relationships
 
 ### 🛡️ **Enterprise Features**
 
@@ -48,6 +49,8 @@ Comprehensive documentation is available in the [`docs/`](docs/) directory:
 - **[📚 Developer Guides](docs/guides/)** - Testing, development workflows, and best practices
 
 ### Quick Links
+
+- **[🔄 Client References Normalization](docs/features/CLIENT_REFERENCES_NORMALIZATION.md)** - How we migrated from email to client_uid relationships
 
 | Topic               | Document                                                               | Description                   |
 | ------------------- | ---------------------------------------------------------------------- | ----------------------------- |
