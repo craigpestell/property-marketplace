@@ -15,9 +15,6 @@ const pool = new Pool({
   port: process.env.PGPORT ? parseInt(process.env.PGPORT) : 5432,
 });
 
-// Use the shared schema detection function from db.ts
-import { isUsingNewSchema } from '@/lib/db';
-
 function generatePropertyUID(): string {
   const prefix = 'PROP';
   const timestamp = Date.now().toString(36).toUpperCase();
@@ -27,7 +24,6 @@ function generatePropertyUID(): string {
 
 export async function GET(request: Request) {
   try {
-    const isNew = await isUsingNewSchema();
     const { searchParams } = new URL(request.url);
 
     // Extract query parameters
@@ -43,6 +39,7 @@ export async function GET(request: Request) {
     const bathrooms = searchParams.get('bathrooms');
     const city = searchParams.get('city');
     const clientId = searchParams.get('clientId');
+    const clientUid = searchParams.get('clientUid');
     const userEmail = searchParams.get('userEmail');
 
     const offset = (page - 1) * limit;
@@ -53,20 +50,12 @@ export async function GET(request: Request) {
 
     // Search logic - adapt based on schema
     if (search) {
-      if (isNew) {
-        whereConditions.push(`(
-          p.title ILIKE $${paramIndex} OR 
-          p.formatted_address ILIKE $${paramIndex} OR 
-          p.search_location ILIKE $${paramIndex} OR 
-          p.details ILIKE $${paramIndex}
-        )`);
-      } else {
-        whereConditions.push(`(
-          p.title ILIKE $${paramIndex} OR 
-          p.address ILIKE $${paramIndex} OR 
-          p.details ILIKE $${paramIndex}
-        )`);
-      }
+      whereConditions.push(`(
+        p.title ILIKE $${paramIndex} OR 
+        p.formatted_address ILIKE $${paramIndex} OR 
+        p.search_location ILIKE $${paramIndex} OR 
+        p.details ILIKE $${paramIndex}
+      )`);
       queryParams.push(`%${search}%`);
       paramIndex++;
     }
@@ -84,38 +73,30 @@ export async function GET(request: Request) {
       paramIndex++;
     }
 
-    // City filtering - adapt based on schema
+    // City filtering
     if (city) {
-      if (isNew) {
-        whereConditions.push(`p.city ILIKE $${paramIndex}`);
-      } else {
-        whereConditions.push(`p.address ILIKE $${paramIndex}`);
-      }
+      whereConditions.push(`p.city ILIKE $${paramIndex}`);
       queryParams.push(`%${city}%`);
       paramIndex++;
     }
 
-    // Client filtering - adapt based on schema
+    // Client filtering - always use client_uid
     if (clientId) {
-      if (isNew) {
-        whereConditions.push(`p.client_uid = $${paramIndex}`);
-        queryParams.push(clientId);
-      } else {
-        whereConditions.push(`p.client_id = $${paramIndex}`);
-        queryParams.push(parseInt(clientId));
-      }
+      whereConditions.push(`p.client_uid = $${paramIndex}`);
+      queryParams.push(clientId);
       paramIndex++;
     }
 
-    // User email filtering - adapt based on schema
-    if (userEmail) {
-      if (isNew) {
-        whereConditions.push(
-          `p.client_uid IN (SELECT client_uid FROM clients WHERE email = $${paramIndex})`,
-        );
-      } else {
-        whereConditions.push(`p.user_email = $${paramIndex}`);
-      }
+    // User filtering - always use client_uid for ownership lookup
+    if (clientUid) {
+      whereConditions.push(`p.client_uid = $${paramIndex}`);
+      queryParams.push(clientUid);
+      paramIndex++;
+    } else if (userEmail) {
+      // Look up client_uid from the user's email
+      whereConditions.push(
+        `p.client_uid IN (SELECT client_uid FROM clients WHERE email = $${paramIndex})`,
+      );
       queryParams.push(userEmail);
       paramIndex++;
     }
@@ -147,9 +128,13 @@ export async function GET(request: Request) {
       paramIndex++;
     }
 
-    const allowedSortColumns = isNew
-      ? ['created_at', 'price', 'title', 'city', 'saves']
-      : ['created_at', 'price', 'title', 'address', 'saves'];
+    const allowedSortColumns = [
+      'created_at',
+      'price',
+      'title',
+      'city',
+      'saves',
+    ];
     const validSortBy = allowedSortColumns.includes(sortBy)
       ? sortBy
       : 'created_at';
@@ -160,9 +145,8 @@ export async function GET(request: Request) {
         ? `WHERE ${whereConditions.join(' AND ')}`
         : '';
 
-    // Conditional SELECT query based on schema
-    const mainQuery = isNew
-      ? `
+    // SELECT query using new schema with client_uid
+    const mainQuery = `
       SELECT 
         p.id, 
         p.uuid, 
@@ -196,43 +180,14 @@ export async function GET(request: Request) {
                p.latitude, p.longitude, p.formatted_address, p.address_type, p.client_uid, c.email, c.name
       ORDER BY ${validSortBy === 'saves' ? 'saves' : 'p.' + validSortBy} ${validSortOrder}
       LIMIT $${paramIndex} OFFSET $${paramIndex + 1}
-    `
-      : `
-      SELECT 
-        p.id, 
-        p.uuid, 
-        COALESCE(p.property_uid, CONCAT('PROP-', EXTRACT(EPOCH FROM p.created_at)::text, '-', SUBSTRING(p.id::text, 1, 6))) as property_uid,
-        p.title, 
-        p.price, 
-        p.details,
-        p.image_url, 
-        p.created_at, 
-        p.address,
-        p.client_id,
-        p.user_email,
-        (SELECT email FROM clients WHERE clients.id = p.client_id) as client_email,
-        COALESCE(COUNT(sp.property_uid), 0) as saves
-      FROM properties p
-      LEFT JOIN saved_properties sp ON COALESCE(p.property_uid, CONCAT('PROP-', EXTRACT(EPOCH FROM p.created_at)::text, '-', SUBSTRING(p.id::text, 1, 6))) = sp.property_uid
-      ${whereClause}
-      GROUP BY p.id, p.uuid, p.property_uid, p.title, p.price, p.details, p.image_url, p.created_at, p.address, p.client_id, p.user_email
-      ORDER BY ${validSortBy === 'saves' ? 'saves' : 'p.' + validSortBy} ${validSortOrder}
-      LIMIT $${paramIndex} OFFSET $${paramIndex + 1}
     `;
 
     queryParams.push(limit, offset);
 
-    const countQuery = isNew
-      ? `
+    const countQuery = `
       SELECT COUNT(DISTINCT p.id) as total
       FROM properties p
       LEFT JOIN clients c ON p.client_uid = c.client_uid
-      LEFT JOIN saved_properties sp ON COALESCE(p.property_uid, CONCAT('PROP-', EXTRACT(EPOCH FROM p.created_at)::text, '-', SUBSTRING(p.id::text, 1, 6))) = sp.property_uid
-      ${whereClause}
-    `
-      : `
-      SELECT COUNT(DISTINCT p.id) as total
-      FROM properties p
       LEFT JOIN saved_properties sp ON COALESCE(p.property_uid, CONCAT('PROP-', EXTRACT(EPOCH FROM p.created_at)::text, '-', SUBSTRING(p.id::text, 1, 6))) = sp.property_uid
       ${whereClause}
     `;
@@ -403,10 +358,14 @@ export async function DELETE(request: Request) {
     const { searchParams } = new URL(request.url);
     const propertyUid = searchParams.get('uid');
     const userEmail = searchParams.get('userEmail');
+    const clientUid = searchParams.get('clientUid');
 
-    if (!propertyUid || !userEmail) {
+    if (!propertyUid || (!userEmail && !clientUid)) {
       return NextResponse.json(
-        { error: 'Property UID and user email are required' },
+        {
+          error:
+            'Property UID and either user email or client UID are required',
+        },
         { status: 400 },
       );
     }
@@ -429,8 +388,17 @@ export async function DELETE(request: Request) {
 
     const property = propertyResult.rows[0];
 
-    // Check if the user owns this property
-    if (property.client_email !== userEmail) {
+    // Check if the user owns this property - prefer client_uid for authorization
+    if (clientUid) {
+      // Direct client_uid comparison for authorization
+      if (property.client_uid !== clientUid) {
+        return NextResponse.json(
+          { error: 'Unauthorized: You can only delete your own listings' },
+          { status: 403 },
+        );
+      }
+    } else if (userEmail && property.client_email !== userEmail) {
+      // Fall back to email only if client_uid is not available
       return NextResponse.json(
         { error: 'Unauthorized: You can only delete your own listings' },
         { status: 403 },
