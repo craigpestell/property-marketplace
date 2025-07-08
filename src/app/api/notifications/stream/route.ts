@@ -3,6 +3,18 @@ import { Pool } from 'pg';
 
 import { withClientUid } from '@/lib/api-middleware';
 
+// Track active connections per client UID to detect and prevent duplicates
+// Map of clientUid -> { connectionId, controller, isActive }
+interface ActiveConnection {
+  connectionId: string;
+  controller: ReadableStreamDefaultController;
+  isActive: boolean;
+  createdAt: number; // timestamp when connection was created
+}
+
+// Store only one active connection per client
+const activeConnections = new Map<string, ActiveConnection>();
+
 const pool = new Pool({
   user: process.env.PGUSER,
   host: process.env.PGHOST,
@@ -16,6 +28,24 @@ export const GET = withClientUid(
   async (_request: NextRequest, { clientUid }) => {
     // Define a unique ID for this connection for debugging purposes
     const connectionId = Math.random().toString(36).substring(2, 15);
+
+    // Check if there's already an active connection for this client
+    const existingConnection = activeConnections.get(clientUid);
+
+    // Close any existing connection before creating a new one
+    if (existingConnection && existingConnection.isActive) {
+      try {
+        // Try to close the existing connection
+        existingConnection.controller.close();
+        // eslint-disable-next-line no-console
+        console.log(
+          `Closed previous connection ${existingConnection.connectionId} for client ${clientUid}`,
+        );
+      } catch (e) {
+        // Ignore errors if the controller is already closed
+      }
+    }
+
     // eslint-disable-next-line no-console
     console.log(
       `SSE connection ${connectionId} established for client_uid: ${clientUid}`,
@@ -27,6 +57,14 @@ export const GET = withClientUid(
         start(controller) {
           // Track the controller state
           let isControllerActive = true;
+
+          // Register this as the active connection for this client
+          activeConnections.set(clientUid, {
+            connectionId,
+            controller,
+            isActive: true,
+            createdAt: Date.now(),
+          });
 
           // Use ReturnType<typeof setInterval> to get the correct type for the interval
           let interval: ReturnType<typeof setInterval> | null = null;
@@ -42,6 +80,15 @@ export const GET = withClientUid(
             if (pingInterval) {
               clearInterval(pingInterval);
               pingInterval = null;
+            }
+
+            // Remove from active connections map if this is still the active connection
+            const currentConnection = activeConnections.get(clientUid);
+            if (
+              currentConnection &&
+              currentConnection.connectionId === connectionId
+            ) {
+              activeConnections.delete(clientUid);
             }
 
             isControllerActive = false;
@@ -201,6 +248,8 @@ export const GET = withClientUid(
           'Access-Control-Allow-Origin': '*',
           'Access-Control-Allow-Headers': 'Cache-Control',
           'X-Accel-Buffering': 'no', // Prevent Nginx from buffering the SSE stream
+          'X-SSE-Connection-ID': connectionId, // Helps client identify this connection
+          'X-SSE-Client-ID': clientUid, // Helps client track which client this stream is for
         },
       });
     } catch (error) {

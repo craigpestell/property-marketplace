@@ -137,8 +137,28 @@ export function useNotifications() {
   useEffect(() => {
     if (!session?.user?.email) return;
 
+    // Use a global EventSource to prevent duplicates
+    const windowWithSSE = window as typeof window & {
+      globalNotificationSSE?: EventSource;
+    };
+
     const connectSSE = () => {
+      // If a global EventSource already exists, use it
+      if (windowWithSSE.globalNotificationSSE) {
+        // eslint-disable-next-line no-console
+        console.log('Reusing existing notification stream connection');
+        eventSourceRef.current = windowWithSSE.globalNotificationSSE;
+
+        // If already connected, update the state
+        if (eventSourceRef.current.readyState === EventSource.OPEN) {
+          setState((prev) => ({ ...prev, isConnected: true }));
+        }
+        return;
+      }
+
+      // Create a new EventSource and store it globally
       eventSourceRef.current = new EventSource('/api/notifications/stream');
+      windowWithSSE.globalNotificationSSE = eventSourceRef.current;
 
       eventSourceRef.current.onopen = () => {
         setState((prev) => ({ ...prev, isConnected: true }));
@@ -176,17 +196,27 @@ export function useNotifications() {
     fetchNotifications();
 
     return () => {
-      if (eventSourceRef.current) {
-        eventSourceRef.current.close();
-      }
+      // Don't close the global event source when component unmounts
+      // This allows the connection to persist across page navigations
+
+      // Just clear our reference to it
+      eventSourceRef.current = null;
     };
   }, [session?.user?.email, fetchNotifications]);
+
+  // Provide a refreshNotifications function that indicates it was a manual refresh
+  const refreshNotifications = useCallback(() => {
+    return fetchNotifications().then(() => {
+      // Return true to indicate this was a manual refresh
+      return true;
+    });
+  }, [fetchNotifications]);
 
   return {
     ...state,
     fetchNotifications,
     markAsRead,
     createNotification,
-    refreshNotifications: () => fetchNotifications(),
+    refreshNotifications,
   };
 }

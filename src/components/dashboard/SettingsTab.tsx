@@ -20,6 +20,20 @@ export default function SettingsTab() {
       });
 
       if (response.ok) {
+        // Close the global EventSource connection if it exists
+        const windowWithSSE = window as typeof window & {
+          globalNotificationSSE?: EventSource;
+        };
+
+        if (windowWithSSE.globalNotificationSSE) {
+          // eslint-disable-next-line no-console
+          console.log(
+            'Closing notification stream connection on account deletion',
+          );
+          windowWithSSE.globalNotificationSSE.close();
+          windowWithSSE.globalNotificationSSE = undefined;
+        }
+
         await signOut({ redirect: false });
         window.location.href = '/';
       } else {

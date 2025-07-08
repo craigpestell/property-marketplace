@@ -2,16 +2,33 @@ import { useSession } from 'next-auth/react';
 import { useCallback, useEffect, useState } from 'react';
 
 export interface SavedProperty {
-  saved_id: number;
   saved_at: string;
   id: string;
   property_uid: string;
   title: string;
   price: number;
-  address: string;
   image_url: string;
   created_at: string;
-  client_id: string;
+  // New schema fields
+  street_number?: string;
+  street_name?: string;
+  unit?: string;
+  city?: string;
+  postal_code?: string;
+  country?: string;
+  latitude?: number;
+  longitude?: number;
+  formatted_address?: string;
+  address_type?: string;
+  // Legacy fields
+  address?: string;
+  client_id?: string;
+  // Client reference fields
+  client_uid?: string;
+  client_email?: string;
+  client_name?: string;
+  // Property details
+  details?: Record<string, unknown>;
 }
 
 export function useSavedProperties() {
@@ -39,7 +56,7 @@ export function useSavedProperties() {
 
       const data = await response.json();
 
-      if (data.success) {
+      if (data.savedProperties) {
         setSavedProperties(data.savedProperties);
         // Create a Set of property UIDs for quick lookup
         const propertyIds = new Set<string>(
@@ -76,7 +93,7 @@ export function useSavedProperties() {
 
         const data = await response.json();
 
-        if (data.success) {
+        if (!data.error) {
           // Add to local state
           setSavedPropertyIds((prev) => new Set(prev).add(propertyUid));
           // Optionally refresh the full list
@@ -112,7 +129,7 @@ export function useSavedProperties() {
 
         const data = await response.json();
 
-        if (data.success) {
+        if (!data.error) {
           // Remove from local state
           setSavedPropertyIds((prev) => {
             const newSet = new Set(prev);

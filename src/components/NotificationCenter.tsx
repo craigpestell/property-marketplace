@@ -94,20 +94,52 @@ export default function NotificationCenter() {
     }
   };
 
-  // Show toast notifications for new notifications
+  // Track which notification IDs we've already shown toasts for
+  const notifiedIdsRef = useRef<Set<number>>(new Set());
+  const isFirstLoadRef = useRef(true);
+
   useEffect(() => {
-    if (prevUnreadCountRef.current < unreadCount && unreadCount > 0) {
-      const newNotifications = notifications.slice(
-        0,
-        unreadCount - prevUnreadCountRef.current,
-      );
-      if (newNotifications.length > 0) {
-        const latestNotification = newNotifications[0];
-        showInfo('New Notification', latestNotification.title, 4000);
-      }
+    // Skip if still loading
+    if (isLoading) {
+      return;
     }
+
+    if (isFirstLoadRef.current) {
+      // On first load, just record all notification IDs without showing toasts
+      notifications.forEach((notification) => {
+        notifiedIdsRef.current.add(notification.notification_id);
+      });
+      isFirstLoadRef.current = false;
+      return;
+    }
+
+    // Get unread notifications that we haven't shown toasts for yet
+    const newUnreadNotifications = notifications.filter(
+      (notification) =>
+        !notification.read_at &&
+        !notifiedIdsRef.current.has(notification.notification_id),
+    );
+
+    // If we have new unread notifications
+    if (newUnreadNotifications.length > 0) {
+      // Mark all these notification IDs as having been notified
+      newUnreadNotifications.forEach((notification) => {
+        notifiedIdsRef.current.add(notification.notification_id);
+      });
+
+      // Show a single toast for all new notifications
+      showInfo(
+        `New notification${newUnreadNotifications.length !== 1 ? 's' : ''}`,
+        `You have ${newUnreadNotifications.length} new unread notification${
+          newUnreadNotifications.length !== 1 ? 's' : ''
+        }`,
+        5000,
+      );
+    }
+
+    // Always update the reference count
     prevUnreadCountRef.current = unreadCount;
-  }, [unreadCount, notifications, showInfo]);
+  }, [isLoading, notifications, unreadCount, showInfo]);
 
   const getNotificationIcon = (type: Notification['type']) => {
     switch (type) {
@@ -214,7 +246,15 @@ export default function NotificationCenter() {
             </h3>
             <div className='flex items-center space-x-2'>
               <button
-                onClick={refreshNotifications}
+                onClick={() => {
+                  // When refresh button is clicked, we want to mark all current notifications as "seen"
+                  // so they don't trigger toasts again when refreshed
+                  notifications.forEach((notification) => {
+                    notifiedIdsRef.current.add(notification.notification_id);
+                  });
+                  // Then refresh
+                  refreshNotifications();
+                }}
                 className='text-sm text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-100'
               >
                 Refresh

@@ -3,6 +3,8 @@
 import { useSession } from 'next-auth/react';
 import { useCallback, useEffect, useState } from 'react';
 
+import { useClientUid } from '@/hooks/useClientUid';
+
 import { PROPERTY_COLORS } from '@/constant/propertyColors';
 
 import { PropertyColorPicker } from './PropertyColorPicker';
@@ -19,6 +21,7 @@ interface ShowingTime {
 
 export default function ShowingsTab() {
   const { data: session } = useSession();
+  const { clientUid, loading: clientUidLoading } = useClientUid();
   const [userListings, setUserListings] = useState<Property[]>([]);
   const [showingTimes, setShowingTimes] = useState<ShowingTime[]>([]);
   const [currentWeek, setCurrentWeek] = useState<Date>(new Date());
@@ -60,9 +63,13 @@ export default function ShowingsTab() {
     if (!session?.user?.email) return;
 
     try {
-      const response = await fetch(
-        `/api/listings?userEmail=${session.user.email}`,
-      );
+      // Only use clientUid if it's already loaded and not null
+      const queryParam =
+        clientUid && !clientUidLoading
+          ? `clientUid=${clientUid}`
+          : `userEmail=${session.user.email}`;
+
+      const response = await fetch(`/api/listings?${queryParam}`);
       if (response.ok) {
         const data = await response.json();
         setUserListings(data.properties || []);
@@ -70,13 +77,16 @@ export default function ShowingsTab() {
     } catch (err) {
       // Handle error silently or show user notification
     }
-  }, [session?.user?.email]);
+  }, [session?.user?.email, clientUid, clientUidLoading]);
 
   const fetchShowingTimes = useCallback(async () => {
     if (!session?.user?.email) return;
 
     try {
-      const response = await fetch('/api/showings/calendar');
+      // Only use clientUid if it's already loaded and not null
+      const queryParam =
+        clientUid && !clientUidLoading ? `?clientUid=${clientUid}` : '';
+      const response = await fetch(`/api/showings/calendar${queryParam}`);
       if (response.ok) {
         const data = await response.json();
         setShowingTimes(data.showings || []);
@@ -84,15 +94,19 @@ export default function ShowingsTab() {
     } catch (err) {
       // Handle error silently or show user notification
     }
-  }, [session?.user?.email]);
+  }, [session?.user?.email, clientUid, clientUidLoading]);
 
   const fetchPropertyColors = useCallback(async () => {
     if (!session?.user?.email) return;
 
     try {
-      const response = await fetch(
-        `/api/properties/colors?userEmail=${session.user.email}`,
-      );
+      // Only use clientUid if it's already loaded and not null
+      const queryParam =
+        clientUid && !clientUidLoading
+          ? `clientUid=${clientUid}`
+          : `userEmail=${session.user.email}`;
+
+      const response = await fetch(`/api/properties/colors?${queryParam}`);
       if (response.ok) {
         const data = await response.json();
         setPropertyColors(data.colorAssignments || {});
@@ -100,15 +114,16 @@ export default function ShowingsTab() {
     } catch (err) {
       // Handle error silently or show user notification
     }
-  }, [session?.user?.email]);
+  }, [session?.user?.email, clientUid, clientUidLoading]);
 
+  // Only fetch once when session is available and not on every clientUid change
   useEffect(() => {
     if (session?.user) {
       fetchUserListings();
       fetchShowingTimes();
       fetchPropertyColors();
     }
-  }, [session, fetchUserListings, fetchShowingTimes, fetchPropertyColors]);
+  }, [session]); // Intentionally omit fetchUserListings and other functions to prevent loops
 
   // Close color picker when clicking outside
   useEffect(() => {

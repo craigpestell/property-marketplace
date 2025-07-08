@@ -9,17 +9,36 @@ import React, {
   useState,
 } from 'react';
 
+import { useClientUid } from '@/hooks/useClientUid';
+
 export interface SavedProperty {
-  saved_id: number;
   saved_at: string;
   id: string;
   property_uid: string;
   title: string;
   price: number;
-  address: string;
   image_url: string;
   created_at: string;
-  client_id: string;
+  // New schema fields
+  street_number?: string;
+  street_name?: string;
+  unit?: string;
+  city?: string;
+  postal_code?: string;
+  country?: string;
+  latitude?: number;
+  longitude?: number;
+  formatted_address?: string;
+  address_type?: string;
+  // Legacy fields
+  address?: string;
+  client_id?: string;
+  // Client reference fields
+  client_uid?: string;
+  client_email?: string;
+  client_name?: string;
+  // Property details
+  details?: Record<string, unknown>;
 }
 
 interface SavedPropertiesContextType {
@@ -45,6 +64,7 @@ export function SavedPropertiesProvider({
   children: React.ReactNode;
 }) {
   const { data: session } = useSession();
+  const { clientUid, loading: clientUidLoading } = useClientUid();
   const [savedProperties, setSavedProperties] = useState<SavedProperty[]>([]);
   const [savedPropertyIds, setSavedPropertyIds] = useState<Set<string>>(
     new Set(),
@@ -60,7 +80,11 @@ export function SavedPropertiesProvider({
     setError(null);
 
     try {
-      const response = await fetch('/api/saved-properties');
+      // Add client_uid query parameter if available and not still loading
+      const queryParam =
+        clientUid && !clientUidLoading ? `?clientUid=${clientUid}` : '';
+
+      const response = await fetch(`/api/saved-properties${queryParam}`);
 
       if (!response.ok) {
         throw new Error('Failed to fetch saved properties');
@@ -68,7 +92,7 @@ export function SavedPropertiesProvider({
 
       const data = await response.json();
 
-      if (data.success) {
+      if (data.savedProperties) {
         setSavedProperties(data.savedProperties);
         // Create a Set of property UIDs for quick lookup
         const propertyIds = new Set<string>(
@@ -84,7 +108,7 @@ export function SavedPropertiesProvider({
     } finally {
       setLoading(false);
     }
-  }, [session?.user?.email]);
+  }, [session?.user?.email, clientUid, clientUidLoading]);
 
   // Save a property
   const saveProperty = useCallback(
@@ -95,17 +119,22 @@ export function SavedPropertiesProvider({
       }
 
       try {
+        // Include client_uid in request body if available
+        const requestBody = clientUid
+          ? { propertyUid, clientUid }
+          : { propertyUid };
+
         const response = await fetch('/api/saved-properties', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ propertyUid }),
+          body: JSON.stringify(requestBody),
         });
 
         const data = await response.json();
 
-        if (data.success) {
+        if (!data.error) {
           // Add to local state
           setSavedPropertyIds((prev) => new Set(prev).add(propertyUid));
           // Optionally refresh the full list
@@ -120,7 +149,7 @@ export function SavedPropertiesProvider({
         return false;
       }
     },
-    [session?.user?.email, fetchSavedProperties],
+    [session?.user?.email, clientUid, fetchSavedProperties],
   );
 
   // Remove a saved property
@@ -132,8 +161,14 @@ export function SavedPropertiesProvider({
       }
 
       try {
+        // Include client_uid in query params if available
+        const queryParams = new URLSearchParams({ propertyUid });
+        if (clientUid) {
+          queryParams.append('clientUid', clientUid);
+        }
+
         const response = await fetch(
-          `/api/saved-properties?propertyUid=${propertyUid}`,
+          `/api/saved-properties?${queryParams.toString()}`,
           {
             method: 'DELETE',
           },
@@ -141,7 +176,7 @@ export function SavedPropertiesProvider({
 
         const data = await response.json();
 
-        if (data.success) {
+        if (!data.error) {
           // Remove from local state
           setSavedPropertyIds((prev) => {
             const newSet = new Set(prev);
@@ -161,7 +196,7 @@ export function SavedPropertiesProvider({
         return false;
       }
     },
-    [session?.user?.email],
+    [session?.user?.email, clientUid],
   );
 
   // Toggle save state for a property
@@ -186,17 +221,20 @@ export function SavedPropertiesProvider({
     [savedPropertyIds],
   );
 
-  // Load saved properties when user logs in
+  // Load saved properties when user logs in and client_uid is available
   useEffect(() => {
     if (session?.user?.email) {
-      fetchSavedProperties();
+      // Only fetch if we have client_uid or we're sure it's not available (clientUidLoading is false)
+      if (clientUid || (!clientUid && !clientUidLoading)) {
+        fetchSavedProperties();
+      }
     } else {
       // Clear state when user logs out
       setSavedProperties([]);
       setSavedPropertyIds(new Set());
       setError(null);
     }
-  }, [session?.user?.email, fetchSavedProperties]);
+  }, [session?.user?.email, clientUid, clientUidLoading, fetchSavedProperties]);
 
   const value: SavedPropertiesContextType = {
     savedProperties,
