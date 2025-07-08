@@ -14,15 +14,42 @@ const pool = new Pool({
 // GET /api/notifications/stream - Server-Sent Events for real-time notifications
 export const GET = withClientUid(
   async (_request: NextRequest, { clientUid }) => {
+    // Define a unique ID for this connection for debugging purposes
+    const connectionId = Math.random().toString(36).substring(2, 15);
+    // eslint-disable-next-line no-console
+    console.log(
+      `SSE connection ${connectionId} established for client_uid: ${clientUid}`,
+    );
+
     try {
       // Set up Server-Sent Events
       const stream = new ReadableStream({
         start(controller) {
+          // Track the controller state
           let isControllerActive = true;
+
           // Use ReturnType<typeof setInterval> to get the correct type for the interval
           let interval: ReturnType<typeof setInterval> | null = null;
+          let pingInterval: ReturnType<typeof setInterval> | null = null;
 
-          // Send initial connection message with better error handling
+          // Function to clean up all intervals and mark controller as inactive
+          const cleanup = () => {
+            if (interval) {
+              clearInterval(interval);
+              interval = null;
+            }
+
+            if (pingInterval) {
+              clearInterval(pingInterval);
+              pingInterval = null;
+            }
+
+            isControllerActive = false;
+            // eslint-disable-next-line no-console
+            console.log(`SSE connection ${connectionId} cleaned up`);
+          };
+
+          // Send event with better error handling
           const sendEvent = (
             data: Record<string, unknown>,
             event = 'message',
@@ -41,7 +68,6 @@ export const GET = withClientUid(
               );
             } catch (error) {
               // If we get an error (like "Controller is already closed"), mark the controller inactive
-              // to prevent future attempts
               isControllerActive = false;
 
               // Only log if it's not a normal disconnection
@@ -52,30 +78,32 @@ export const GET = withClientUid(
                 )
               ) {
                 // eslint-disable-next-line no-console
-                console.error('Error sending SSE event:', error);
+                console.error(
+                  `SSE connection ${connectionId} error sending event:`,
+                  error,
+                );
               }
 
-              // Clear the interval to prevent further attempts after an error
-              if (interval) {
-                clearInterval(interval);
-                interval = null;
-              }
+              // Clean up all intervals
+              cleanup();
             }
           };
 
+          // Send initial connection message
           sendEvent(
-            { type: 'connected', message: 'Notification stream connected' },
+            {
+              type: 'connected',
+              message: 'Notification stream connected',
+              connectionId,
+            },
             'connected',
           );
 
           // Function to check for new notifications
           const checkNotifications = async () => {
-            // Stop checking if controller is not active or there was an error
+            // Stop checking if controller is not active
             if (!isControllerActive) {
-              if (interval) {
-                clearInterval(interval);
-                interval = null;
-              }
+              cleanup();
               return;
             }
 
@@ -84,10 +112,10 @@ export const GET = withClientUid(
               const result = await pool.query(
                 `SELECT notification_id, title, message, type, 
                       related_offer_uid, related_property_uid, priority, created_at, read_at
-               FROM user_notifications 
-               WHERE client_uid::text = $1::text AND read_at IS NULL 
-               ORDER BY created_at DESC 
-               LIMIT 10`,
+                 FROM user_notifications 
+                 WHERE client_uid::text = $1::text AND read_at IS NULL 
+                 ORDER BY created_at DESC 
+                 LIMIT 10`,
                 [clientUid],
               );
 
@@ -105,11 +133,11 @@ export const GET = withClientUid(
               // Only check for offer updates using client_uid with explicit type casting
               const offerUpdates = await pool.query(
                 `SELECT o.offer_uid, o.status, o.updated_at, p.title as property_title
-               FROM offers o
-               JOIN properties p ON o.property_uid = p.property_uid
-               WHERE (o.buyer_client_uid::text = $1::text OR o.seller_client_uid::text = $1::text)
-               AND o.updated_at > NOW() - INTERVAL '5 minutes'
-               ORDER BY o.updated_at DESC`,
+                 FROM offers o
+                 JOIN properties p ON o.property_uid = p.property_uid
+                 WHERE (o.buyer_client_uid::text = $1::text OR o.seller_client_uid::text = $1::text)
+                 AND o.updated_at > NOW() - INTERVAL '5 minutes'
+                 ORDER BY o.updated_at DESC`,
                 [clientUid],
               );
 
@@ -124,27 +152,43 @@ export const GET = withClientUid(
               }
             } catch (error) {
               // eslint-disable-next-line no-console
-              console.error('Error checking notifications:', error);
+              console.error(
+                `SSE connection ${connectionId} error checking notifications:`,
+                error,
+              );
+              // Don't cleanup here, allow the connection to try again
             }
           };
 
-          // Initial check
+          // Send periodic ping to keep the connection alive and detect disconnects early
+          pingInterval = setInterval(() => {
+            if (isControllerActive) {
+              sendEvent(
+                { type: 'ping', timestamp: new Date().toISOString() },
+                'ping',
+              );
+            } else {
+              cleanup();
+            }
+          }, 15000); // Send ping every 15 seconds
+
+          // Initial check for notifications
           checkNotifications();
 
           // Set up periodic checking (every 30 seconds)
           interval = setInterval(checkNotifications, 30000);
 
-          // Clean up function
+          // Clean up function called when the stream is closed
           return () => {
-            isControllerActive = false;
-            if (interval) {
-              clearInterval(interval);
-              interval = null;
-            }
+            // eslint-disable-next-line no-console
+            console.log(`SSE connection ${connectionId} closed by client`);
+            cleanup();
           };
         },
         cancel() {
           // This is called when the client disconnects
+          // eslint-disable-next-line no-console
+          console.log(`SSE connection ${connectionId} canceled`);
           // The cleanup function returned by start() will also be called
         },
       });
@@ -152,16 +196,23 @@ export const GET = withClientUid(
       return new Response(stream, {
         headers: {
           'Content-Type': 'text/event-stream',
-          'Cache-Control': 'no-cache',
+          'Cache-Control': 'no-cache, no-transform',
           Connection: 'keep-alive',
           'Access-Control-Allow-Origin': '*',
           'Access-Control-Allow-Headers': 'Cache-Control',
+          'X-Accel-Buffering': 'no', // Prevent Nginx from buffering the SSE stream
         },
       });
     } catch (error) {
       // eslint-disable-next-line no-console
-      console.error('SSE stream error:', error);
-      return new Response('Internal Server Error', { status: 500 });
+      console.error(`SSE connection ${connectionId} stream error:`, error);
+      return new Response(JSON.stringify({ error: 'Internal Server Error' }), {
+        status: 500,
+        headers: {
+          'Content-Type': 'application/json',
+          'Cache-Control': 'no-cache',
+        },
+      });
     }
   },
 );
