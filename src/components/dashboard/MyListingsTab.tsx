@@ -4,12 +4,15 @@ import Link from 'next/link';
 import { useSession } from 'next-auth/react';
 import { useCallback, useEffect, useState } from 'react';
 
+import { useClientUid } from '@/hooks/useClientUid';
+
 import UserPropertyCard from '@/components/UserPropertyCard';
 
 import { Property } from '@/types';
 
 export default function MyListingsTab() {
   const { data: session } = useSession();
+  const { clientUid, loading: clientUidLoading } = useClientUid();
   const [userListings, setUserListings] = useState<Property[]>([]);
   const [listingsLoading, setListingsLoading] = useState(false);
   const [deletingPropertyId, setDeletingPropertyId] = useState<string | null>(
@@ -22,6 +25,24 @@ export default function MyListingsTab() {
 
     try {
       setListingsLoading(true);
+
+      // Wait for clientUid to be loaded before fetching
+      if (clientUidLoading) {
+        // Skip fetching while client_uid is still loading
+        return;
+      }
+
+      // Always use clientUid if available
+      if (clientUid) {
+        const response = await fetch(`/api/listings?clientUid=${clientUid}`);
+        if (response.ok) {
+          const data = await response.json();
+          setUserListings(data.properties || []);
+          return;
+        }
+      }
+
+      // Fallback to email only if clientUid is not available
       const response = await fetch(
         `/api/listings?userEmail=${session.user.email}`,
       );
@@ -34,21 +55,33 @@ export default function MyListingsTab() {
     } finally {
       setListingsLoading(false);
     }
-  }, [session?.user?.email]);
+  }, [session?.user?.email, clientUid, clientUidLoading]);
 
   const handleDeleteProperty = async (propertyUid: string) => {
     if (!session?.user?.email) return;
+
+    // Wait for clientUid to finish loading before proceeding
+    if (clientUidLoading) {
+      setDeleteError('Please wait, still loading user data...');
+      return;
+    }
 
     try {
       setDeletingPropertyId(propertyUid);
       setDeleteError(null);
 
-      const response = await fetch(
-        `/api/listings?uid=${propertyUid}&userEmail=${session.user.email}`,
-        {
-          method: 'DELETE',
-        },
-      );
+      let url = `/api/listings?uid=${propertyUid}`;
+
+      // Always use clientUid when available for better security
+      if (clientUid) {
+        url += `&clientUid=${clientUid}`;
+      } else {
+        url += `&userEmail=${session.user.email}`;
+      }
+
+      const response = await fetch(url, {
+        method: 'DELETE',
+      });
 
       if (response.ok) {
         setUserListings((prev) =>
@@ -65,11 +98,15 @@ export default function MyListingsTab() {
     }
   };
 
+  // Fetch when session is available and when clientUid loading state changes
   useEffect(() => {
     if (session?.user) {
-      fetchUserListings();
+      // Only attempt to fetch when we know if clientUid is available or not
+      if (!clientUidLoading) {
+        fetchUserListings();
+      }
     }
-  }, [session, fetchUserListings]);
+  }, [session, clientUidLoading, fetchUserListings]);
 
   return (
     <div className='p-6'>
